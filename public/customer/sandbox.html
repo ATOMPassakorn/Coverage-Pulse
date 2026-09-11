@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Coverage Pulse | AI Coverage Sandbox</title>
+  <meta name="description" content="AI Coverage Sandbox — ทดลองจำลองแผนประกันและปรึกษา AI Assistant เพื่อหาแผนที่ใช่"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    @layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}
+    ::-webkit-scrollbar{display:none;}
+    #chat-messages::-webkit-scrollbar{display:none;}
+    #chat-messages{scrollbar-width:none;}
+    @keyframes typing{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+    .typing-dot{animation:typing 0.8s ease-in-out infinite;}
+    .typing-dot:nth-child(2){animation-delay:0.15s;}
+    .typing-dot:nth-child(3){animation-delay:0.3s;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .animate-spin{animation:spin 1s linear infinite;}
+    .rider-card{transition:all 0.2s ease;}
+    .rider-card.active{background:rgba(254,203,0,0.12);border-color:#fecb00!important;}
+    @keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+    .msg-animate{animation:slideUp 0.25s ease forwards;}
+    #send-btn:disabled{opacity:0.5;cursor:not-allowed;}
+    textarea:focus{outline:none;}
+    .battery-bar-fill{transition:width 0.7s cubic-bezier(0.4,0,0.2,1);}
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "inverse-on-surface":"#f1effa","secondary-container":"#e6ded9","surface":"#fbf8ff","on-tertiary-fixed":"#002113","background":"#fbf8ff","secondary-fixed":"#e9e1dc","primary-fixed-dim":"#f1c100","error-container":"#ffdad6","on-error":"#ffffff","outline":"#80765f","surface-tint":"#745b00","on-secondary-fixed":"#1e1b18","on-primary-fixed-variant":"#584400","on-tertiary-container":"#006645","surface-variant":"#e3e1ec","on-background":"#1a1b22","surface-container-lowest":"#ffffff","tertiary-container":"#5be9ad","primary-fixed":"#ffe08b","on-secondary-fixed-variant":"#4b4642","tertiary-fixed":"#6ffbbe","tertiary":"#006c49","on-error-container":"#93000a","on-primary-fixed":"#241a00","on-tertiary":"#ffffff","on-primary":"#ffffff","surface-container":"#eeedf7","secondary-fixed-dim":"#cdc5c0","surface-bright":"#fbf8ff","error":"#ba1a1a","on-surface-variant":"#4e4632","primary":"#745b00","on-primary-container":"#6e5700","surface-dim":"#dad9e3","tertiary-fixed-dim":"#4edea3","primary-container":"#fecb00","on-tertiary-fixed-variant":"#005236","on-surface":"#1a1b22","outline-variant":"#d2c5ab","secondary":"#635d5a","inverse-primary":"#f1c100","surface-container-highest":"#e3e1ec","on-secondary":"#ffffff","surface-container-low":"#f4f2fd","inverse-surface":"#2f3038","on-secondary-container":"#67625e","surface-container-high":"#e8e7f1"
+        },
+        "borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        "fontFamily":{"headline-xl":["IBM Plex Sans"],"label-sm":["IBM Plex Sans"],"body-lg":["IBM Plex Sans"],"label-lg":["IBM Plex Sans"],"headline-md":["IBM Plex Sans"],"label-md":["IBM Plex Sans"],"headline-lg":["IBM Plex Sans"],"body-sm":["IBM Plex Sans"],"display-lg":["IBM Plex Sans"],"body-md":["IBM Plex Sans"]},
+        "fontSize":{
+          "headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"600"}],
+          "label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"500"}],
+          "label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],
+          "headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],
+          "label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],
+          "headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],
+          "body-sm":["14px",{"lineHeight":"20px","fontWeight":"400"}],
+          "body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}]
+        }
+      }
+    }
+  }</script>
+</head>
+<body class="bg-background font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 w-full z-50 bg-surface/95 backdrop-blur-xl border-b border-surface-container/60 shadow-[0_1px_10px_rgba(0,0,0,0.03)]">
+  <div class="h-18 max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center justify-between gap-3 lg:gap-6">
+    <div class="flex items-center gap-3 lg:gap-5 flex-shrink-0">
+      <a class="flex items-center gap-2.5 group" href="/customer">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FFD100] to-[#E5AC00] flex items-center justify-center shadow-xs text-[#2D2926] flex-shrink-0 group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="font-headline-md text-[17px] font-bold tracking-tight text-on-surface">Coverage Pulse</span>
+            <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container font-semibold text-[9px] tracking-wider uppercase">KRUNGSRI</span>
+          </div>
+          <span class="font-label-sm text-[10.5px] text-on-surface-variant leading-none">Health &amp; Wealth Intelligence</span>
+        </div>
+      </a>
+    </div>
+    <nav class="hidden lg:flex items-center gap-1 bg-surface-container-low p-1 rounded-full flex-shrink-0 shadow-xs">
+      <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors text-[13px] font-medium whitespace-nowrap" href="/customer">ภาพรวมพอร์ต</a>
+      <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors text-[13px] font-medium whitespace-nowrap" href="/customer/assessment.html">ประเมินความคุ้มครอง</a>
+      <a aria-current="page" class="px-3.5 py-1.5 bg-surface-container-lowest text-on-surface rounded-full text-[13px] font-semibold shadow-xs whitespace-nowrap" href="/customer/sandbox.html">AI จำลองแผน</a>
+      <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors text-[13px] font-medium whitespace-nowrap" href="/customer/appointments.html">ติดต่อที่ปรึกษา</a>
+    </nav>
+    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+      <a href="/customer?openConsent=1" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-[11.5px] font-medium transition-all border border-surface-container-high/60 shadow-xs cursor-pointer group" title="เปิดศูนย์จัดการความยินยอม PDPA Consent Center">
+        <span class="material-symbols-outlined text-[15px] text-tertiary group-hover:scale-110 transition-transform">verified_user</span>
+        <span>PDPA Consent</span>
+      </a>
+      <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-on-surface-variant text-[11px] whitespace-nowrap">
+        <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+        <span>AI Online</span>
+      </div>
+      <div class="flex items-center gap-2 text-on-surface-variant whitespace-nowrap">
+        <span class="font-label-sm text-[12px] hidden md:block">แบตเตอรี่:</span>
+        <span class="font-label-lg font-bold text-on-surface text-[14px]" id="current-battery-display">--</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="w-full pt-20 min-h-screen bg-background">
+  <div class="max-w-[1280px] mx-auto px-6 lg:px-12 py-8 h-[calc(100vh-80px)] grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left: Module Picker + Battery Result -->
+    <div class="lg:col-span-5 flex flex-col gap-4 overflow-y-auto">
+      <!-- Title -->
+      <div class="flex flex-col gap-1">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container/20 w-fit">
+          <span class="material-symbols-outlined text-[15px] text-primary" style="font-variation-settings: 'FILL' 1;">science</span>
+          <span class="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-on-primary-fixed-variant">AI Coverage Sandbox</span>
+        </div>
+        <h1 class="font-headline-xl text-[22px] font-bold text-on-surface leading-tight">จำลองแผนประกัน<br/>และดูแบตเตอรี่ที่เปลี่ยนแปลง</h1>
+        <p class="font-body-sm text-[13px] text-on-surface-variant">เปิดหรือปิดโมดูลความคุ้มครอง แล้วดูระดับแบตเตอรี่ที่คำนวณแบบ Real-time</p>
+      </div>
+
+      <!-- Battery Result Card -->
+      <div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container shadow-sm flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <span class="font-label-md text-label-md font-semibold text-on-surface-variant">ระดับแบตเตอรี่จำลอง</span>
+          <span id="sim-status-badge" class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-[11px] font-semibold">ปิดใช้งาน</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="font-display-lg text-[44px] font-bold text-on-surface leading-none" id="sim-score-main">--</span>
+          <span class="font-headline-lg text-[24px] text-on-surface-variant font-bold">%</span>
+          <span class="font-label-sm text-[12px] text-tertiary font-semibold" id="sim-gain-badge"></span>
+        </div>
+        <div class="w-full h-3 rounded-full bg-surface-container overflow-hidden">
+          <div class="h-full rounded-full battery-bar-fill bg-surface-container-high" style="width:0%" id="sim-bar"></div>
+        </div>
+        <p class="font-body-sm text-[12px] text-on-surface-variant" id="sim-desc">เปิดโมดูลด้านล่างเพื่อเริ่มจำลองแผน</p>
+      </div>
+
+      <!-- Rider Modules -->
+      <div class="flex flex-col gap-2">
+        <span class="font-label-md text-label-md font-semibold text-on-surface uppercase tracking-wider">โมดูลความคุ้มครอง</span>
+        <div class="flex flex-col gap-2.5" id="riders-container">
+          <!-- Riders injected by JS -->
+        </div>
+      </div>
+
+      <!-- Send to Broker CTA -->
+      <div class="mt-auto pt-2">
+        <div class="bg-primary-container/15 border border-primary-container/40 rounded-2xl p-5 flex flex-col gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary-container flex-shrink-0">
+              <span class="material-symbols-outlined text-[22px]">person_pin</span>
+            </div>
+            <div>
+              <div class="font-label-lg font-bold text-on-surface">สนใจแผนนี้?</div>
+              <div class="font-label-sm text-[12px] text-on-surface-variant">ส่งผลจำลองให้ที่ปรึกษาติดต่อกลับ</div>
+            </div>
+          </div>
+          <button id="btn-send-broker" class="w-full h-11 rounded-full bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-[1.02] active:scale-95 opacity-50 cursor-not-allowed" disabled type="button">
+            <span class="material-symbols-outlined text-[18px]">send</span>
+            ส่งแผนจำลองนี้ให้ Broker
+          </button>
+          <p class="font-label-sm text-[11px] text-on-surface-variant text-center">ที่ปรึกษาจะติดต่อกลับตามเวลาที่คุณสะดวก ไม่มีค่าใช้จ่าย</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: AI Chat -->
+    <div class="lg:col-span-7 flex flex-col h-full bg-surface-container-lowest rounded-2xl border border-surface-container shadow-sm overflow-hidden">
+      <!-- Chat Header -->
+      <div class="px-5 py-4 border-b border-surface-container flex items-center justify-between bg-surface-bright">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm">
+            <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+          </div>
+          <div>
+            <div class="font-label-lg font-bold text-on-surface">AI Coverage Assistant</div>
+            <div class="font-label-sm text-[12px] text-tertiary flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> พร้อมให้คำปรึกษา
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-[11px]">PDPA Secured</span>
+          <button id="btn-clear-chat" type="button" class="w-8 h-8 rounded-full text-on-surface-variant hover:bg-surface-container flex items-center justify-center transition-colors" title="ล้างบทสนทนา">
+            <span class="material-symbols-outlined text-[18px]">refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="flex-1 overflow-y-auto p-5 flex flex-col gap-3" id="chat-messages">
+        <!-- Initial AI message -->
+        <div class="flex items-start gap-3 msg-animate">
+          <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+          </div>
+          <div class="max-w-[80%] flex flex-col gap-1">
+            <div class="bg-surface-container-low rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
+              <p class="font-body-sm text-[14px] text-on-surface leading-relaxed">สวัสดีครับ! ผม AI Coverage Assistant ของ Krungsri Coverage Pulse 👋<br/><br/>วันนี้ผมจะช่วยวิเคราะห์ความคุ้มครองและแนะนำแผนที่เหมาะสมกับคุณ ถามเรื่องประกันได้เลยครับ เช่น:<br/>• ประกันสุขภาพที่เหมาะกับฉัน<br/>• ควรทำประกันชีวิตเท่าไหร่<br/>• วางแผนเกษียณอย่างไร</p>
+            </div>
+            <span class="font-label-sm text-[11px] text-on-surface-variant ml-1">AI Assistant • เพิ่งตอบ</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typing indicator -->
+      <div id="typing-indicator" class="px-5 pb-2 hidden">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-primary-container/30 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-[16px] text-primary">smart_toy</span>
+          </div>
+          <div class="bg-surface-container-low rounded-2xl px-4 py-3 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant typing-dot"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant typing-dot"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant typing-dot"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Prompts -->
+      <div class="px-5 py-3 border-t border-surface-container/50 overflow-x-auto">
+        <div class="flex gap-2 whitespace-nowrap">
+          <button type="button" class="quick-prompt px-3 py-1.5 rounded-full bg-surface-container text-on-surface font-label-sm text-[12px] hover:bg-surface-container-high transition-colors">ประกันสุขภาพราคาดี</button>
+          <button type="button" class="quick-prompt px-3 py-1.5 rounded-full bg-surface-container text-on-surface font-label-sm text-[12px] hover:bg-surface-container-high transition-colors">วางแผนเกษียณ</button>
+          <button type="button" class="quick-prompt px-3 py-1.5 rounded-full bg-surface-container text-on-surface font-label-sm text-[12px] hover:bg-surface-container-high transition-colors">ประกันโรคร้ายแรง</button>
+          <button type="button" class="quick-prompt px-3 py-1.5 rounded-full bg-surface-container text-on-surface font-label-sm text-[12px] hover:bg-surface-container-high transition-colors">ลดหย่อนภาษีได้ไหม</button>
+          <button type="button" class="quick-prompt px-3 py-1.5 rounded-full bg-surface-container text-on-surface font-label-sm text-[12px] hover:bg-surface-container-high transition-colors">แบตเตอรี่ของฉันเป็นยังไง</button>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="px-5 pb-5 pt-2">
+        <div class="flex items-end gap-3 bg-surface-container-low rounded-2xl px-4 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.04)] border border-surface-container">
+          <textarea id="chat-input" rows="1" placeholder="ถามเรื่องประกัน ความคุ้มครอง หรือแผนการเงิน..." class="flex-1 bg-transparent font-body-sm text-[14px] text-on-surface placeholder:text-on-surface-variant resize-none leading-relaxed max-h-32 overflow-y-auto focus:outline-none"></textarea>
+          <button id="send-btn" type="button" class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center hover:bg-primary-fixed-dim transition-all hover:scale-110 active:scale-95 flex-shrink-0" disabled>
+            <span class="material-symbols-outlined text-[18px]">send</span>
+          </button>
+        </div>
+        <p class="font-label-sm text-[11px] text-on-surface-variant mt-2 text-center">AI Assistant ให้ข้อมูลเบื้องต้นเท่านั้น ไม่ใช่คำแนะนำการเงินอย่างเป็นทางการ</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-inverse-surface text-inverse-on-surface px-6 py-3 rounded-full shadow-2xl transition-all duration-300 opacity-0 translate-y-4 pointer-events-none">
+  <span class="material-symbols-outlined text-tertiary-fixed" id="toast-icon">check_circle</span>
+  <span class="font-label-lg text-label-lg" id="toast-msg">สำเร็จ</span>
+</div>
+
+<script>
+(function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const CUSTOMER_ID = urlParams.get('cid') || 'CUST-001';
+  let baseBattery = 68;
+  let activeRiders = new Set();
+  let chatHistory = [];
+  let isTyping = false;
+  let toastTimer = null;
+
+  const RIDERS = [
+    { id: 'opd', label: 'สุขภาพ OPD/IPD เหมาจ่าย', icon: 'health_and_safety', gain: 15, premium: 1500, desc: 'ครอบคลุมค่ารักษาผู้ป่วยนอก-ใน วงเงิน 3M บาท' },
+    { id: 'ci', label: 'โรคร้ายแรง (Critical Illness)', icon: 'cardiology', gain: 22, premium: 890, desc: 'คุ้มครองโรคร้ายแรง 44 โรค วงเงิน 2M บาท' },
+    { id: 'maternity', label: 'คุ้มครองมารดาและบุตร', icon: 'child_care', gain: 25, premium: 1200, desc: 'คุ้มครองค่าคลอดและดูแลทารกแรกเกิด' },
+    { id: 'accident', label: 'อุบัติเหตุส่วนบุคคล (PA)', icon: 'flight_takeoff', gain: 12, premium: 350, desc: 'วงเงิน 1M บาท รวมคุ้มครองทั่วโลก 24 ชม.' },
+    { id: 'income_protection', label: 'คุ้มครองรายได้สูญเสีย', icon: 'payments', gain: 18, premium: 680, desc: 'ชดเชยรายได้กรณีหยุดงานจากเจ็บป่วย/อุบัติเหตุ' }
+  ];
+
+  function showToast(msg, icon = 'check_circle') {
+    if (toastTimer) clearTimeout(toastTimer);
+    document.getElementById('toast-msg').textContent = msg;
+    document.getElementById('toast-icon').textContent = icon;
+    const el = document.getElementById('toast');
+    el.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+    el.classList.add('opacity-100', 'translate-y-0');
+    toastTimer = setTimeout(() => {
+      el.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      el.classList.remove('opacity-100', 'translate-y-0');
+    }, 3000);
+  }
+
+  function renderRiders() {
+    const container = document.getElementById('riders-container');
+    container.innerHTML = RIDERS.map(r => `
+      <button type="button" data-id="${r.id}" class="rider-card w-full flex items-center gap-3.5 p-4 border border-surface-container bg-surface-container-lowest rounded-xl text-left hover:border-outline-variant">
+        <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface flex-shrink-0">
+          <span class="material-symbols-outlined text-[22px]">${r.icon}</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-label-lg font-bold text-on-surface text-[13px]">${r.label}</div>
+          <div class="font-label-sm text-[11px] text-on-surface-variant">${r.desc}</div>
+          <div class="font-label-sm text-[11px] text-primary font-semibold mt-0.5">+${r.gain}% แบตเตอรี่ • ฿${r.premium.toLocaleString()}/เดือน</div>
+        </div>
+        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 rider-toggle border-surface-container-high"></div>
+      </button>
+    `).join('');
+
+    container.querySelectorAll('.rider-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.dataset.id;
+        const isActive = card.classList.contains('active');
+        card.classList.toggle('active', !isActive);
+        const toggle = card.querySelector('.rider-toggle');
+        if (!isActive) {
+          activeRiders.add(id);
+          toggle.innerHTML = `<span class="material-symbols-outlined text-[14px] text-primary-container" style="background:#fecb00;border-radius:50%;padding:1px;color:#6e5700;">check</span>`;
+          toggle.style.border = '2px solid #fecb00';
+        } else {
+          activeRiders.delete(id);
+          toggle.innerHTML = '';
+          toggle.style.border = '';
+          toggle.className = 'w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 rider-toggle border-surface-container-high';
+        }
+        simulateBattery();
+      });
+    });
+  }
+
+  async function simulateBattery() {
+    if (activeRiders.size === 0) {
+      document.getElementById('sim-score-main').textContent = baseBattery || '--';
+      document.getElementById('current-battery-display').textContent = `${baseBattery}%`;
+      const baseBarColor = baseBattery >= 80 ? 'bg-tertiary' : baseBattery >= 50 ? 'bg-primary-container' : 'bg-error';
+      document.getElementById('sim-bar').style.width = `${baseBattery}%`;
+      document.getElementById('sim-bar').className = `h-full rounded-full battery-bar-fill ${baseBarColor}`;
+      document.getElementById('sim-status-badge').textContent = 'คะแนนเดิม';
+      document.getElementById('sim-status-badge').className = 'px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-[11px] font-semibold';
+      document.getElementById('sim-gain-badge').textContent = '';
+      document.getElementById('sim-desc').textContent = 'แตะเลือกโมดูลด้านล่างเพื่อเริ่มจำลองผลลัพธ์';
+      document.getElementById('btn-send-broker').disabled = true;
+      document.getElementById('btn-send-broker').classList.add('opacity-50', 'cursor-not-allowed');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/customer/sandbox/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId: CUSTOMER_ID, addedRiders: [...activeRiders].map(id => ({ id })) })
+      });
+      const data = await res.json();
+      const simScore = data.simulatedScore;
+      const gain = data.gain;
+
+      document.getElementById('sim-score-main').textContent = simScore;
+      document.getElementById('current-battery-display').textContent = `${simScore}%`;
+      document.getElementById('sim-gain-badge').textContent = `+${gain}%`;
+
+      const barColor = simScore >= 80 ? 'bg-tertiary' : simScore >= 50 ? 'bg-primary-container' : 'bg-error';
+      document.getElementById('sim-bar').style.width = `${simScore}%`;
+      document.getElementById('sim-bar').className = `h-full rounded-full battery-bar-fill ${barColor}`;
+
+      const statusText = simScore >= 80 ? 'เหมาะสม ✓' : simScore >= 50 ? 'ปานกลาง' : 'ยังต้องเสริม';
+      const statusCls = simScore >= 80 ? 'bg-tertiary/20 text-tertiary' : simScore >= 50 ? 'bg-primary-container/30 text-on-primary-fixed-variant' : 'bg-error-container text-on-error-container';
+      document.getElementById('sim-status-badge').textContent = statusText;
+      document.getElementById('sim-status-badge').className = `px-2.5 py-0.5 rounded-full ${statusCls} font-label-sm text-[11px] font-semibold`;
+      document.getElementById('sim-desc').textContent = `จากแบตเตอรี่เดิม ${data.currentScore}% → จำลองได้ ${simScore}% ด้วยแผนที่เลือก`;
+
+      document.getElementById('btn-send-broker').disabled = false;
+      document.getElementById('btn-send-broker').classList.remove('opacity-50', 'cursor-not-allowed');
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  // Send to broker
+  document.getElementById('btn-send-broker').addEventListener('click', async () => {
+    try {
+      const simData = { customerId: CUSTOMER_ID, addedRiders: [...activeRiders].map(id => ({ id })) };
+      const simRes = await fetch('/api/customer/sandbox/simulate', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(simData)
+      });
+      const simResult = await simRes.json();
+
+      // Calculate next business day
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      while (d.getDay() === 0 || d.getDay() === 6) {
+        d.setDate(d.getDate() + 1);
+      }
+      const defaultDate = d.toISOString().split('T')[0];
+
+      await fetch('/api/customer/warm-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerId: CUSTOMER_ID,
+          intentDetails: [...activeRiders],
+          simulatedBattery: simResult.simulatedScore,
+          preferredDate: defaultDate,
+          preferredTime: '10:00 - 11:00 น.',
+          notes: `จำลองแผน Sandbox: สนใจโมดูล ${[...activeRiders].join(', ')} (คะแนนจำลอง ${simResult.simulatedScore}%)`
+        })
+      });
+      showToast('ส่งแผนให้ที่ปรึกษาเรียบร้อย จะนำท่านสู่หน้านัดหมาย...', 'check_circle');
+      setTimeout(() => window.location.href = `/customer/appointments.html?cid=${encodeURIComponent(CUSTOMER_ID)}`, 1500);
+    } catch (e) {
+      showToast('เกิดข้อผิดพลาด กรุณาลองอีกครั้ง', 'error');
+    }
+  });
+
+  // Chat
+  const chatInput = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('send-btn');
+  const chatMessages = document.getElementById('chat-messages');
+  const typingIndicator = document.getElementById('typing-indicator');
+
+  chatInput.addEventListener('input', () => {
+    sendBtn.disabled = chatInput.value.trim().length === 0;
+    chatInput.style.height = 'auto';
+    chatInput.style.height = Math.min(chatInput.scrollHeight, 128) + 'px';
+  });
+
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!sendBtn.disabled) sendMessage();
+    }
+  });
+
+  sendBtn.addEventListener('click', sendMessage);
+
+  document.querySelectorAll('.quick-prompt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      chatInput.value = btn.textContent.trim();
+      sendBtn.disabled = false;
+      sendMessage();
+    });
+  });
+
+  document.getElementById('btn-clear-chat').addEventListener('click', () => {
+    chatMessages.innerHTML = '';
+    chatHistory = [];
+    appendAiMessage('บทสนทนาถูกล้างแล้ว ถามคำถามใหม่ได้เลยครับ!');
+  });
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function appendUserMessage(text) {
+    const div = document.createElement('div');
+    div.className = 'flex justify-end msg-animate';
+    div.innerHTML = `
+      <div class="max-w-[80%] flex flex-col items-end gap-1">
+        <div class="bg-primary-container rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm">
+          <p class="font-body-sm text-[14px] text-on-primary-container leading-relaxed">${escapeHtml(text).replace(/\n/g, '<br/>')}</p>
+        </div>
+        <span class="font-label-sm text-[11px] text-on-surface-variant mr-1">คุณ</span>
+      </div>
+    `;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function appendAiMessage(text) {
+    const div = document.createElement('div');
+    div.className = 'flex items-start gap-3 msg-animate';
+    div.innerHTML = `
+      <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+      </div>
+      <div class="max-w-[80%] flex flex-col gap-1">
+        <div class="bg-surface-container-low rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
+          <p class="font-body-sm text-[14px] text-on-surface leading-relaxed">${escapeHtml(text).replace(/\n/g, '<br/>')}</p>
+        </div>
+        <span class="font-label-sm text-[11px] text-on-surface-variant ml-1">AI Assistant</span>
+      </div>
+    `;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    if (isTyping) return;
+    const text = chatInput.value.trim();
+    if (!text) return;
+    chatHistory.push({ role: 'user', content: text });
+    appendUserMessage(text);
+    chatInput.value = '';
+    chatInput.style.height = 'auto';
+    sendBtn.disabled = true;
+    isTyping = true;
+    typingIndicator.classList.remove('hidden');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: chatHistory, customerId: CUSTOMER_ID })
+      });
+      const data = await res.json();
+      const reply = data.reply || 'ขอโทษครับ ระบบไม่สามารถตอบได้ในขณะนี้';
+      chatHistory.push({ role: 'assistant', content: reply });
+      typingIndicator.classList.add('hidden');
+      appendAiMessage(reply);
+    } catch (e) {
+      typingIndicator.classList.add('hidden');
+      appendAiMessage('ขอโทษครับ เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองอีกครั้งในไม่ช้า 🙏');
+    } finally {
+      isTyping = false;
+    }
+  }
+
+  // Load base battery
+  async function init() {
+    try {
+      const res = await fetch(`/api/customer/profile/${CUSTOMER_ID}`);
+      const data = await res.json();
+      baseBattery = data.customer?.battery_score || 68;
+      document.getElementById('current-battery-display').textContent = `${baseBattery}%`;
+      document.getElementById('sim-score-main').textContent = baseBattery;
+      const baseBarColor = baseBattery >= 80 ? 'bg-tertiary' : baseBattery >= 50 ? 'bg-primary-container' : 'bg-error';
+      document.getElementById('sim-bar').style.width = `${baseBattery}%`;
+      document.getElementById('sim-bar').className = `h-full rounded-full battery-bar-fill ${baseBarColor}`;
+      document.getElementById('sim-status-badge').textContent = 'คะแนนปัจจุบัน';
+      document.getElementById('sim-desc').textContent = 'แตะเลือกโมดูลด้านล่างเพื่อเริ่มจำลองผลลัพธ์';
+    } catch (e) {}
+    renderRiders();
+
+    // Preserve customer ID across navigation links
+    document.querySelectorAll('a[href^="/customer"]').forEach(a => {
+      try {
+        const u = new URL(a.getAttribute('href'), window.location.origin);
+        u.searchParams.set('cid', CUSTOMER_ID);
+        a.setAttribute('href', u.pathname + u.search);
+      } catch(e) {}
+    });
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

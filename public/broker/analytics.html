@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Coverage Pulse | Analytics &amp; Trends</title>
+  <meta name="description" content="Broker Analytics Dashboard — แนวโน้ม Battery Distribution, Conversion Rate, และ Life Events Breakdown"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    @layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}}
+    ::-webkit-scrollbar{display:none;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .animate-spin{animation:spin 1s linear infinite;}
+    @keyframes countUp{from{opacity:0;transform:scale(0.8);}to{opacity:1;transform:scale(1);}}
+    .count-animate{animation:countUp 0.5s ease forwards;}
+    .bar-fill{transition:width 1s cubic-bezier(0.4,0,0.2,1);}
+    .donut-segment{transition:stroke-dashoffset 1s ease;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    .fade-up{animation:fadeUp 0.4s ease forwards;}
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "inverse-on-surface":"#f1effa","surface":"#fbf8ff","background":"#fbf8ff","primary-fixed-dim":"#f1c100","error-container":"#ffdad6","on-error":"#ffffff","surface-container-lowest":"#ffffff","primary-fixed":"#ffe08b","tertiary":"#006c49","on-error-container":"#93000a","on-tertiary":"#ffffff","on-primary":"#ffffff","surface-container":"#eeedf7","error":"#ba1a1a","on-surface-variant":"#4e4632","primary":"#745b00","on-primary-container":"#6e5700","primary-container":"#fecb00","on-surface":"#1a1b22","outline-variant":"#d2c5ab","secondary":"#635d5a","surface-container-highest":"#e3e1ec","on-secondary":"#ffffff","surface-container-low":"#f4f2fd","surface-container-high":"#e8e7f1"
+        },
+        "borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        "fontFamily":{"IBM Plex Sans":["IBM Plex Sans"]}
+      }
+    }
+  }</script>
+</head>
+<body class="bg-background font-['IBM_Plex_Sans'] text-on-surface antialiased">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-xl border-b border-surface-container/60 shadow-[0_1px_10px_rgba(45,41,38,0.04)]">
+  <div class="h-18 max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center justify-between gap-3 lg:gap-6">
+    
+    <!-- Left: Brand Logo & Title -->
+    <div class="flex items-center gap-3 lg:gap-5 flex-shrink-0">
+      <a href="/broker" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FFD100] to-[#E5AC00] flex items-center justify-center shadow-xs text-[#2D2926] flex-shrink-0 group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="font-headline-md text-[17px] font-bold tracking-tight text-on-surface">Coverage Pulse</span>
+            <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container font-semibold text-[9px] tracking-wider uppercase">BROKER</span>
+          </div>
+          <span class="font-label-sm text-[10.5px] text-on-surface-variant leading-none">Advisor Operations Hub</span>
+        </div>
+      </a>
+
+      <!-- Center-Left Nav -->
+      <nav class="hidden lg:flex items-center gap-1 p-1 bg-surface-container-low rounded-full flex-shrink-0 shadow-xs">
+        <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface text-[13px] font-medium whitespace-nowrap transition-colors" href="/broker">Priority Queue</a>
+        <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface text-[13px] font-medium whitespace-nowrap transition-colors" href="/broker/portfolio.html">Customer Portfolio</a>
+        <a aria-current="page" class="px-3.5 py-1.5 bg-primary-container text-on-primary-container font-semibold text-[13px] rounded-full shadow-xs whitespace-nowrap" href="/broker/analytics.html">Analytics &amp; Trends</a>
+        <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface text-[13px] font-medium whitespace-nowrap transition-colors" href="/broker/audit-log.html">PDPA Audit Log</a>
+      </nav>
+    </div>
+
+    <!-- Right: Filters, Export -->
+    <div class="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
+      <select id="timeframe-select" class="bg-surface-container-lowest border border-surface-container-high/60 rounded-full px-3.5 py-1.5 text-[12.5px] text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container shadow-xs">
+        <option value="ytd">Year to Date (2568)</option>
+        <option value="q3">Q3/2568</option>
+        <option value="q2">Q2/2568</option>
+        <option value="q1">Q1/2568</option>
+      </select>
+      <button id="btn-export" class="px-3.5 py-1.5 rounded-full bg-primary-container text-on-primary-container text-[12.5px] font-bold flex items-center gap-1.5 shadow-xs hover:brightness-105 transition-all whitespace-nowrap">
+        <span class="material-symbols-outlined text-[16px]">download</span>
+        Export BI
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="w-full pt-20 bg-background min-h-screen">
+  <div class="max-w-[1280px] mx-auto px-6 py-6 flex flex-col gap-6">
+
+    <!-- Page Header -->
+    <div class="flex flex-col gap-1">
+      <h1 class="font-bold text-[28px] text-on-surface leading-tight">Analytics &amp; Trends</h1>
+      <p class="text-[14px] text-on-surface-variant">ภาพรวมผลการดำเนินงาน ประสิทธิภาพ AI และแนวโน้มความคุ้มครองในพอร์ต</p>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm fade-up" style="animation-delay:0ms">
+        <div class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Warm Lead Conversion</div>
+        <div class="flex items-baseline gap-1 mb-1">
+          <span class="font-bold text-[36px] text-on-surface count-animate" id="kpi-warm-rate">--</span>
+          <span class="font-bold text-[20px] text-on-surface-variant">%</span>
+        </div>
+        <div class="flex items-center gap-1.5 text-[12px] text-tertiary font-semibold">
+          <span class="material-symbols-outlined text-[14px]">trending_up</span>vs Cold Call 4.8%
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm fade-up" style="animation-delay:60ms">
+        <div class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-2">เวลาเตรียม Pre-call</div>
+        <div class="flex items-baseline gap-1 mb-1">
+          <span class="font-bold text-[36px] text-on-surface count-animate" id="kpi-prep-time">--</span>
+          <span class="font-bold text-[20px] text-on-surface-variant">นาที</span>
+        </div>
+        <div class="flex items-center gap-1.5 text-[12px] text-tertiary font-semibold">
+          <span class="material-symbols-outlined text-[14px]">trending_down</span>จากเดิม 15 นาที
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm fade-up" style="animation-delay:120ms">
+        <div class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-2">ลูกค้าวิกฤต</div>
+        <div class="flex items-baseline gap-1 mb-1">
+          <span class="font-bold text-[36px] text-error count-animate" id="kpi-critical">--</span>
+          <span class="font-bold text-[20px] text-on-surface-variant">ราย</span>
+        </div>
+        <div class="text-[12px] text-on-surface-variant">แบตเตอรี่ &lt; 50%</div>
+      </div>
+      <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm fade-up" style="animation-delay:180ms">
+        <div class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-2">ลูกค้าเหมาะสม</div>
+        <div class="flex items-baseline gap-1 mb-1">
+          <span class="font-bold text-[36px] text-tertiary count-animate" id="kpi-optimal">--</span>
+          <span class="font-bold text-[20px] text-on-surface-variant">ราย</span>
+        </div>
+        <div class="text-[12px] text-on-surface-variant">แบตเตอรี่ ≥ 80%</div>
+      </div>
+    </div>
+
+    <!-- Main Charts Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Battery Distribution Donut -->
+      <div class="lg:col-span-4 bg-surface-container-lowest rounded-xl shadow-sm p-6 flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-bold text-[18px] text-on-surface">Battery Distribution</h2>
+            <p class="text-[12px] text-on-surface-variant">สัดส่วนระดับความคุ้มครองพอร์ต</p>
+          </div>
+        </div>
+        <!-- SVG Donut Chart -->
+        <div class="flex items-center justify-center py-4">
+          <svg viewBox="0 0 120 120" class="w-48 h-48 -rotate-90">
+            <circle cx="60" cy="60" r="45" fill="none" stroke="#e8e7f1" stroke-width="14"/>
+            <circle id="donut-critical" cx="60" cy="60" r="45" fill="none" stroke="#ba1a1a" stroke-width="14" stroke-dasharray="0 283" class="donut-segment"/>
+            <circle id="donut-review" cx="60" cy="60" r="45" fill="none" stroke="#fecb00" stroke-width="14" stroke-dasharray="0 283" class="donut-segment"/>
+            <circle id="donut-optimal" cx="60" cy="60" r="45" fill="none" stroke="#006c49" stroke-width="14" stroke-dasharray="0 283" class="donut-segment"/>
+          </svg>
+        </div>
+        <!-- Legend -->
+        <div class="flex flex-col gap-2" id="donut-legend">
+          <div class="flex items-center justify-between text-[13px]">
+            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-error"></span>วิกฤต</span>
+            <span class="font-bold" id="legend-critical">--</span>
+          </div>
+          <div class="flex items-center justify-between text-[13px]">
+            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>ควรทบทวน</span>
+            <span class="font-bold" id="legend-review">--</span>
+          </div>
+          <div class="flex items-center justify-between text-[13px]">
+            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>เหมาะสม</span>
+            <span class="font-bold" id="legend-optimal">--</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conversion Comparison -->
+      <div class="lg:col-span-4 bg-surface-container-lowest rounded-xl shadow-sm p-6 flex flex-col gap-4">
+        <div>
+          <h2 class="font-bold text-[18px] text-on-surface">Conversion vs Cold Call</h2>
+          <p class="text-[12px] text-on-surface-variant">Coverage Pulse เทียบกับการขายแบบเดิม</p>
+        </div>
+        <div class="flex flex-col gap-5 pt-2">
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between text-[13px] font-semibold">
+              <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>Warm Lead (Coverage Pulse)</span>
+              <span class="text-tertiary font-bold" id="conv-warm">--</span>
+            </div>
+            <div class="h-4 rounded-full bg-surface-container overflow-hidden">
+              <div class="h-full bg-tertiary bar-fill" style="width:0%" id="bar-warm"></div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between text-[13px] font-semibold">
+              <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-surface-container-high"></span>Cold Call (Traditional)</span>
+              <span class="text-on-surface-variant font-bold" id="conv-cold">--</span>
+            </div>
+            <div class="h-4 rounded-full bg-surface-container overflow-hidden">
+              <div class="h-full bg-surface-container-high bar-fill" style="width:0%" id="bar-cold"></div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-auto p-4 rounded-xl bg-tertiary/10 border border-tertiary/20 flex items-center gap-3">
+          <span class="material-symbols-outlined text-tertiary text-[24px]" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+          <div>
+            <div class="font-bold text-[16px] text-on-surface" id="conv-lift">--x</div>
+            <div class="text-[12px] text-on-surface-variant">ประสิทธิภาพการแปลงลูกค้า</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prep Time Savings -->
+      <div class="lg:col-span-4 bg-surface-container-lowest rounded-xl shadow-sm p-6 flex flex-col gap-4">
+        <div>
+          <h2 class="font-bold text-[18px] text-on-surface">เวลาเตรียม Pre-call</h2>
+          <p class="text-[12px] text-on-surface-variant">ประหยัดเวลา Broker ด้วย AI</p>
+        </div>
+        <div class="flex flex-col gap-5 pt-2">
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between text-[13px] font-semibold">
+              <span>ด้วย Coverage Pulse AI</span>
+              <span class="text-tertiary font-bold" id="prep-with">--</span>
+            </div>
+            <div class="h-4 rounded-full bg-surface-container overflow-hidden">
+              <div class="h-full bg-tertiary bar-fill" style="width:0%" id="bar-prep-with"></div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between text-[13px] font-semibold">
+              <span>วิธีเดิม (Manual Research)</span>
+              <span class="text-on-surface-variant font-bold" id="prep-without">--</span>
+            </div>
+            <div class="h-4 rounded-full bg-surface-container overflow-hidden">
+              <div class="h-full bg-primary-container bar-fill" style="width:0%" id="bar-prep-without"></div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-auto p-4 rounded-xl bg-primary-container/15 border border-primary-container/40 text-center">
+          <div class="font-bold text-[28px] text-primary" id="prep-savings">--</div>
+          <div class="text-[12px] text-on-surface-variant">นาทีที่ประหยัดได้ต่อ Call</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Life Events Breakdown -->
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6 flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-bold text-[18px] text-on-surface">Life Events Breakdown</h2>
+          <p class="text-[12px] text-on-surface-variant">สัญญาณ Life Events ที่ตรวจพบทั้งหมดในพอร์ต</p>
+        </div>
+        <button id="btn-refresh-analytics" class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+          <span class="material-symbols-outlined text-[18px]">refresh</span>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3" id="life-events-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Warm Leads Status -->
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6 flex flex-col gap-4">
+      <h2 class="font-bold text-[18px] text-on-surface">Warm Lead Status</h2>
+      <div class="flex flex-wrap gap-4" id="warm-leads-status">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+(function() {
+  const EVENT_ICON_MAP = {
+    'hospital_visit': { icon: 'local_hospital', color: 'text-error' },
+    'new_baby': { icon: 'child_care', color: 'text-tertiary' },
+    'marriage': { icon: 'diversity_1', color: 'text-primary' },
+    'home_purchase': { icon: 'home', color: 'text-secondary' },
+    'salary_increase': { icon: 'trending_up', color: 'text-tertiary' },
+    'critical_illness_search': { icon: 'cardiology', color: 'text-error' },
+    'sandbox_warm_lead': { icon: 'tune', color: 'text-primary' },
+    'default': { icon: 'event', color: 'text-on-surface-variant' }
+  };
+
+  function animateCountUp(el, target) {
+    let current = 0;
+    const step = Math.ceil(target / 30);
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      el.textContent = current;
+    }, 30);
+  }
+
+  function drawDonut(data) {
+    const total = data.critical + data.review + data.optimal;
+    if (total === 0) return;
+    const circumference = 2 * Math.PI * 45; // 282.74
+
+    const critPct = data.critical / total;
+    const revPct = data.review / total;
+    const optPct = data.optimal / total;
+
+    const critLen = critPct * circumference;
+    const revLen = revPct * circumference;
+    const optLen = optPct * circumference;
+
+    const critOffset = 0;
+    const revOffset = circumference - critLen;
+    const optOffset = circumference - critLen - revLen;
+
+    setTimeout(() => {
+      document.getElementById('donut-critical').style.strokeDasharray = `${critLen} ${circumference}`;
+      document.getElementById('donut-critical').style.strokeDashoffset = -critOffset;
+
+      document.getElementById('donut-review').style.strokeDasharray = `${revLen} ${circumference}`;
+      document.getElementById('donut-review').style.strokeDashoffset = -(circumference - critLen);
+
+      document.getElementById('donut-optimal').style.strokeDasharray = `${optLen} ${circumference}`;
+      document.getElementById('donut-optimal').style.strokeDashoffset = -(circumference - critLen - revLen);
+    }, 100);
+
+    document.getElementById('legend-critical').textContent = `${data.critical} ราย (${Math.round(critPct * 100)}%)`;
+    document.getElementById('legend-review').textContent = `${data.review} ราย (${Math.round(revPct * 100)}%)`;
+    document.getElementById('legend-optimal').textContent = `${data.optimal} ราย (${Math.round(optPct * 100)}%)`;
+  }
+
+  async function loadAnalytics() {
+    try {
+      const icon = document.getElementById('btn-refresh-analytics').querySelector('.material-symbols-outlined');
+      icon.classList.add('animate-spin');
+      const res = await fetch('/api/broker/analytics');
+      const data = await res.json();
+      icon.classList.remove('animate-spin');
+
+      const bd = data.batteryDistribution;
+      const cc = data.conversionComparison;
+
+      // KPIs
+      animateCountUp(document.getElementById('kpi-warm-rate'), cc.warmLeadConversionRate);
+      document.getElementById('kpi-warm-rate').textContent = cc.warmLeadConversionRate;
+      document.getElementById('kpi-prep-time').textContent = cc.prepTimeWithPulseMin;
+      animateCountUp(document.getElementById('kpi-critical'), bd.critical);
+      animateCountUp(document.getElementById('kpi-optimal'), bd.optimal);
+
+      // Donut
+      drawDonut(bd);
+
+      // Conversion bars
+      document.getElementById('conv-warm').textContent = `${cc.warmLeadConversionRate}%`;
+      document.getElementById('conv-cold').textContent = `${cc.coldCallConversionRate}%`;
+      setTimeout(() => {
+        document.getElementById('bar-warm').style.width = `${cc.warmLeadConversionRate}%`;
+        document.getElementById('bar-cold').style.width = `${cc.coldCallConversionRate}%`;
+      }, 200);
+      const lift = (cc.warmLeadConversionRate / cc.coldCallConversionRate).toFixed(1);
+      document.getElementById('conv-lift').textContent = `${lift}x สูงกว่า`;
+
+      // Prep time bars
+      document.getElementById('prep-with').textContent = `${cc.prepTimeWithPulseMin} นาที`;
+      document.getElementById('prep-without').textContent = `${cc.prepTimeWithoutPulseMin} นาที`;
+      const savings = cc.prepTimeWithoutPulseMin - cc.prepTimeWithPulseMin;
+      document.getElementById('prep-savings').textContent = savings.toFixed(1);
+      setTimeout(() => {
+        document.getElementById('bar-prep-with').style.width = `${(cc.prepTimeWithPulseMin / cc.prepTimeWithoutPulseMin) * 100}%`;
+        document.getElementById('bar-prep-without').style.width = '100%';
+      }, 200);
+
+      // Life Events
+      const eventsGrid = document.getElementById('life-events-grid');
+      if (data.lifeEventsBreakdown && data.lifeEventsBreakdown.length > 0) {
+        eventsGrid.innerHTML = data.lifeEventsBreakdown.map(e => {
+          const iconInfo = EVENT_ICON_MAP[e.event_type] || EVENT_ICON_MAP.default;
+          return `
+            <div class="bg-surface-container-low rounded-xl p-4 flex flex-col gap-2 hover:shadow-sm transition-all">
+              <span class="material-symbols-outlined text-[24px] ${iconInfo.color}">${iconInfo.icon}</span>
+              <div class="font-bold text-[20px] text-on-surface">${e.count}</div>
+              <div class="text-[11px] text-on-surface-variant font-medium">${e.event_type.replace(/_/g, ' ')}</div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        eventsGrid.innerHTML = '<div class="col-span-full text-center text-on-surface-variant text-[13px] py-4">ไม่พบข้อมูล Life Events</div>';
+      }
+
+      // Warm Lead Status
+      const leadsContainer = document.getElementById('warm-leads-status');
+      if (data.warmLeadsBreakdown && data.warmLeadsBreakdown.length > 0) {
+        const statusColor = { submitted: 'bg-primary-container/30 text-on-primary-container', confirmed: 'bg-tertiary/15 text-tertiary', completed: 'bg-surface-container text-on-surface-variant', cancelled: 'bg-error-container text-on-error-container' };
+        leadsContainer.innerHTML = data.warmLeadsBreakdown.map(l => {
+          const cls = statusColor[l.status] || 'bg-surface-container text-on-surface-variant';
+          return `<div class="flex items-center gap-3 px-5 py-3 rounded-xl ${cls}">
+            <span class="font-bold text-[22px]">${l.count}</span>
+            <span class="font-semibold text-[13px]">${l.status}</span>
+          </div>`;
+        }).join('');
+      }
+
+    } catch (e) {
+      console.error('Analytics error:', e);
+    }
+  }
+
+  document.getElementById('btn-export').addEventListener('click', () => {
+    alert('Export BI Report: กำลังสร้างไฟล์ PDF/Excel สรุป Analytics สำหรับผู้บริหาร');
+  });
+
+  document.getElementById('btn-refresh-analytics').addEventListener('click', loadAnalytics);
+  document.getElementById('timeframe-select').addEventListener('change', loadAnalytics);
+
+  loadAnalytics();
+})();
+</script>
+</body>
+</html>

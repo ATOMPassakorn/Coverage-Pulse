@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Coverage Pulse | ภาพรวมพอร์ตความคุ้มครอง</title>
+  <meta name="description" content="Krungsri Coverage Pulse — ระบบวิเคราะห์ชีพจรความคุ้มครองสุขภาพและความมั่งคั่งส่วนบุคคล"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    @layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}
+    ::-webkit-scrollbar{display:none;}
+    @keyframes batteryCharge{0%{transform:scaleX(0.96);opacity:0.85;}50%{transform:scaleX(1.01);opacity:1;filter:drop-shadow(0 0 10px rgba(254,203,0,0.45));}100%{transform:scaleX(0.96);opacity:0.85;}}
+    @keyframes subtlePulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.8;transform:scale(0.98);}}
+    .animate-battery-glow{animation:batteryCharge 3.5s ease-in-out infinite;}
+    .animate-alarm-soft{animation:subtlePulse 2.8s ease-in-out infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .animate-spin{animation:spin 1s linear infinite;}
+    .skeleton{background:linear-gradient(90deg,#eeedf7 25%,#f4f2fd 50%,#eeedf7 75%);background-size:200% 100%;animation:skeleton-loading 1.4s infinite;}
+    @keyframes skeleton-loading{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+    .dim-card-clickable{cursor:pointer;transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1);}
+    .dim-card-clickable:hover{transform:translateY(-2px) scale(1.008);box-shadow:0 12px 28px -6px rgba(0,0,0,0.08);}
+    @keyframes modalFadeIn{from{opacity:0;transform:scale(0.96) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);}}
+    .modal-animate{animation:modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;}
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "inverse-on-surface":"#f1effa","secondary-container":"#e6ded9","surface":"#fbf8ff","on-tertiary-fixed":"#002113","background":"#fbf8ff","secondary-fixed":"#e9e1dc","primary-fixed-dim":"#f1c100","error-container":"#ffdad6","on-error":"#ffffff","outline":"#80765f","surface-tint":"#745b00","on-secondary-fixed":"#1e1b18","on-primary-fixed-variant":"#584400","on-tertiary-container":"#006645","surface-variant":"#e3e1ec","on-background":"#1a1b22","surface-container-lowest":"#ffffff","tertiary-container":"#5be9ad","primary-fixed":"#ffe08b","on-secondary-fixed-variant":"#4b4642","tertiary-fixed":"#6ffbbe","tertiary":"#006c49","on-error-container":"#93000a","on-primary-fixed":"#241a00","on-tertiary":"#ffffff","on-primary":"#ffffff","surface-container":"#eeedf7","secondary-fixed-dim":"#cdc5c0","surface-bright":"#fbf8ff","error":"#ba1a1a","on-surface-variant":"#4e4632","primary":"#745b00","on-primary-container":"#6e5700","surface-dim":"#dad9e3","tertiary-fixed-dim":"#4edea3","primary-container":"#fecb00","on-tertiary-fixed-variant":"#005236","on-surface":"#1a1b22","outline-variant":"#d2c5ab","secondary":"#635d5a","inverse-primary":"#f1c100","surface-container-highest":"#e3e1ec","on-secondary":"#ffffff","surface-container-low":"#f4f2fd","inverse-surface":"#2f3038","on-secondary-container":"#67625e","surface-container-high":"#e8e7f1"
+        },
+        "borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        "fontFamily":{"headline-xl":["IBM Plex Sans"],"label-sm":["IBM Plex Sans"],"body-lg":["IBM Plex Sans"],"label-lg":["IBM Plex Sans"],"headline-md":["IBM Plex Sans"],"label-md":["IBM Plex Sans"],"headline-lg":["IBM Plex Sans"],"body-sm":["IBM Plex Sans"],"display-lg":["IBM Plex Sans"],"body-md":["IBM Plex Sans"]},
+        "fontSize":{
+          "headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"600"}],
+          "label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"500"}],
+          "body-lg":["18px",{"lineHeight":"28px","fontWeight":"400"}],
+          "label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],
+          "headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],
+          "label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],
+          "headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],
+          "body-sm":["14px",{"lineHeight":"20px","fontWeight":"400"}],
+          "display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"700"}],
+          "body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}]
+        }
+      }
+    }
+  }</script>
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 w-full z-50 bg-surface/95 backdrop-blur-xl border-b border-surface-container/60 shadow-[0_1px_10px_rgba(0,0,0,0.03)]">
+  <div class="h-18 max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center justify-between gap-3 lg:gap-6">
+    
+    <!-- Left: Brand Logo & Title -->
+    <div class="flex items-center gap-3 lg:gap-5 flex-shrink-0">
+      <a href="/customer" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FFD100] to-[#E5AC00] flex items-center justify-center shadow-xs text-[#2D2926] flex-shrink-0 group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="font-headline-md text-[17px] font-bold tracking-tight text-on-surface">Coverage Pulse</span>
+            <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container font-semibold text-[9px] tracking-wider uppercase">KRUNGSRI</span>
+          </div>
+          <span class="font-label-sm text-[10.5px] text-on-surface-variant leading-none">Health &amp; Wealth Intelligence</span>
+        </div>
+      </a>
+      <div class="h-4 w-px bg-surface-container-high hidden xl:block"></div>
+      <button id="btn-open-consent" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-[11.5px] font-medium transition-all border border-surface-container-high/60 shadow-xs cursor-pointer group" type="button" title="ศูนย์จัดการความยินยอม PDPA Consent Center">
+        <span class="material-symbols-outlined text-[15px] text-tertiary group-hover:scale-110 transition-transform">verified_user</span>
+        <span>PDPA Consent</span>
+        <span id="nav-active-consent-badge" class="text-[10px] bg-tertiary/15 text-tertiary px-1.5 py-0.5 rounded-full font-semibold">4 Active</span>
+      </button>
+    </div>
+
+    <!-- Center: Main Navigation -->
+    <nav class="hidden lg:flex items-center gap-1 bg-surface-container-low p-1 rounded-full flex-shrink-0 shadow-xs">
+      <a aria-current="page" class="px-3.5 py-1.5 transition-all bg-surface-container-lowest text-on-surface text-[13px] rounded-full shadow-xs font-semibold whitespace-nowrap" href="/customer">ภาพรวมพอร์ต</a>
+      <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors text-[13px] font-medium whitespace-nowrap" href="/customer/assessment.html">ประเมินความคุ้มครอง</a>
+      <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors text-[13px] font-medium whitespace-nowrap" href="/customer/sandbox.html">AI จำลองแผน</a>
+      <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors text-[13px] font-medium whitespace-nowrap" href="/customer/appointments.html">ติดต่อที่ปรึกษา</a>
+    </nav>
+
+    <!-- Right: Persona Selector, Sync, Profile -->
+    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+      <!-- Persona Switcher -->
+      <div class="flex items-center gap-1.5 bg-surface-container-low px-2.5 py-1 rounded-full border border-surface-container-high/60 shadow-xs hover:bg-surface-container transition-colors flex-shrink-0" title="สลับโปรไฟล์ลูกค้าจำลอง">
+        <span class="material-symbols-outlined text-[16px] text-primary flex-shrink-0">switch_account</span>
+        <select id="persona-select" class="bg-transparent text-[12px] font-medium text-on-surface focus:outline-none cursor-pointer pr-1 max-w-[140px] sm:max-w-[175px] truncate">
+          <option value="CUST-001">CUST-001: นภัสสร (25)</option>
+          <option value="CUST-002">CUST-002: สมชาย (SME)</option>
+          <option value="CUST-003">CUST-003: ธนภัทร (Dev)</option>
+          <option value="CUST-004">CUST-004: พิมลดา (VIP)</option>
+          <option value="CUST-005">CUST-005: นพ. อานนท์</option>
+          <option value="CUST-006">CUST-006: วรัญญา (แม่&amp;เด็ก)</option>
+        </select>
+      </div>
+
+      <!-- Sync Button -->
+      <button id="btn-sync" class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors relative flex-shrink-0" type="button" title="ซิงค์ข้อมูล">
+        <span class="material-symbols-outlined text-[18px]" id="sync-icon">sync</span>
+        <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-primary-container ring-2 ring-surface"></span>
+      </button>
+
+      <div class="h-4 w-px bg-surface-container-high hidden sm:block"></div>
+
+      <!-- Customer Profile Button -->
+      <button id="btn-profile-open" type="button" class="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full hover:bg-surface-container transition-all cursor-pointer border border-transparent hover:border-surface-container-high group flex-shrink-0" title="คลิกเพื่อดูและแก้ไขข้อมูลโปรไฟล์">
+        <div class="relative flex-shrink-0">
+          <img id="customer-avatar" alt="Customer Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-container/60 shadow-xs group-hover:ring-primary transition-all" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80"/>
+          <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-xs">
+            <span class="material-symbols-outlined text-[8px]">edit</span>
+          </span>
+        </div>
+        <div class="hidden md:flex flex-col text-left whitespace-nowrap">
+          <div class="flex items-center gap-0.5">
+            <span class="text-[13px] text-on-surface font-semibold leading-tight group-hover:text-primary transition-colors" id="customer-name">กำลังโหลด...</span>
+            <span class="material-symbols-outlined text-[13px] text-on-surface-variant group-hover:text-primary transition-transform group-hover:translate-y-0.5">expand_more</span>
+          </div>
+          <span class="text-[10px] text-on-surface-variant leading-none" id="customer-tier">Krungsri Prime</span>
+        </div>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="w-full pt-20 bg-surface min-h-[calc(100vh-140px)]">
+  <div class="flex flex-col w-full">
+    <div class="max-w-[1280px] w-full mx-auto px-6 lg:px-12 py-8 flex flex-col gap-8">
+
+      <!-- 1. Header Welcome Bar -->
+      <section class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-surface-container-high/60">
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-3 flex-wrap">
+            <h1 class="font-display-lg text-[32px] md:text-[36px] font-bold text-on-surface tracking-tight" id="welcome-title">สวัสดี...</h1>
+            <span id="tier-badge" class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm font-semibold">
+              <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+              Krungsri Prime
+            </span>
+          </div>
+          <p class="font-body-md text-on-surface-variant text-[15px]">สรุปชีพจรความคุ้มครองสุขภาพ ทุนชีวิต และความมั่นคงทางการเงินรอบด้านของคุณ</p>
+        </div>
+        <div class="flex items-center gap-3 bg-surface-container-lowest px-4 py-2.5 rounded-full shadow-sm border border-surface-container">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-tertiary"></span>
+          </span>
+          <span class="font-label-sm text-label-sm text-on-surface-variant font-medium" id="update-time">อัปเดตเรียลไทม์...</span>
+          <button id="btn-sync-inline" class="w-6 h-6 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors" title="ซิงค์ข้อมูล" type="button">
+            <span class="material-symbols-outlined text-[16px]">sync</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 2. Life-Event Alert Banner -->
+      <div id="life-event-banner" class="bg-surface-container-lowest border border-error/20 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden hidden">
+        <div class="flex items-center gap-4 min-w-0">
+          <div class="w-12 h-12 rounded-xl bg-error-container text-on-error-container flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-[24px]" id="event-icon">notifications_active</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2.5">
+              <span class="font-headline-md text-[18px] font-bold text-on-surface" id="event-title">ตรวจพบเหตุการณ์ชีวิตใหม่</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-error/10 text-error font-label-sm text-[11px] font-semibold uppercase tracking-wide">ควรทบทวน</span>
+            </div>
+            <p class="font-body-sm text-[14px] text-on-surface-variant" id="event-desc">ระบบตรวจพบการเปลี่ยนแปลงในชีวิตที่อาจส่งผลต่อความคุ้มครองของคุณ</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <a href="/customer/assessment.html" class="px-5 py-2.5 rounded-full bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-label-lg text-label-lg font-bold flex items-center gap-2 shadow-sm transition-all hover:scale-[1.02] active:scale-95">
+            <span>ปรับปรุงแผนนี้ทันที</span>
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 3. Primary Section: Battery Gauge & 5-Dimension Overview -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Left: Hero Battery -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
+          <div class="bg-surface-container-lowest rounded-2xl p-8 shadow-sm border border-surface-container flex flex-col gap-8 relative overflow-hidden">
+            <div class="flex items-center justify-between">
+              <div class="flex flex-col gap-1">
+                <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-medium">Overall Protection Battery</span>
+                <h2 class="font-headline-lg text-[22px] font-bold text-on-surface">ชีพจรความคุ้มครองรวม</h2>
+              </div>
+              <span id="battery-status-badge" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary-container/30 text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span> กำลังโหลด
+              </span>
+            </div>
+
+            <!-- Battery Score Display -->
+            <div class="flex flex-col gap-4">
+              <div class="flex items-baseline justify-between">
+                <div class="flex items-baseline gap-1.5">
+                  <span class="font-display-lg text-[56px] leading-none font-bold text-on-surface tracking-tight" id="battery-score">--</span>
+                  <span class="font-headline-lg text-[28px] font-bold text-on-surface-variant">%</span>
+                </div>
+                <div class="text-right flex flex-col items-end">
+                  <span class="font-label-sm text-label-sm text-on-surface-variant">เป้าหมายเสถียรภาพ</span>
+                  <span class="font-headline-md text-[18px] font-bold text-tertiary">100%</span>
+                </div>
+              </div>
+
+              <!-- 5-Block Battery Meter -->
+              <div class="p-3 bg-surface-container-low rounded-2xl flex items-center gap-2.5" id="battery-blocks">
+                <div class="flex-1 h-12 rounded-xl bg-surface-container-high/40 flex items-center justify-center text-outline-variant"><span class="text-xs">-</span></div>
+                <div class="flex-1 h-12 rounded-xl bg-surface-container-high/40 flex items-center justify-center text-outline-variant"><span class="text-xs">-</span></div>
+                <div class="flex-1 h-12 rounded-xl bg-surface-container-high/40 flex items-center justify-center text-outline-variant"><span class="text-xs">-</span></div>
+                <div class="flex-1 h-12 rounded-xl bg-surface-container-high/40 flex items-center justify-center text-outline-variant"><span class="text-xs">-</span></div>
+                <div class="flex-1 h-12 rounded-xl bg-surface-container-high/40 flex items-center justify-center text-outline-variant"><span class="text-xs">-</span></div>
+                <div class="w-2 h-6 bg-surface-container-highest rounded-r-md -mr-1.5"></div>
+              </div>
+
+              <div class="flex items-center justify-between text-body-sm text-[13px] text-on-surface-variant pt-1">
+                <span class="flex items-center gap-1.5 font-medium" id="battery-gap-text">
+                  <span class="material-symbols-outlined text-[15px]">info</span>
+                  กำลังคำนวณ...
+                </span>
+                <span id="battery-level-text" class="text-on-surface-variant">ระดับ -- จาก 5 ขีด</span>
+              </div>
+            </div>
+
+            <!-- AI Quick Solution Box -->
+            <div class="p-4 rounded-xl bg-surface-container-low border border-surface-container flex items-start gap-3.5" id="ai-recommendation-box">
+              <div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="font-label-md text-label-md font-bold text-on-surface">คำแนะนำจากระบบ</span>
+                <p class="font-body-sm text-[13px] text-on-surface-variant leading-relaxed" id="ai-tip">กำลังวิเคราะห์ความคุ้มครองของคุณ...</p>
+              </div>
+            </div>
+
+            <!-- Primary CTAs -->
+            <div class="flex flex-col gap-3 pt-2">
+              <a href="/customer/sandbox.html" class="w-full h-12 px-6 rounded-full bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.99]">
+                <span class="material-symbols-outlined text-[18px]">tune</span>
+                <span>ทดลองปรับแผนใน AI Sandbox</span>
+              </a>
+            </div>
+
+            <!-- Advisor Tile -->
+            <div class="p-4 rounded-xl bg-surface-container-low/60 flex items-center justify-between gap-3" id="advisor-tile">
+              <div class="flex items-center gap-3 min-w-0">
+                <img alt="ที่ปรึกษา" class="w-11 h-11 rounded-full object-cover shadow-sm flex-shrink-0 ring-1 ring-surface-container-highest" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&auto=format&fit=crop&q=80" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80';"/>
+                <div class="flex flex-col min-w-0">
+                  <span class="font-label-md text-label-md font-bold text-on-surface truncate">คุณกิตติพงษ์ สิทธิเวช</span>
+                  <span class="font-label-sm text-[12px] text-on-surface-variant truncate">ที่ปรึกษา Wealth ประจำตัวคุณ</span>
+                </div>
+              </div>
+              <a href="/customer/appointments.html" class="w-9 h-9 rounded-full bg-surface-container-lowest hover:bg-primary-container text-on-surface flex items-center justify-center flex-shrink-0 transition-colors shadow-sm" title="นัดหมายที่ปรึกษา">
+                <span class="material-symbols-outlined text-[18px]">calendar_today</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: 5 Dimensions Breakdown -->
+        <div class="lg:col-span-7 flex flex-col gap-6">
+          <div class="flex items-center justify-between pb-1">
+            <div class="flex flex-col">
+              <div class="flex items-center gap-2">
+                <h2 class="font-headline-lg text-[22px] font-bold text-on-surface">วิเคราะห์แยก 5 มิติความคุ้มครอง</h2>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-container/25 text-primary text-[11px] font-semibold">
+                  <span class="material-symbols-outlined text-[13px]">smart_toy</span> AI Simulate
+                </span>
+              </div>
+              <span class="font-body-sm text-[13px] text-on-surface-variant">💡 แตะที่มิติใดก็ได้เพื่อจำลองว่า "ถ้าไม่มีความคุ้มครองนี้ จะเกิดอะไรขึ้น"</span>
+            </div>
+            <a href="/customer/assessment.html" class="font-label-sm text-label-sm text-primary hover:underline">ทำแบบประเมินใหม่</a>
+          </div>
+
+          <div class="flex flex-col gap-3.5" id="dimensions-container">
+            <!-- Dimension cards will be rendered here by JS -->
+            <div class="skeleton h-24 rounded-2xl"></div>
+            <div class="skeleton h-24 rounded-2xl"></div>
+            <div class="skeleton h-24 rounded-2xl"></div>
+            <div class="skeleton h-24 rounded-2xl"></div>
+            <div class="skeleton h-24 rounded-2xl"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Bottom AI Engine Recommendation -->
+      <section class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0 shadow-sm">
+            <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2">
+              <span class="font-headline-md text-[17px] font-bold text-on-surface" id="ai-plan-title">แผนแนะนำ AI</span>
+              <span class="px-2 py-0.5 rounded-full bg-primary-container/30 text-on-primary-fixed-variant font-label-sm text-[11px] font-semibold">AI Recommended</span>
+            </div>
+            <p class="font-body-sm text-[13px] text-on-surface-variant" id="ai-plan-desc">กำลังวิเคราะห์แผนที่เหมาะสมกับคุณ...</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <a href="/customer/sandbox.html" class="h-11 px-6 rounded-full bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-label-lg text-label-lg font-bold flex items-center gap-2 shadow-sm transition-all hover:scale-105 active:scale-95">
+            <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+            <span>ปรึกษา AI Assistant</span>
+          </a>
+          <button id="btn-share" class="h-11 w-11 rounded-full bg-surface-container-low text-on-surface hover:bg-surface-container flex items-center justify-center transition-colors" title="แชร์">
+            <span class="material-symbols-outlined text-[18px]">share</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 5. Security Subtext -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 text-on-surface-variant">
+        <div class="flex items-center gap-2 text-body-sm text-[12px]">
+          <span class="material-symbols-outlined text-[15px] text-tertiary">lock</span>
+          <span>คุ้มครองข้อมูลตาม พ.ร.บ. PDPA และเข้ารหัสความปลอดภัยระดับธนาคารพาณิชย์ 256-bit TLS</span>
+        </div>
+        <div class="flex items-center gap-4 text-label-sm text-[12px]">
+          <a class="hover:text-on-surface transition-colors" href="#">นโยบายความเป็นส่วนตัว</a>
+          <span>•</span>
+          <a class="hover:text-on-surface transition-colors" href="#">ความยินยอม Consent</a>
+          <span>•</span>
+          <span>BOT Regulated</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- AI 'What-If' Risk Simulator Modal -->
+<div id="risk-simulator-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+  <div id="risk-modal-dialog" class="bg-surface-container-lowest w-full max-w-2xl rounded-3xl shadow-2xl border border-surface-container overflow-hidden flex flex-col max-h-[90vh]">
+    <!-- Modal Header -->
+    <div class="px-6 py-5 border-b border-surface-container flex items-center justify-between bg-surface-bright sticky top-0 z-10">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-error-container text-on-error-container flex items-center justify-center shadow-sm flex-shrink-0">
+          <span class="material-symbols-outlined text-[24px]">crisis_alert</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-headline-md text-[18px] font-bold text-on-surface">AI Risk Simulator</span>
+            <span class="px-2 py-0.5 rounded-full bg-error/10 text-error font-label-sm text-[11px] font-bold tracking-wide">WHAT-IF SCENARIO</span>
+          </div>
+          <p class="font-label-sm text-[12px] text-on-surface-variant">จำลองสถานการณ์ความเสี่ยงเมื่อเกิดวิกฤตโดยไม่มีความคุ้มครองส่วนนี้</p>
+        </div>
+      </div>
+      <button id="close-risk-modal" type="button" class="w-9 h-9 rounded-full text-on-surface-variant hover:bg-surface-container flex items-center justify-center transition-colors">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- Modal Content Body -->
+    <div class="p-6 overflow-y-auto flex flex-col gap-5">
+      <!-- Target Dimension Bar -->
+      <div class="p-4 rounded-2xl bg-surface-container-low border border-surface-container flex items-center justify-between">
+        <div class="flex items-center gap-3 min-w-0">
+          <div id="sim-modal-dim-icon" class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
+            <span class="material-symbols-outlined text-[22px]">health_and_safety</span>
+          </div>
+          <div class="min-w-0">
+            <span class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">มิติที่วิเคราะห์</span>
+            <h4 id="sim-modal-dim-title" class="font-bold text-[16px] text-on-surface truncate">สุขภาพและโรคร้ายแรง</h4>
+          </div>
+        </div>
+        <div class="text-right flex-shrink-0 pl-3">
+          <span class="text-[11px] text-on-surface-variant">ระดับปัจจุบัน</span>
+          <div id="sim-modal-current-score" class="font-bold text-[18px] text-on-surface leading-none">--%</div>
+        </div>
+      </div>
+
+      <!-- AI Generating Spinner/Skeleton (toggled by JS) -->
+      <div id="sim-ai-loading" class="py-8 flex flex-col items-center justify-center gap-3 text-center">
+        <div class="w-12 h-12 rounded-full border-4 border-primary-container border-t-primary animate-spin"></div>
+        <div class="font-headline-md text-[15px] font-semibold text-on-surface">AI กำลังวิเคราะห์สถานการณ์จำลอง...</div>
+        <p class="font-body-sm text-[12px] text-on-surface-variant">กำลังดึงข้อมูลต้นทุนค่ารักษา อัตราเงินเฟ้อทางการแพทย์ และโครงสร้างพอร์ต</p>
+      </div>
+
+      <!-- AI Simulation Result Card -->
+      <div id="sim-ai-result" class="hidden flex-col gap-4">
+        <!-- Scenario Alert -->
+        <div class="p-4 rounded-2xl bg-error-container/20 border border-error/30 flex flex-col gap-2">
+          <div class="flex items-center gap-2 text-error font-bold text-[14px]">
+            <span class="material-symbols-outlined text-[18px]">warning</span>
+            <span id="sim-scenario-title">เหตุการณ์จำลอง: กรณีตรวจพบโรคร้ายแรงระยะลุกลาม</span>
+          </div>
+          <p id="sim-scenario-desc" class="text-[13px] text-on-surface leading-relaxed">
+            หากเกิดขึ้นโดยไม่มีสัญญาเพิ่มเติมโรคร้ายแรง คุณจะต้องรับผิดชอบค่าใช้จ่ายรักษาพยาบาล ยามุ่งเป้า (Targeted Therapy) และการพักฟื้นทั้งหมดด้วยเงินเก็บส่วนตัว
+          </p>
+        </div>
+
+        <!-- 3 Key Impact Metric Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-3.5 rounded-2xl bg-surface-container-low border border-surface-container flex flex-col gap-1">
+            <span class="text-[11px] font-semibold text-on-surface-variant uppercase">ผลกระทบทางการเงิน</span>
+            <span id="sim-impact-money" class="font-bold text-[20px] text-error leading-tight">-฿2,400,000</span>
+            <span class="text-[11px] text-on-surface-variant">ต้องจ่ายเอง Out-of-pocket</span>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-surface-container-low border border-surface-container flex flex-col gap-1">
+            <span class="text-[11px] font-semibold text-on-surface-variant uppercase">ความเสียหายต่อพอร์ต</span>
+            <span id="sim-impact-battery" class="font-bold text-[20px] text-error leading-tight">แบตเตอรี่ลดเหลือ 18%</span>
+            <span class="text-[11px] text-on-surface-variant">พอร์ตสุขภาพล่มสลาย</span>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-surface-container-low border border-surface-container flex flex-col gap-1">
+            <span class="text-[11px] font-semibold text-on-surface-variant uppercase">โอกาสเกิดใน 5 ปี</span>
+            <span id="sim-impact-prob" class="font-bold text-[20px] text-on-surface leading-tight">1 ใน 6 คน</span>
+            <span class="text-[11px] text-on-surface-variant">สถิติกลุ่มอายุคุณ</span>
+          </div>
+        </div>
+
+        <!-- Timeline / What Happens Detailed -->
+        <div class="p-4 rounded-2xl bg-surface-container-lowest border border-surface-container flex flex-col gap-3">
+          <span class="text-[12px] font-bold text-on-surface uppercase tracking-wider flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-error">timeline</span>
+            ผลกระทบต่อเนื่องที่อาจเกิดขึ้น
+          </span>
+          <div id="sim-impact-steps" class="flex flex-col gap-2.5 text-[13px] text-on-surface-variant">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <!-- AI Recommendation Protection Fix -->
+        <div class="p-4 rounded-2xl bg-tertiary/10 border border-tertiary/30 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-tertiary text-on-tertiary flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span class="material-symbols-outlined text-[18px]">verified</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-[13px] font-bold text-on-surface">วิธีป้องกันด้วยแผนแนะนำ</span>
+            <p id="sim-protection-tip" class="text-[12px] text-on-surface-variant leading-relaxed">
+              การเพิ่มแผนประกันเหมาจ่ายและคุ้มครองโรคร้ายแรงจะปิดความเสี่ยงนี้ได้ 100% ทำให้ค่ารักษาหลักล้านเปลี่ยนเป็นเบี้ยหลักร้อยต่อเดือน
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="px-6 py-4 border-t border-surface-container bg-surface-bright flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="text-[12px] text-on-surface-variant text-center sm:text-left flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[15px] text-tertiary">analytics</span>
+        คำนวณโดย AI Coverage Pulse Risk Engine
+      </div>
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <button id="btn-close-sim" type="button" class="flex-1 sm:flex-none px-4 py-2.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-[13px] font-semibold transition-colors">
+          ปิด
+        </button>
+        <a id="btn-sim-fix-plan" href="/customer/sandbox.html" class="flex-1 sm:flex-none px-5 py-2.5 rounded-full bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-label-md text-[13px] font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all hover:scale-[1.02] active:scale-95">
+          <span class="material-symbols-outlined text-[17px]">tune</span>
+          <span>ทดลองปิดช่องโหว่นี้ใน Sandbox</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Profile & Edit Modal -->
+<div id="profile-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300 opacity-0 pointer-events-none">
+  <div class="bg-surface-container-lowest border border-surface-container rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden transform scale-95 transition-all duration-300" id="profile-modal-dialog">
+    <!-- Modal Header -->
+    <div class="p-6 pb-4 border-b border-surface-container bg-surface-bright flex items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="relative">
+          <img id="modal-avatar" class="w-14 h-14 rounded-full object-cover ring-2 ring-primary shadow-md" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80" alt="Profile"/>
+          <span class="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center text-[11px] shadow-sm">
+            <span class="material-symbols-outlined text-[13px]">verified</span>
+          </span>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <h3 class="font-headline-lg text-[20px] font-bold text-on-surface" id="modal-customer-name">กำลังโหลด...</h3>
+            <span id="modal-cid-badge" class="px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-[11px] font-bold">CUST-001</span>
+          </div>
+          <div class="flex items-center gap-2 text-[12px] text-on-surface-variant mt-0.5">
+            <span id="modal-segment-badge" class="font-semibold text-primary">Krungsri Prime</span>
+            <span>•</span>
+            <span id="modal-battery-badge" class="px-2 py-0.5 rounded-full bg-tertiary/15 text-tertiary font-bold text-[11px]">แบตเตอรี่ --%</span>
+          </div>
+        </div>
+      </div>
+      <button id="btn-close-profile-modal" type="button" class="w-9 h-9 rounded-full bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer" title="ปิดหน้าต่าง">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="flex items-center gap-1 px-6 pt-2 border-b border-surface-container bg-surface-container-low/40 overflow-x-auto">
+      <button type="button" id="tab-btn-personal" class="profile-tab-btn px-4 py-3 font-label-md text-[13px] font-bold text-primary border-b-2 border-primary flex items-center gap-1.5 transition-colors cursor-pointer">
+        <span class="material-symbols-outlined text-[17px]">person</span>
+        <span>ข้อมูลส่วนบุคคล & ติดต่อ</span>
+      </button>
+      <button type="button" id="tab-btn-welfare" class="profile-tab-btn px-4 py-3 font-label-md text-[13px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent flex items-center gap-1.5 transition-colors cursor-pointer">
+        <span class="material-symbols-outlined text-[17px]">health_and_safety</span>
+        <span>สวัสดิการ & บริบทความเสี่ยง</span>
+      </button>
+      <button type="button" id="tab-btn-policies" class="profile-tab-btn px-4 py-3 font-label-md text-[13px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent flex items-center gap-1.5 transition-colors cursor-pointer">
+        <span class="material-symbols-outlined text-[17px]">shield</span>
+        <span>กรมธรรม์ในพอร์ต (<span id="modal-policy-count">0</span>)</span>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-6 overflow-y-auto flex-1 space-y-5">
+      <form id="profile-form" class="space-y-5">
+
+        <!-- TAB 1: Personal Details -->
+        <div id="tab-content-personal" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-label-sm text-[12px] font-semibold text-on-surface-variant mb-1.5">ชื่อ - นามสกุล *</label>
+              <input type="text" id="prof-name" class="w-full px-3.5 py-2.5 rounded-xl border border-surface-container-high bg-surface-container-lowest text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" required/>
+            </div>
+            <div>
+              <label class="block font-label-sm text-[12px] font-semibold text-on-surface-variant mb-1.5">อายุ (ปี) *</label>
+              <input type="number" id="prof-age" min="15" max="99" class="w-full px-3.5 py-2.5 rounded-xl border border-surface-container-high bg-surface-container-lowest text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" required/>
+            </div>
+            <div>
+              <label class="block font-label-sm text-[12px] font-semibold text-on-surface-variant mb-1.5">เพศ</label>
+              <select id="prof-gender" class="w-full px-3.5 py-2.5 rounded-xl border border-surface-container-high bg-surface-container-lowest text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all">
+                <option value="หญิง">หญิง</option>
+                <option value="ชาย">ชาย</option>
+                <option value="อื่นๆ">อื่นๆ</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-label-sm text-[12px] font-semibold text-on-surface-variant mb-1.5">เบอร์โทรศัพท์ติดต่อ</label>
+              <input type="tel" id="prof-phone" class="w-full px-3.5 py-2.5 rounded-xl border border-surface-container-high bg-surface-container-lowest text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"/>
+            </div>
+            <div>
+              <label class="block font-label-sm text-[12px] font-semibold text-on-surface-variant mb-1.5">อีเมลติดต่อ</label>
+              <input type="email" id="prof-email" class="w-full px-3.5 py-2.5 rounded-xl border border-surface-container-high bg-surface-container-lowest text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"/>
+            </div>
+            <div>
+              <label class="block font-label-sm text-[12px] font-semibold text-on-surface-variant mb-1.5">สถานะระดับลูกค้า (Bank Segment / Tier)</label>
+              <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-surface-container bg-surface-container-low text-on-surface text-sm">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">stars</span>
+                  <span id="prof-segment-display" class="font-bold text-primary">Krungsri Prime</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div>
+              <label class="block font-label-sm text-[12px] font-semibold text-on-surface-variant mb-1.5">หมวดหมู่อาชีพหลัก (ความเสี่ยง &amp; สวัสดิการ) <span class="text-error">*</span></label>
+              <select id="prof-occupation-category" class="w-full px-3.5 py-2.5 rounded-xl border border-surface-container-high bg-surface-container-lowest text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all">
+                <option value="employee">พนักงานบริษัทเอกชน (มีประกันสังคม/ประกันกลุ่ม)</option>
+                <option value="government">ข้าราชการ / รัฐวิสาหกิจ (สิทธิเบิกจ่ายตรง)</option>
+                <option value="business_owner">เจ้าของธุรกิจ / SME (รับผิดชอบต้นทุนเอง)</option>
+                <option value="freelance">ฟรีแลนซ์ / รับจ้างอิสระ (รายได้ผันผวน)</option>
+                <option value="retired">เกษียณอายุ / พ่อบ้าน-แม่บ้าน</option>
+                <option value="other">อื่นๆ</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-label-sm text-[12px] font-semibold text-on-surface-variant mb-1.5">ตำแหน่ง / ลักษณะงานเฉพาะ (ระบุเสริม)</label>
+              <input type="text" id="prof-occupation-detail" class="w-full px-3.5 py-2.5 rounded-xl border border-surface-container-high bg-surface-container-lowest text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" placeholder="เช่น Senior Marketing, แพทย์, เจ้าของร้าน"/>
+            </div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-surface-container-low border border-surface-container text-[11.5px] text-on-surface-variant flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[16px] flex-shrink-0">verified</span>
+            <span><strong>Data Best Practice:</strong> หมวดหมู่อาชีพหลักใช้ประเมินสิทธิสวัสดิการและขั้นความเสี่ยง (Underwriting Class) ส่วนตำแหน่งงานช่วยให้ที่ปรึกษาเข้าใจบริบทชีวิตของคุณ</span>
+          </div>
+        </div>
+
+        <!-- TAB 2: Welfare & Risk Context (Assessment Snapshot) -->
+        <div id="tab-content-welfare" class="space-y-4 hidden">
+          <div class="p-4 rounded-2xl bg-surface-container-low border border-surface-container flex items-start gap-3">
+            <div class="w-9 h-9 rounded-xl bg-primary-container/20 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="font-bold text-sm text-on-surface">สรุปบริบทความคุ้มครองจากการประเมินล่าสุด</span>
+              <p class="text-xs text-on-surface-variant leading-relaxed">
+                ข้อมูลสวัสดิการ ภาระหนี้สิน และเป้าหมายชีวิตในส่วนนี้ถูกบันทึกจากการทำ <strong>แบบประเมินความคุ้มครอง (Coverage Assessment)</strong> หากบริบทชีวิตของคุณเปลี่ยนแปลง เช่น มีบุตร ซื้อบ้านใหม่ หรือเริ่มธุรกิจใหม่ แนะนำทำแบบประเมินฉบับเต็มเพื่อวิเคราะห์ 5 มิติและคำนวณชีพจรใหม่อย่างแม่นยำ
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-surface-container flex flex-col gap-1">
+              <span class="text-[11px] font-semibold text-on-surface-variant uppercase">สวัสดิการเดิมที่มี</span>
+              <span id="prof-welfare-display" class="font-bold text-sm text-on-surface">กำลังโหลด...</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-surface-container flex flex-col gap-1">
+              <span class="text-[11px] font-semibold text-on-surface-variant uppercase">ภาระหนี้สินหลัก</span>
+              <span id="prof-debt-display" class="font-bold text-sm text-on-surface">กำลังโหลด...</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-surface-container flex flex-col gap-1">
+              <span class="text-[11px] font-semibold text-on-surface-variant uppercase">สถานะครอบครัว & ผู้พึ่งพิง</span>
+              <span id="prof-family-display" class="font-bold text-sm text-on-surface">กำลังโหลด...</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-surface-container flex flex-col gap-1">
+              <span class="text-[11px] font-semibold text-on-surface-variant uppercase">ประเด็นที่กังวลสูงสุด</span>
+              <span id="prof-concern-display" class="font-bold text-sm text-on-surface">กำลังโหลด...</span>
+            </div>
+            <div class="sm:col-span-2 p-3.5 rounded-xl bg-surface-container-lowest border border-surface-container flex flex-col gap-1">
+              <span class="text-[11px] font-semibold text-on-surface-variant uppercase">ระดับรายได้เฉลี่ยต่อเดือน</span>
+              <span id="prof-income-display" class="font-bold text-sm text-on-surface">กำลังโหลด...</span>
+            </div>
+          </div>
+
+          <!-- Assessment CTA Link -->
+          <div class="pt-2">
+            <a id="btn-modal-goto-assessment" href="/customer/assessment.html" class="w-full py-3 px-4 rounded-xl bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-bold text-[13px] flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-[1.01] active:scale-95">
+              <span class="material-symbols-outlined text-[18px]">quiz</span>
+              <span>ทำแบบประเมินความคุ้มครองรอบด้านเพื่อทบทวนชีพจร (Full Assessment)</span>
+            </a>
+          </div>
+        </div>
+      </form>
+
+      <!-- TAB 3: Active Policies -->
+      <div id="tab-content-policies" class="space-y-4 hidden">
+        <div class="flex items-center justify-between pb-2 border-b border-surface-container">
+          <span class="text-sm font-bold text-on-surface">รายการกรมธรรม์ที่ผูกกับบัญชีธนาคารกรุงศรี</span>
+          <span id="modal-policy-total-sum" class="text-xs text-primary font-bold">ทุนประกันรวม: ฿0</span>
+        </div>
+        <div id="modal-policies-list" class="space-y-3">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="px-6 py-4 border-t border-surface-container bg-surface-bright flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="text-[12px] text-on-surface-variant flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[16px] text-tertiary">lock</span>
+        <span>ข้อมูลปลอดภัยตามมาตรฐาน PDPA & ISO 27001</span>
+      </div>
+      <div class="flex items-center gap-2.5 w-full sm:w-auto">
+        <button id="btn-cancel-profile" type="button" class="flex-1 sm:flex-none px-4 py-2.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-[13px] font-semibold transition-colors cursor-pointer">
+          ปิด
+        </button>
+        <button id="btn-save-profile" type="button" class="flex-1 sm:flex-none px-6 py-2.5 rounded-full bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-label-md text-[13px] font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all hover:scale-[1.02] active:scale-95 cursor-pointer">
+          <span class="material-symbols-outlined text-[17px]" id="btn-save-icon">save</span>
+          <span id="btn-save-text">บันทึกข้อมูลส่วนตัว</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- F10: Customer Consent Center Modal -->
+<div id="modal-consent-center" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 transition-all duration-300">
+  <div class="bg-surface-container-lowest rounded-2xl shadow-2xl max-w-2xl sm:max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-surface-container animate-in fade-in zoom-in-95 duration-200">
+    
+    <!-- Modal Header -->
+    <div class="px-6 py-4 border-b border-surface-container bg-surface-container-lowest flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-tertiary/10 text-tertiary flex items-center justify-center flex-shrink-0 shadow-xs">
+          <span class="material-symbols-outlined text-[24px]">policy</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h3 class="font-bold text-[17px] text-on-surface">ศูนย์จัดการความยินยอม (Consent Center)</h3>
+            <span class="px-2 py-0.5 rounded-full bg-tertiary/15 text-tertiary text-[10.5px] font-semibold flex items-center gap-1">
+              <span class="material-symbols-outlined text-[12px]">verified</span> PDPA Compliant
+            </span>
+          </div>
+          <p class="text-[12px] text-on-surface-variant mt-0.5">ควบคุมสิทธิ์เปิด-ปิดการแชร์สัญญาณข้อมูลของคุณอย่างอิสระตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562</p>
+        </div>
+      </div>
+      <button type="button" id="btn-close-consent-modal" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors cursor-pointer" title="ปิด">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- Modal Tabs -->
+    <div class="px-6 border-b border-surface-container flex gap-6 bg-surface-container-low/40 text-[13px] font-semibold">
+      <button type="button" id="tab-btn-consent-sources" class="py-3 border-b-2 border-primary text-primary flex items-center gap-1.5 transition-colors cursor-pointer">
+        <span class="material-symbols-outlined text-[16px]">tune</span>
+        <span>แหล่งสัญญาณข้อมูล (4 แหล่ง)</span>
+      </button>
+      <button type="button" id="tab-btn-consent-audit" class="py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface flex items-center gap-1.5 transition-colors cursor-pointer">
+        <span class="material-symbols-outlined text-[16px]">history</span>
+        <span>ประวัติ Audit Trail</span>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-5 sm:p-6 overflow-y-auto flex-1 flex flex-col gap-4">
+      
+      <!-- Tab 1: Sources View -->
+      <div id="view-consent-sources" class="flex flex-col gap-3.5">
+        <!-- Privacy Guarantee Banner -->
+        <div class="p-3.5 rounded-xl bg-tertiary/10 border border-tertiary/20 flex items-start gap-3">
+          <span class="material-symbols-outlined text-[20px] text-tertiary mt-0.5 flex-shrink-0">lock</span>
+          <div class="text-[12px] text-on-surface leading-relaxed">
+            <strong class="font-semibold text-tertiary">ความปลอดภัยระดับธนาคาร (Privacy by Design):</strong> 
+            ทุกการเปิดหรือระงับสิทธิ์จะส่งผลต่อการประมวลผลสัญญาณเตือน Life-event แบบ Real-time และระบบจะไม่เก็บข้อมูลประวัติการรักษาเชิงลึก (ดึงเฉพาะ Event-level Signal เท่านั้น)
+          </div>
+        </div>
+
+        <!-- Dynamic List of 4 Sources -->
+        <div id="consent-sources-list" class="flex flex-col gap-3">
+          <div class="skeleton h-24 rounded-xl"></div>
+          <div class="skeleton h-24 rounded-xl"></div>
+          <div class="skeleton h-24 rounded-xl"></div>
+          <div class="skeleton h-24 rounded-xl"></div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Audit History View -->
+      <div id="view-consent-audit" class="hidden flex-col gap-3">
+        <div class="text-[12.5px] text-on-surface-variant mb-1">
+          บันทึกการยินยอม/เพิกถอนสิทธิ์ย้อนหลังทั้งหมดของบัญชีนี้ (เชื่อมโยงกับระบบ Audit Trail ของผู้กำกับดูแล):
+        </div>
+        <div id="consent-audit-list" class="divide-y divide-surface-container border border-surface-container rounded-xl overflow-hidden bg-surface-container-lowest">
+          <!-- Loaded dynamically -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div class="px-6 py-3.5 border-t border-surface-container bg-surface-container-low/60 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <button type="button" id="btn-revoke-all-consents" class="text-error hover:bg-error/10 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-colors flex items-center gap-1.5 cursor-pointer w-full sm:w-auto justify-center" title="เพิกถอนสิทธิ์ทุกรายการตาม PDPA มาตรา 34">
+        <span class="material-symbols-outlined text-[15px]">block</span>
+        เพิกถอนความยินยอมทั้งหมด
+      </button>
+      <button type="button" id="btn-done-consent" class="px-6 py-2 rounded-full bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-semibold text-[13px] hover:brightness-105 transition-all shadow-xs cursor-pointer w-full sm:w-auto text-center">
+        เรียบร้อย
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-inverse-surface text-inverse-on-surface px-6 py-3.5 rounded-full shadow-2xl transition-all duration-300 opacity-0 translate-y-4 pointer-events-none">
+  <span class="material-symbols-outlined text-tertiary-fixed text-[20px]" id="toast-icon">check_circle</span>
+  <span class="font-label-md text-label-md font-medium" id="toast-msg">สำเร็จ</span>
+</div>
+
+<footer class="w-full bg-surface-container-low py-10 mt-16 shadow-[0_-1px_8px_rgba(0,0,0,0.02)]">
+  <div class="max-w-[1280px] mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="flex items-center gap-3">
+      <span class="w-2.5 h-2.5 rounded-full bg-tertiary animate-pulse"></span>
+      <span class="font-body-sm text-body-sm text-on-surface-variant">Krungsri Coverage Pulse Engine • Bank of Ayudhya Public Company Limited</span>
+    </div>
+    <div class="flex items-center gap-6">
+      <span class="font-label-sm text-label-sm text-on-surface-variant">ISO 27001 Certified</span>
+      <span class="font-label-sm text-label-sm text-on-surface-variant">PDPA Encrypted</span>
+      <span class="font-label-sm text-label-sm text-on-surface-variant">© 2025 Krungsri. All rights reserved.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const CUSTOMER_ID = urlParams.get('cid') || 'CUST-001';
+  let currentCustomer = null;
+  let currentPolicies = [];
+  let toastTimer = null;
+  const DIMENSIONS = [
+    { key: 'health', icon: 'cardiology', title: '1. สุขภาพและโรคร้ายแรง', subtitle: 'Medical & Critical Illness Buffer', colorCritical: true },
+    { key: 'life', icon: 'shield', title: '2. คุ้มครองชีวิตและมรดก', subtitle: 'Whole Life & Family Protection', colorCritical: false },
+    { key: 'savings', icon: 'savings', title: '3. เงินออมและสะสมทรัพย์', subtitle: 'Guaranteed Endowment', colorCritical: false },
+    { key: 'pension', icon: 'elderly', title: '4. เกษียณและบำนาญ', subtitle: 'Retirement & Tax Shelter', colorCritical: false },
+    { key: 'accident', icon: 'flight_takeoff', title: '5. อุบัติเหตุและการเดินทาง', subtitle: 'PA & Global Mobility', colorCritical: false }
+  ];
+
+  function getBatteryStatusText(score) {
+    if (score >= 80) return { text: 'เหมาะสม', cls: 'bg-tertiary/15 text-tertiary' };
+    if (score >= 50) return { text: 'ควรทบทวน', cls: 'bg-primary-container/30 text-on-primary-fixed-variant' };
+    return { text: 'วิกฤต', cls: 'bg-error-container text-on-error-container' };
+  }
+
+  function getBatteryBlocks(score) {
+    const pct = score / 100;
+    const filled = Math.floor(pct * 5);
+    let html = '';
+    const colors = [
+      score >= 20 ? 'bg-tertiary text-on-tertiary' : 'bg-surface-container-high/40 text-outline-variant',
+      score >= 40 ? 'bg-tertiary text-on-tertiary' : 'bg-surface-container-high/40 text-outline-variant',
+      score >= 60 ? 'bg-primary-container text-on-primary-container' : 'bg-surface-container-high/40 text-outline-variant',
+      score >= 80 ? 'bg-primary-container text-on-primary-container' : 'bg-surface-container-high/40 text-outline-variant',
+      score >= 100 ? 'bg-tertiary text-on-tertiary' : 'bg-surface-container-high/40 text-outline-variant'
+    ];
+    const labels = [20, 40, 60, 80, 100];
+    labels.forEach((lbl, i) => {
+      html += `<div class="flex-1 h-12 rounded-xl ${colors[i]} flex flex-col items-center justify-center shadow-sm"><span class="font-label-md text-label-md font-bold leading-none">${lbl}%</span></div>`;
+    });
+    html += `<div class="w-2 h-6 bg-surface-container-highest rounded-r-md -mr-1.5"></div>`;
+    return html;
+  }
+
+  /**
+   * Calculate each of the 5 dimension scores dynamically based on:
+   * 1. Existing policies in port (Health, CI, Whole Life, Savings, Pension, Accident)
+   * 2. Customer self-reported profile (welfare, debt, family status, age, occupation)
+   * 3. Current overall battery score
+   */
+  function calculateDimensionScores(customer = {}, policies = []) {
+    const battery = Number(customer.battery_score) || 50;
+    const welfare = customer.welfare || 'social_security';
+    const debt = customer.debt_burden || 'medium';
+    const family = customer.family_status || 'single';
+    const occ = customer.occupation || 'employee';
+    let age = 35;
+    if (customer.age) {
+      const m = String(customer.age).match(/\d+/);
+      if (m) age = parseInt(m[0], 10);
+    }
+
+    // Check policies
+    const hasHealth = (policies || []).some(p => p.category === 'health_ci' || p.category === 'health' || (p.product_name && p.product_name.includes('Health')));
+    const hasCI = (policies || []).some(p => p.category === 'health_ci' || (p.product_name && (p.product_name.includes('CI') || p.product_name.includes('โรคร้ายแรง'))));
+    const hasLife = (policies || []).some(p => p.category === 'whole_life' || p.category === 'term_life' || (p.product_name && p.product_name.includes('Life')));
+    const hasSavings = (policies || []).some(p => p.category === 'savings' || p.category === 'unit_linked' || (p.product_name && p.product_name.includes('ออม')));
+    const hasPension = (policies || []).some(p => p.category === 'pension' || p.category === 'annuity' || (p.product_name && p.product_name.includes('บำนาญ')));
+    const hasAccident = (policies || []).some(p => p.category === 'accident' || (p.product_name && (p.product_name.includes('อุบัติเหตุ') || p.product_name.includes('PA'))));
+
+    // 1. Health & CI Dimension
+    let healthScore = 15;
+    if (welfare === 'group_insurance') healthScore = 45;
+    else if (welfare === 'government') healthScore = 55;
+    else if (welfare === 'social_security') healthScore = 30;
+    if (hasHealth) healthScore += 35;
+    if (hasCI) healthScore += 15;
+
+    // 2. Life & Debt Dimension
+    let lifeScore = 30;
+    if (family === 'single') lifeScore += 30;
+    else lifeScore += 10;
+    if (debt === 'none' || debt === 'no_debt') lifeScore += 20;
+    else if (debt === 'mortgage_high') lifeScore -= 10;
+    if (hasLife) lifeScore += 35;
+    else if (hasSavings) lifeScore += 15;
+
+    // 3. Savings Dimension
+    let savingsScore = 25;
+    if (hasSavings) savingsScore += 50;
+    if (customer.income_bracket === 'over_70k' || customer.income_bracket === '30k_70k') savingsScore += 15;
+
+    // 4. Pension Dimension
+    let pensionScore = 20;
+    if (hasPension) pensionScore += 65;
+    else if (hasSavings) pensionScore += 20;
+    if (age <= 30) pensionScore += 20;
+    else if (age >= 50) pensionScore = Math.max(15, pensionScore - 10);
+
+    // 5. Accident Dimension
+    let accidentScore = 30;
+    if (occ === 'employee' || occ === 'government') accidentScore += 25;
+    if (hasAccident) accidentScore += 45;
+
+    return {
+      health: Math.min(100, Math.max(15, Math.round(healthScore))),
+      life: Math.min(100, Math.max(15, Math.round(lifeScore))),
+      savings: Math.min(100, Math.max(15, Math.round(savingsScore))),
+      pension: Math.min(100, Math.max(15, Math.round(pensionScore))),
+      accident: Math.min(100, Math.max(15, Math.round(accidentScore)))
+    };
+  }
+
+  function getDimStatusBadge(score) {
+    if (score >= 80) return { text: 'เหมาะสม', cls: 'bg-tertiary/15 text-tertiary', barCls: 'bg-tertiary', scoreCls: 'text-tertiary' };
+    if (score >= 50) return { text: 'ปานกลาง', cls: 'bg-primary-fixed text-on-primary-fixed', barCls: 'bg-primary-container', scoreCls: 'text-primary' };
+    return { text: 'วิกฤต', cls: 'bg-error-container text-on-error-container', barCls: 'bg-error', scoreCls: 'text-error' };
+  }
+
+  const RISK_SCENARIOS = {
+    health: {
+      title: 'กรณีเจ็บป่วยหนักหรือตรวจพบโรคร้ายแรง (ICU / Critical Illness)',
+      desc: 'หากเกิดภาวะเจ็บป่วยเฉียบพลันหรือมะเร็งระยะลุกลาม โดยไม่มีสัญญาเพิ่มเติมเหมาจ่ายและโรคร้ายแรง คุณจะต้องรับผิดชอบค่าใช้จ่ายรักษาพยาบาล ค่ายานอกบัญชี และค่าห้องพิเศษด้วยตนเองทั้งหมด',
+      money: '-฿2,500,000',
+      moneySub: 'ค่ารักษาเฉลี่ย + ยามุ่งเป้า 1 ปี',
+      prob: '1 ใน 6 คน',
+      probSub: 'สถิติคนไทยช่วงวัยทำงาน',
+      batteryRemaining: '22%',
+      batteryDrop: 'ลดลงทันที -46%',
+      steps: [
+        { icon: 'emergency', text: 'เข้ารับการรักษาฉุกเฉินและ ICU: ค่าใช้จ่ายสะสม 350,000 - 800,000 บาท ใน 2 สัปดาห์แรก' },
+        { icon: 'medication', text: 'ยามุ่งเป้าและเทคโนโลยีการแพทย์สมัยใหม่: ค่าใช้จ่าย 150,000 - 250,000 บาทต่อเดือน' },
+        { icon: 'money_off', text: 'กระทบเงินเก็บสะสม: จำเป็นต้องถอนเงินสำรองฉุกเฉินและขายสินทรัพย์ลงทุนก่อนกำหนดเพื่อจ่ายค่ารักษา' }
+      ],
+      protectionTip: 'เพิ่มความคุ้มครองสุขภาพเหมาจ่าย 3M-5M บาท พร้อม CI 2M บาท ช่วยโอนความเสี่ยงค่ารักษาหลักล้านให้บริษัทประกันดูแล 100%'
+    },
+    life: {
+      title: 'กรณีเสียชีวิตก่อนวัยอันควร (เสาหลักของครอบครัวจากไป)',
+      desc: 'หากหัวหน้าครอบครัวจากไปกะทันหันโดยไม่มีทุนประกันชีวิตที่เพียงพอ ภาระหนี้สินคงค้าง ค่าใช้จ่ายในบ้าน และทุนการศึกษาบุตรจะตกเป็นภาระของคนที่อยู่ข้างหลังทันที',
+      money: '-฿5,000,000',
+      moneySub: 'มูลค่ารายได้ในอนาคตที่ขาดหายไป',
+      prob: '1 ใน 12 ครอบครัว',
+      probSub: 'เกิดเหตุการณ์ไม่คาดฝันต่อเสาหลัก',
+      batteryRemaining: '15%',
+      batteryDrop: 'ครอบครัวเข้าสู่ภาวะวิกฤต',
+      steps: [
+        { icon: 'home', text: 'ภาระหนี้สินบ้านและรถยนต์: หากไม่มี MRTA/ประกันชีวิต ภาระหนี้ค้างตกสู่ทายาทโดยตรง' },
+        { icon: 'school', text: 'กองทุนการศึกษาบุตรหยุดชะงัก: ขาดกระแสเงินสดรองรับค่าเล่าเรียนในระยะยาว 10-15 ปี' },
+        { icon: 'trending_down', text: 'คุณภาพชีวิตครอบครัวลดลง: คู่สมรสต้องรับภาระทำงานหนักขึ้นหรือขายสินทรัพย์ครอบครัว' }
+      ],
+      protectionTip: 'วางทุนประกันชีวิตคุ้มครองรายได้ 5-10 เท่าของรายจ่ายต่อปี เพื่อสร้างตาข่ายความปลอดภัยให้ครอบครัวก้าวต่อไปได้อย่างมั่นคง'
+    },
+    savings: {
+      title: 'กรณีเกิดภาวะฉุกเฉินทางการเงิน ขาดเงินสำรองสภาพคล่อง',
+      desc: 'หากไม่มีประกันแบบสะสมทรัพย์ที่มีเงินคืนแน่นอน หรือเงินสำรองที่มีวินัย เมื่อเกิดวิกฤตเศรษฐกิจหรือฉุกเฉิน จะขาดเงินก้อนชดเชยสภาพคล่อง',
+      money: '-฿1,200,000',
+      moneySub: 'เป้าหมายเงินออมสะดุด',
+      prob: '65% ของคนไทย',
+      probSub: 'มีเงินสำรองไม่พอใช้เกิน 6 เดือน',
+      batteryRemaining: '35%',
+      batteryDrop: 'วินัยทางการเงินสะดุด',
+      steps: [
+        { icon: 'account_balance_wallet', text: 'สภาพคล่องตึงตัว: ไม่มีเงินคืนการันตีรายปีมาช่วยหมุนเวียนหรือชำระเบี้ย' },
+        { icon: 'receipt_long', text: 'เสียสิทธิ์ลดหย่อนภาษี: พลาดการประหยัดภาษีปีละหลายหมื่นบาท' },
+        { icon: 'credit_card_off', text: 'ต้องพึ่งพาหนี้สินดอกเบี้ยสูง: ก่อหนี้บัตรเครดิตหรือสินเชื่อส่วนบุคคล' }
+      ],
+      protectionTip: 'วางแผนประกันสะสมทรัพย์ Guaranteed Return ช่วยสร้างวินัย บังคับออม มีเงินคืนสม่ำเสมอ และได้สิทธิ์ลดหย่อนภาษีเต็มสิทธิ์'
+    },
+    pension: {
+      title: 'กรณีอายุยืนยาวหลัง 60 แต่เงินเก็บหมดก่อน (Longevity Risk)',
+      desc: 'ความเสี่ยงของการมีชีวิตยืนยาวเกินกว่าเงินเก็บที่มี (อายุยืนถึง 85-90 ปี) โดยไม่มีบำนาญการันตี จะส่งผลให้ต้องพึ่งพาผู้อื่นหรือลดมาตรฐานความเป็นอยู่อย่างรุนแรง',
+      money: '-฿3,600,000',
+      moneySub: 'เงินขาดแคลนในวัย 70-85 ปี',
+      prob: '72% ผู้สูงอายุ',
+      probSub: 'เงินเก็บไม่พอใช้หลังเกษียณ 10 ปี',
+      batteryRemaining: '20%',
+      batteryDrop: 'คุณภาพชีวิตวัยเกษียณลดฮวบ',
+      steps: [
+        { icon: 'elderly', text: 'เงินออมหมดตั้งแต่อายุ 70: ขาดกระแสเงินสดต่อเนื่องในวันที่หมดแรงทำงาน' },
+        { icon: 'medical_services', text: 'ค่าดูแลพยาบาลระยะยาว (Long-term Care): ต้องมีค่าผู้ดูแลเดือนละ 25,000 - 45,000 บาท' },
+        { icon: 'sentiment_very_dissatisfied', text: 'ต้องพึ่งพาลูกหลานหรือเบี้ยยังชีพ: สูญเสียอิสรภาพทางการเงินในบั้นปลาย' }
+      ],
+      protectionTip: 'วางแผนประกันบำนาญ (Annuity) การันตีเงินบำนาญคืนทุกปีตั้งแต่อายุ 60 ถึง 85-90 ปี พร้อมลดหย่อนภาษีได้สูงสุด 200,000 บาท'
+    },
+    accident: {
+      title: 'กรณีอุบัติเหตุรุนแรง ทุพพลภาพถาวร หรือสูญเสียอวัยวะ',
+      desc: 'อุบัติเหตุเกิดขึ้นได้ทุกวินาทีโดยไม่ทันตั้งตัว หากสูญเสียความสามารถในการประกอบอาชีพแต่ยังมีชีวิตอยู่ ค่าใช้จ่ายจะสูงกว่าการเสียชีวิตทันที',
+      money: '-฿1,800,000',
+      moneySub: 'ค่ารักษาต่อเนื่อง + สูญเสียรายได้',
+      prob: '1 ใน 8 คน',
+      probSub: 'เคยประสบอุบัติเหตุต้องนอน รพ.',
+      batteryRemaining: '30%',
+      batteryDrop: 'สูญเสียความสามารถหารายได้',
+      steps: [
+        { icon: 'accessible', text: 'ทุพพลภาพถาวรสิ้นเชิง: ขาดรายได้จากงานประจำทันที แต่ค่าใช้จ่ายในชีวิตประจำวันยังคงอยู่' },
+        { icon: 'personal_injury', text: 'การผ่าตัดและกายภาพบำบัดต่อเนื่อง: ค่ารักษาอุบัติเหตุเฉพาะทางราคาสูง' },
+        { icon: 'handshake', text: 'ขาดเงินชดเชยรายได้: ไม่มีเงินก้อนมาชดเชยรายได้ที่หายไประหว่างพักฟื้น' }
+      ],
+      protectionTip: 'ทำประกันอุบัติเหตุส่วนบุคคล (PA) วงเงิน 1M-2M บาท เบี้ยเริ่มต้นเพียงวันละไม่กี่บาท คุ้มครองทั่วโลกตลอด 24 ชั่วโมง'
+    }
+  };
+
+  let currentSimTimeout = null;
+
+  window.openRiskSimulator = function(dimKey, score, dimTitle, dimIcon) {
+    const modal = document.getElementById('risk-simulator-modal');
+    const dialog = document.getElementById('risk-modal-dialog');
+    const loading = document.getElementById('sim-ai-loading');
+    const result = document.getElementById('sim-ai-result');
+
+    document.getElementById('sim-modal-dim-title').textContent = dimTitle;
+    document.getElementById('sim-modal-dim-icon').innerHTML = `<span class="material-symbols-outlined text-[22px]">${dimIcon}</span>`;
+    document.getElementById('sim-modal-current-score').textContent = `${score}%`;
+
+    const scenario = RISK_SCENARIOS[dimKey] || RISK_SCENARIOS.health;
+    document.getElementById('sim-scenario-title').textContent = scenario.title;
+    document.getElementById('sim-scenario-desc').textContent = scenario.desc;
+    document.getElementById('sim-impact-money').textContent = scenario.money;
+    document.querySelector('#sim-impact-money + span').textContent = scenario.moneySub;
+    document.getElementById('sim-impact-battery').textContent = `เหลือ ${scenario.batteryRemaining}`;
+    document.querySelector('#sim-impact-battery + span').textContent = scenario.batteryDrop;
+    document.getElementById('sim-impact-prob').textContent = scenario.prob;
+    document.querySelector('#sim-impact-prob + span').textContent = scenario.probSub;
+    document.getElementById('sim-protection-tip').textContent = scenario.protectionTip;
+
+    const stepsContainer = document.getElementById('sim-impact-steps');
+    stepsContainer.innerHTML = scenario.steps.map(s => `
+      <div class="flex items-start gap-3 p-2.5 rounded-xl bg-surface-container-low">
+        <span class="material-symbols-outlined text-[18px] text-error flex-shrink-0 mt-0.5">${s.icon}</span>
+        <span class="text-[13px] text-on-surface leading-snug">${s.text}</span>
+      </div>
+    `).join('');
+
+    // Show modal
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.classList.add('opacity-100');
+    dialog.classList.add('modal-animate');
+
+    // Show loading state first for realism
+    loading.classList.remove('hidden');
+    result.classList.add('hidden');
+
+    if (currentSimTimeout) clearTimeout(currentSimTimeout);
+    currentSimTimeout = setTimeout(() => {
+      loading.classList.add('hidden');
+      result.classList.remove('hidden');
+      result.classList.add('flex');
+    }, 700);
+  };
+
+  window.closeRiskSimulator = function() {
+    const modal = document.getElementById('risk-simulator-modal');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    modal.classList.remove('opacity-100');
+  };
+
+  document.getElementById('close-risk-modal').addEventListener('click', window.closeRiskSimulator);
+  document.getElementById('btn-close-sim').addEventListener('click', window.closeRiskSimulator);
+  document.getElementById('risk-simulator-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'risk-simulator-modal') window.closeRiskSimulator();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') window.closeRiskSimulator();
+  });
+
+  function renderDimensions(customer = {}, policies = []) {
+    const container = document.getElementById('dimensions-container');
+    const dimScores = calculateDimensionScores(customer, policies);
+    let html = '';
+    DIMENSIONS.forEach((dim) => {
+      const score = dimScores[dim.key] ?? 50;
+      const st = getDimStatusBadge(score);
+      const borderCls = score < 50 ? 'border-error/30 hover:border-error' : 'border-surface-container hover:border-primary-container';
+      html += `
+        <div onclick="window.openRiskSimulator('${dim.key}', ${score}, '${dim.title}', '${dim.icon}')" class="dim-card-clickable bg-surface-container-lowest rounded-2xl p-5 border ${borderCls} shadow-sm flex flex-col gap-3 group relative">
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="w-10 h-10 rounded-xl ${score < 50 ? 'bg-error-container text-on-error-container' : 'bg-primary-container/30 text-on-primary-container'} flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-[22px]">${dim.icon}</span>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <div class="flex items-center gap-2">
+                  <h3 class="font-headline-md text-[16px] font-bold text-on-surface leading-tight truncate">${dim.title}</h3>
+                  <span class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 text-[11px] font-semibold text-primary">
+                    <span class="material-symbols-outlined text-[13px]">crisis_alert</span> จำลองความเสี่ยง
+                  </span>
+                </div>
+                <span class="font-body-sm text-[12px] text-on-surface-variant">${dim.subtitle}</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 flex-shrink-0">
+              <span class="font-headline-md text-[16px] font-bold ${st.scoreCls}">${score}%</span>
+              <span class="px-2.5 py-0.5 rounded-full ${st.cls} font-label-sm text-[11px] font-semibold">${st.text}</span>
+              <span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-primary group-hover:translate-x-0.5 transition-all">chevron_right</span>
+            </div>
+          </div>
+          <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+            <div class="h-full rounded-full ${st.barCls} transition-all duration-700" style="width:${score}%"></div>
+          </div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  async function loadProfile() {
+    try {
+      const res = await fetch(`/api/customer/profile/${CUSTOMER_ID}`);
+      if (!res.ok) throw new Error('API error');
+      const data = await res.json();
+      const c = data.customer;
+      currentCustomer = c;
+      currentPolicies = data.policies || [];
+
+      // Update header
+      if (c.avatar_url) {
+        const av = document.getElementById('customer-avatar');
+        if (av) av.src = c.avatar_url;
+      }
+      document.getElementById('customer-name').textContent = c.name ? c.name.split(' ')[0] : 'ผู้ใช้';
+      document.getElementById('customer-tier').textContent = c.segment || 'Krungsri Prime';
+      document.getElementById('welcome-title').textContent = `สวัสดีคุณ${c.name ? c.name.split(' ')[0] || c.name : ''}`;
+      
+      // Update time
+      const now = new Date();
+      document.getElementById('update-time').textContent = `อัปเดตเรียลไทม์ ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')} น.`;
+
+      // Update battery
+      const score = c.battery_score || 0;
+      document.getElementById('battery-score').textContent = score;
+      document.getElementById('battery-blocks').innerHTML = getBatteryBlocks(score);
+
+      const st = getBatteryStatusText(score);
+      const badge = document.getElementById('battery-status-badge');
+      badge.className = `inline-flex items-center gap-1 px-3 py-1.5 rounded-full ${st.cls} font-label-sm text-label-sm font-semibold`;
+      badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-current opacity-70"></span> ${st.text}`;
+
+      const gap = 100 - score;
+      const gapEl = document.getElementById('battery-gap-text');
+      if (gap > 0) {
+        gapEl.innerHTML = `<span class="material-symbols-outlined text-[15px] text-error">arrow_upward</span><span class="text-error font-medium">ขาดอีก ${gap}% เพื่อความคุ้มครองสมบูรณ์</span>`;
+      } else {
+        gapEl.innerHTML = `<span class="material-symbols-outlined text-[15px] text-tertiary">check_circle</span><span class="text-tertiary font-medium">ความคุ้มครองครบถ้วน!</span>`;
+      }
+
+      const level = Math.floor(score / 20);
+      document.getElementById('battery-level-text').textContent = `ระดับ ${level} จาก 5 ขีด`;
+
+      // AI tip
+      const reasons = c.battery_reasons || [];
+      let tip = 'พอร์ตของคุณแข็งแกร่งดี ทบทวนประกันทุกปีเพื่อให้สอดคล้องกับชีวิต';
+      if (score < 80) {
+        tip = reasons.length > 0 ? reasons[0] : `หากเสริมความคุ้มครองเพิ่ม คะแนนแบตเตอรี่จะพุ่งขึ้น`;
+      }
+      document.getElementById('ai-tip').textContent = tip;
+
+      // AI plan
+      document.getElementById('ai-plan-title').textContent = `แผนแนะนำ: Krungsri ${score < 60 ? 'Family Health Shield + CI' : 'Wealth Optimizer'}`;
+      document.getElementById('ai-plan-desc').textContent = score < 60
+        ? 'คุ้มครองครอบคลุมและยกระดับแบตเตอรี่สู่ความมั่นคง พร้อมสิทธิ์เบิกจ่ายโรงพยาบาลชั้นนำทันที'
+        : 'พอร์ตของคุณดีแล้ว สามารถเพิ่มเติมการออมเพื่อเพิ่มผลตอบแทนระยะยาว';
+
+      // Render dimensions dynamically based on customer profile & policies
+      renderDimensions(c, data.policies || []);
+
+      // Life events banner
+      if (data.lifeEvents && data.lifeEvents.length > 0) {
+        const evt = data.lifeEvents[0];
+        document.getElementById('event-title').textContent = evt.title || 'ตรวจพบเหตุการณ์ชีวิตใหม่';
+        document.getElementById('event-desc').textContent = evt.description || '';
+        document.getElementById('life-event-banner').classList.remove('hidden');
+      }
+
+    } catch (err) {
+      console.error('Failed to load profile:', err);
+      // Fallback static values
+      document.getElementById('customer-name').textContent = 'ผู้ใช้งาน';
+      document.getElementById('welcome-title').textContent = 'สวัสดี';
+      document.getElementById('battery-score').textContent = '68';
+      document.getElementById('battery-blocks').innerHTML = getBatteryBlocks(68);
+      renderDimensions({ battery_score: 68 }, []);
+      document.getElementById('update-time').textContent = 'อัปเดตล่าสุด: --:-- น.';
+      document.getElementById('ai-tip').textContent = 'ไม่สามารถโหลดข้อมูลได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง';
+    }
+  }
+
+  // Sync button
+  document.getElementById('btn-sync').addEventListener('click', async () => {
+    const icon = document.getElementById('sync-icon');
+    icon.classList.add('animate-spin');
+    await loadProfile();
+    icon.classList.remove('animate-spin');
+  });
+  document.getElementById('btn-sync-inline').addEventListener('click', async () => {
+    await loadProfile();
+  });
+
+  // Share button
+  document.getElementById('btn-share').addEventListener('click', () => {
+    if (navigator.share) {
+      navigator.share({ title: 'Coverage Pulse', text: 'ดูชีพจรความคุ้มครองของฉัน', url: window.location.href });
+    } else {
+      navigator.clipboard.writeText(window.location.href).then(() => alert('คัดลอก URL เรียบร้อย'));
+    }
+  });
+
+  // Toast notification
+  function showToast(msg, icon = 'check_circle') {
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toast-msg');
+    const toastIcon = document.getElementById('toast-icon');
+    if (!toast || !toastMsg) return;
+    if (toastTimer) clearTimeout(toastTimer);
+    toastMsg.textContent = msg;
+    if (toastIcon) toastIcon.textContent = icon;
+    toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+    toast.classList.add('opacity-100', 'translate-y-0');
+    toastTimer = setTimeout(() => {
+      toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      toast.classList.remove('opacity-100', 'translate-y-0');
+    }, 3500);
+  }
+
+  // Profile Modal
+  const profileModal = document.getElementById('profile-modal');
+  const profileDialog = document.getElementById('profile-modal-dialog');
+
+  function openProfileModal() {
+    if (!currentCustomer) return;
+    const c = currentCustomer;
+
+    // Header info
+    document.getElementById('modal-customer-name').textContent = c.name || 'ผู้ใช้';
+    document.getElementById('modal-cid-badge').textContent = c.id || CUSTOMER_ID;
+    document.getElementById('modal-segment-badge').textContent = c.segment || 'Krungsri Prime';
+    document.getElementById('modal-battery-badge').textContent = `แบตเตอรี่ ${c.battery_score || 0}%`;
+    if (c.avatar_url) {
+      document.getElementById('modal-avatar').src = c.avatar_url;
+    }
+
+    // Tab 1 Personal
+    document.getElementById('prof-name').value = c.name || '';
+    document.getElementById('prof-age').value = c.age || '';
+    document.getElementById('prof-gender').value = c.gender || 'หญิง';
+    document.getElementById('prof-phone').value = c.phone || '';
+    document.getElementById('prof-email').value = c.email || '';
+    document.getElementById('prof-segment-display').textContent = c.segment || 'Krungsri Prime';
+    document.getElementById('prof-occupation-category').value = c.occupation || 'employee';
+    document.getElementById('prof-occupation-detail').value = c.occupation_detail || '';
+
+    // Tab 2 Welfare & Risk Snapshot (from Latest Assessment)
+    const WELFARE_MAP = {
+      group_insurance: 'ประกันกลุ่มบริษัทเอกชน (OPD/IPD)',
+      government: 'สิทธิข้าราชการ / รัฐวิสาหกิจ',
+      social_security: 'ประกันสังคม ม.33 / ม.39',
+      none: 'ไม่มีสวัสดิการอื่น (จ่ายเอง 100%)'
+    };
+    const DEBT_MAP = {
+      no_debt: 'ปลอดหนี้สิน ไม่มีภาระผ่อนประจำ',
+      car_or_personal: 'ผ่อนรถยนต์ / สินเชื่อบุคคล',
+      mortgage_high: 'ผ่อนบ้าน / คอนโดมิเนียมยอดสูง',
+      business_loan: 'หนี้สินหมุนเวียนธุรกิจ SME'
+    };
+    const FAMILY_MAP = {
+      single: 'โสด (ไม่มีผู้พึ่งพิงทางการเงิน)',
+      married: 'สมรส (ไม่มีบุตร)',
+      married_children: 'สมรส มีบุตรและครอบครัว (เสาหลัก)',
+      preparing: 'กำลังเตรียมมีบุตร / วางแผนครอบครัว'
+    };
+    const CONCERN_MAP = {
+      emergency_medical: 'ค่ารักษาพยาบาลฉุกเฉินและค่าห้องเอกชน',
+      critical_illness: 'โรคร้ายแรง มะเร็ง และค่ารักษาต่อเนื่อง',
+      family_burden: 'ทุนประกันชีวิตคุ้มครองครอบครัว/มรดก',
+      retirement_shortage: 'เงินออมยามเกษียณและบำนาญไม่พอ'
+    };
+    const INCOME_MAP = {
+      below_30k: 'น้อยกว่า 30,000 บาท',
+      '30k_70k': '30,000 - 70,000 บาท',
+      '70k_150k': '70,000 - 150,000 บาท',
+      above_150k: 'มากกว่า 150,000 บาท'
+    };
+
+    document.getElementById('prof-welfare-display').textContent = WELFARE_MAP[c.welfare] || c.welfare || 'ไม่ระบุ';
+    document.getElementById('prof-debt-display').textContent = DEBT_MAP[c.debt_burden] || c.debt_burden || 'ไม่ระบุ';
+    document.getElementById('prof-family-display').textContent = FAMILY_MAP[c.family_status] || c.family_status || 'ไม่ระบุ';
+    document.getElementById('prof-concern-display').textContent = CONCERN_MAP[c.primary_concern] || c.primary_concern || 'ไม่ระบุ';
+    document.getElementById('prof-income-display').textContent = INCOME_MAP[c.income_bracket] || c.income_bracket || 'ไม่ระบุ';
+
+    const gotoAssessment = document.getElementById('btn-modal-goto-assessment');
+    if (gotoAssessment) {
+      gotoAssessment.href = `/customer/assessment.html?cid=${CUSTOMER_ID}`;
+    }
+
+    // Tab 3 Policies
+    renderModalPolicies(currentPolicies);
+
+    // Default to tab 1
+    switchProfileTab('personal');
+
+    // Show modal
+    profileModal.classList.remove('opacity-0', 'pointer-events-none');
+    profileModal.classList.add('opacity-100');
+    profileDialog.classList.remove('scale-95');
+    profileDialog.classList.add('scale-100');
+  }
+
+  function closeProfileModal() {
+    profileModal.classList.remove('opacity-100');
+    profileModal.classList.add('opacity-0', 'pointer-events-none');
+    profileDialog.classList.remove('scale-100');
+    profileDialog.classList.add('scale-95');
+  }
+
+  function switchProfileTab(tab) {
+    const tabBtns = {
+      personal: document.getElementById('tab-btn-personal'),
+      welfare: document.getElementById('tab-btn-welfare'),
+      policies: document.getElementById('tab-btn-policies')
+    };
+    const tabContents = {
+      personal: document.getElementById('tab-content-personal'),
+      welfare: document.getElementById('tab-content-welfare'),
+      policies: document.getElementById('tab-content-policies')
+    };
+
+    Object.keys(tabBtns).forEach(k => {
+      const btn = tabBtns[k];
+      const content = tabContents[k];
+      if (k === tab) {
+        btn.classList.add('text-primary', 'border-primary', 'font-bold');
+        btn.classList.remove('text-on-surface-variant', 'border-transparent', 'font-semibold');
+        content.classList.remove('hidden');
+      } else {
+        btn.classList.remove('text-primary', 'border-primary', 'font-bold');
+        btn.classList.add('text-on-surface-variant', 'border-transparent', 'font-semibold');
+        content.classList.add('hidden');
+      }
+    });
+  }
+
+  function renderModalPolicies(policies) {
+    const list = document.getElementById('modal-policies-list');
+    const countEl = document.getElementById('modal-policy-count');
+    const totalSumEl = document.getElementById('modal-policy-total-sum');
+    if (!list) return;
+
+    countEl.textContent = policies ? policies.length : 0;
+    let totalSum = 0;
+    (policies || []).forEach(p => { totalSum += (p.coverage_amount || 0); });
+    totalSumEl.textContent = `ทุนประกันรวม: ฿${totalSum.toLocaleString()}`;
+
+    if (!policies || policies.length === 0) {
+      list.innerHTML = `
+        <div class="p-8 rounded-2xl bg-surface-container-low border border-dashed border-surface-container-high text-center flex flex-col items-center gap-2">
+          <span class="material-symbols-outlined text-[36px] text-on-surface-variant">policy</span>
+          <span class="font-bold text-sm text-on-surface">ยังไม่มีกรมธรรม์ในพอร์ต</span>
+          <span class="text-xs text-on-surface-variant max-w-xs">ลูกค้ายังไม่มีกรมธรรม์ประกันชีวิตหรือสุขภาพผูกกับธนาคารกรุงศรี</span>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = policies.map(p => `
+      <div class="p-4 rounded-2xl bg-surface-container-lowest border border-surface-container flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-primary-container/30 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span class="material-symbols-outlined text-[20px]">shield</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-bold text-sm text-on-surface leading-snug">${p.product_name || 'กรมธรรม์ประกันภัย'}</span>
+            <span class="text-[11px] text-on-surface-variant mt-0.5">เลขที่: ${p.policy_number || p.id} • ประเภท: ${p.category || '-'}</span>
+          </div>
+        </div>
+        <div class="flex sm:flex-col items-baseline sm:items-end justify-between w-full sm:w-auto text-right">
+          <span class="text-xs font-bold text-tertiary">ความคุ้มครอง ฿${(p.coverage_amount || 0).toLocaleString()}</span>
+          <span class="text-[11px] text-on-surface-variant">เบี้ย ฿${(p.annual_premium || 0).toLocaleString()}/ปี</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Profile modal event listeners
+  const btnProfileOpen = document.getElementById('btn-profile-open');
+  if (btnProfileOpen) {
+    btnProfileOpen.addEventListener('click', openProfileModal);
+  }
+
+  const btnCloseModal = document.getElementById('btn-close-profile-modal');
+  if (btnCloseModal) {
+    btnCloseModal.addEventListener('click', closeProfileModal);
+  }
+
+  const btnCancelProfile = document.getElementById('btn-cancel-profile');
+  if (btnCancelProfile) {
+    btnCancelProfile.addEventListener('click', closeProfileModal);
+  }
+
+  if (profileModal) {
+    profileModal.addEventListener('click', (e) => {
+      if (e.target === profileModal) closeProfileModal();
+    });
+  }
+
+  // Tab buttons
+  document.getElementById('tab-btn-personal')?.addEventListener('click', () => switchProfileTab('personal'));
+  document.getElementById('tab-btn-welfare')?.addEventListener('click', () => switchProfileTab('welfare'));
+  document.getElementById('tab-btn-policies')?.addEventListener('click', () => switchProfileTab('policies'));
+
+  // Save profile
+  document.getElementById('btn-save-profile')?.addEventListener('click', async () => {
+    const saveBtn = document.getElementById('btn-save-profile');
+    const saveIcon = document.getElementById('btn-save-icon');
+    const saveText = document.getElementById('btn-save-text');
+
+    const nameVal = document.getElementById('prof-name').value.trim();
+    const ageVal = document.getElementById('prof-age').value;
+    if (!nameVal || !ageVal) {
+      alert('กรุณากรอกชื่อ-นามสกุล และอายุให้ครบถ้วน');
+      return;
+    }
+
+    const payload = {
+      name: nameVal,
+      age: parseInt(ageVal),
+      gender: document.getElementById('prof-gender').value,
+      phone: document.getElementById('prof-phone').value.trim(),
+      email: document.getElementById('prof-email').value.trim(),
+      occupation: document.getElementById('prof-occupation-category').value,
+      occupation_detail: document.getElementById('prof-occupation-detail').value.trim()
+    };
+
+    saveBtn.disabled = true;
+    saveIcon.textContent = 'progress_activity';
+    saveIcon.classList.add('animate-spin');
+    saveText.textContent = 'กำลังบันทึกข้อมูล...';
+
+    try {
+      const res = await fetch(`/api/customer/profile/${CUSTOMER_ID}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+      const data = await res.json();
+
+      closeProfileModal();
+      showToast('บันทึกข้อมูลส่วนบุคคลเรียบร้อยแล้ว!', 'verified');
+      await loadProfile();
+    } catch (err) {
+      alert('เกิดข้อผิดพลาด: ' + err.message);
+    } finally {
+      saveBtn.disabled = false;
+      saveIcon.textContent = 'save';
+      saveIcon.classList.remove('animate-spin');
+      saveText.textContent = 'บันทึกข้อมูลส่วนตัว';
+    }
+  });
+
+  // Persona switcher
+  const personaSelect = document.getElementById('persona-select');
+  if (personaSelect) {
+    personaSelect.value = CUSTOMER_ID;
+    personaSelect.addEventListener('change', (e) => {
+      const u = new URL(window.location.href);
+      u.searchParams.set('cid', e.target.value);
+      window.location.href = u.pathname + u.search;
+    });
+  }
+
+  // Update nav links to preserve customer persona
+  document.querySelectorAll('a[href^="/customer"]').forEach(a => {
+    try {
+      const u = new URL(a.getAttribute('href'), window.location.origin);
+      u.searchParams.set('cid', CUSTOMER_ID);
+      a.setAttribute('href', u.pathname + u.search);
+    } catch(e) {}
+  });
+
+  // Consent Center State & Functions
+  let consentData = null;
+
+  async function loadConsentCenterData() {
+    try {
+      const res = await fetch(`/api/customer/consent-center/${CUSTOMER_ID}`);
+      if (!res.ok) throw new Error('Cannot fetch consent data');
+      consentData = await res.json();
+      renderConsentCenter();
+    } catch (e) {
+      console.warn('Consent center fetch error:', e);
+    }
+  }
+
+  function renderConsentCenter() {
+    if (!consentData) return;
+    const sourcesContainer = document.getElementById('consent-sources-list');
+    const auditContainer = document.getElementById('consent-audit-list');
+    const badgeEl = document.getElementById('nav-active-consent-badge');
+
+    const activeCount = consentData.sources.filter(s => s.status === 'active').length;
+    if (badgeEl) {
+      badgeEl.textContent = `${activeCount}/4 Active`;
+      badgeEl.className = activeCount === 4 
+        ? 'text-[10px] bg-tertiary/15 text-tertiary px-1.5 py-0.5 rounded-full font-semibold'
+        : 'text-[10px] bg-primary-container text-on-primary-container px-1.5 py-0.5 rounded-full font-semibold';
+    }
+
+    // Render Sources
+    if (sourcesContainer) {
+      sourcesContainer.innerHTML = consentData.sources.map(src => {
+        const isActive = src.status === 'active';
+        return `
+          <div class="p-4 rounded-xl border ${isActive ? 'border-surface-container-high bg-surface-container-lowest shadow-xs' : 'border-error/20 bg-error/5'} flex flex-col sm:flex-row sm:items-start justify-between gap-4 transition-all">
+            <div class="flex items-start gap-3.5 flex-1">
+              <div class="w-10 h-10 rounded-xl ${isActive ? 'bg-tertiary/10 text-tertiary' : 'bg-surface-container text-on-surface-variant'} flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
+                <span class="material-symbols-outlined text-[22px]">${src.icon}</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-bold text-[13.5px] text-on-surface">${src.title}</span>
+                  ${src.sensitive ? '<span class="px-2 py-0.2 rounded text-[9.5px] font-semibold bg-error/10 text-error">Sensitive Data</span>' : ''}
+                  ${src.double_opt_in ? '<span class="px-2 py-0.2 rounded text-[9.5px] font-semibold bg-tertiary/15 text-tertiary">Double Opt-in</span>' : ''}
+                </div>
+                <div class="text-[11.5px] text-tertiary font-medium mt-0.5 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[13px]">handshake</span>
+                  ${src.partner_name}
+                </div>
+                <p class="text-[12px] text-on-surface-variant mt-1.5 leading-relaxed">${src.purpose}</p>
+                <div class="mt-2 text-[10.5px] text-on-surface-variant flex items-center gap-2 font-mono flex-wrap">
+                  <span>สถานะ: <strong class="${isActive ? 'text-tertiary' : 'text-error'}">${isActive ? 'ให้ความยินยอมแล้ว' : 'ระงับความยินยอม'}</strong></span>
+                  <span>•</span>
+                  <span>ช่องทาง: ${src.ip_channel}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Toggle Switch -->
+            <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 flex-shrink-0 pt-0.5 border-t sm:border-t-0 border-surface-container pt-2 sm:pt-0">
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" class="sr-only peer consent-toggle" data-key="${src.key}" ${isActive ? 'checked' : ''}>
+                <div class="w-11 h-6 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tertiary"></div>
+              </label>
+              <span class="text-[11px] font-semibold ${isActive ? 'text-tertiary' : 'text-error'}">
+                ${isActive ? 'เปิดรับสัญญาณ' : 'ระงับสิทธิ์'}
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Wire up toggle events
+      sourcesContainer.querySelectorAll('.consent-toggle').forEach(chk => {
+        chk.addEventListener('change', async function() {
+          const key = this.dataset.key;
+          const status = this.checked ? 'active' : 'revoked';
+          await toggleConsentSource(key, status);
+        });
+      });
+    }
+
+    // Render Audit Trail
+    if (auditContainer) {
+      if (!consentData.recentLogs || consentData.recentLogs.length === 0) {
+        auditContainer.innerHTML = '<div class="p-6 text-center text-[13px] text-on-surface-variant">ไม่พบบันทึก Audit Trail</div>';
+      } else {
+        auditContainer.innerHTML = consentData.recentLogs.map((log, idx) => {
+          const isAct = log.status === 'active';
+          return `
+            <div class="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-surface-container-low transition-colors">
+              <div class="flex items-start gap-2.5 min-w-0 flex-1">
+                <span class="font-mono text-[11px] text-on-surface-variant mt-0.5 flex-shrink-0">#${String(idx + 1).padStart(2, '0')}</span>
+                <div class="flex flex-col min-w-0 pr-1">
+                  <span class="text-[12.5px] font-semibold text-on-surface leading-snug break-words">${log.consent_type}</span>
+                  <span class="text-[11px] text-tertiary leading-normal break-words">${log.partner_name} • ${log.ip_channel || 'KMA'}</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2.5 self-end sm:self-center flex-shrink-0">
+                <span class="text-[11px] font-mono text-on-surface-variant whitespace-nowrap">${log.granted_at}</span>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap ${isAct ? 'bg-tertiary/15 text-tertiary' : 'bg-error-container text-on-error-container'}">
+                  ${isAct ? 'ACTIVE' : 'REVOKED'}
+                </span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+  }
+
+  async function toggleConsentSource(sourceKey, status) {
+    try {
+      const res = await fetch('/api/customer/consent-center/toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerId: CUSTOMER_ID,
+          sourceKey,
+          status
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to toggle');
+
+      showToast(status === 'active' ? 'ยินยอมเปิดรับสัญญาณเรียบร้อยแล้ว ✓' : 'ระงับการแชร์สัญญาณข้อมูลแล้ว ✓', status === 'active' ? 'check_circle' : 'block');
+      await loadConsentCenterData();
+    } catch (e) {
+      alert('เกิดข้อผิดพลาด: ' + e.message);
+      await loadConsentCenterData();
+    }
+  }
+
+  async function revokeAllConsents() {
+    if (!confirm('คุณต้องการเพิกถอนความยินยอมในการประมวลผลข้อมูลทุกแหล่งสัญญาณตามสิทธิ์ PDPA ใช่หรือไม่? (อาจทำให้ระบบไม่สามารถตรวจจับช่องโหว่ความคุ้มครองได้)')) {
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/customer/consent-center/revoke-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId: CUSTOMER_ID })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to revoke');
+
+      showToast('เพิกถอนความยินยอมทุกแหล่งสัญญาณเรียบร้อยแล้ว', 'verified');
+      await loadConsentCenterData();
+    } catch (e) {
+      alert('เกิดข้อผิดพลาด: ' + e.message);
+    }
+  }
+
+  function openConsentCenter() {
+    const modal = document.getElementById('modal-consent-center');
+    if (!modal) return;
+    loadConsentCenterData();
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    switchConsentTab('sources');
+  }
+
+  function closeConsentCenter() {
+    const modal = document.getElementById('modal-consent-center');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function switchConsentTab(tab) {
+    const sourcesBtn = document.getElementById('tab-btn-consent-sources');
+    const auditBtn = document.getElementById('tab-btn-consent-audit');
+    const sourcesView = document.getElementById('view-consent-sources');
+    const auditView = document.getElementById('view-consent-audit');
+
+    if (tab === 'sources') {
+      sourcesBtn.className = 'py-3 border-b-2 border-primary text-primary flex items-center gap-1.5 transition-colors cursor-pointer';
+      auditBtn.className = 'py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface flex items-center gap-1.5 transition-colors cursor-pointer';
+      sourcesView.classList.remove('hidden');
+      sourcesView.classList.add('flex');
+      auditView.classList.add('hidden');
+      auditView.classList.remove('flex');
+    } else {
+      auditBtn.className = 'py-3 border-b-2 border-primary text-primary flex items-center gap-1.5 transition-colors cursor-pointer';
+      sourcesBtn.className = 'py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface flex items-center gap-1.5 transition-colors cursor-pointer';
+      auditView.classList.remove('hidden');
+      auditView.classList.add('flex');
+      sourcesView.classList.add('hidden');
+      sourcesView.classList.remove('flex');
+    }
+  }
+
+  // Event bindings for Consent Center
+  document.getElementById('btn-open-consent')?.addEventListener('click', openConsentCenter);
+  document.getElementById('btn-close-consent-modal')?.addEventListener('click', closeConsentCenter);
+  document.getElementById('btn-done-consent')?.addEventListener('click', closeConsentCenter);
+  document.getElementById('modal-consent-center')?.addEventListener('click', (e) => {
+    if (e.target === document.getElementById('modal-consent-center')) closeConsentCenter();
+  });
+  document.getElementById('tab-btn-consent-sources')?.addEventListener('click', () => switchConsentTab('sources'));
+  document.getElementById('tab-btn-consent-audit')?.addEventListener('click', () => switchConsentTab('audit'));
+  document.getElementById('btn-revoke-all-consents')?.addEventListener('click', revokeAllConsents);
+
+  // Init
+  loadProfile();
+  loadConsentCenterData().then(() => {
+    if (urlParams.get('openConsent') === '1') {
+      openConsentCenter();
+    }
+  });
+})();
+</script>
+</body>
+</html>

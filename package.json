@@ -1,0 +1,25 @@
+{
+  "name": "coverage-pulse",
+  "version": "1.0.0",
+  "description": "Coverage Pulse - Krungsri Proactive Insurance Health & Wealth Intelligence Platform",
+  "main": "server/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "seed": "node server/db/seed.js"
+  },
+  "keywords": [
+    "krungsri",
+    "insurance",
+    "coverage-pulse",
+    "pdpa",
+    "agentic-ai",
+    "fintech"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}

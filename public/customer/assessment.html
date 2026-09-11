@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Coverage Pulse | ประเมินความคุ้มครองตนเอง</title>
+  <meta name="description" content="แบบประเมิน Self-Service Assessment — วิเคราะห์ความเพียงพอของความคุ้มครองสุขภาพและทุนชีวิตในไม่กี่นาที"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    @layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}
+    ::-webkit-scrollbar{display:none;}
+    .step-hidden{display:none!important;}
+    .option-card{transition:all 0.15s ease;}
+    .option-card.selected{background:rgba(254,203,0,0.12);border-color:#fecb00!important;box-shadow:0 0 0 2px rgba(254,203,0,0.35);}
+    .option-card:hover:not(.selected){background:rgba(238,237,247,0.6);}
+    @keyframes slideIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    .animate-slide-in{animation:slideIn 0.3s ease forwards;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .animate-spin{animation:spin 1s linear infinite;}
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "inverse-on-surface":"#f1effa","secondary-container":"#e6ded9","surface":"#fbf8ff","on-tertiary-fixed":"#002113","background":"#fbf8ff","secondary-fixed":"#e9e1dc","primary-fixed-dim":"#f1c100","error-container":"#ffdad6","on-error":"#ffffff","outline":"#80765f","surface-tint":"#745b00","on-secondary-fixed":"#1e1b18","on-primary-fixed-variant":"#584400","on-tertiary-container":"#006645","surface-variant":"#e3e1ec","on-background":"#1a1b22","surface-container-lowest":"#ffffff","tertiary-container":"#5be9ad","primary-fixed":"#ffe08b","on-secondary-fixed-variant":"#4b4642","tertiary-fixed":"#6ffbbe","tertiary":"#006c49","on-error-container":"#93000a","on-primary-fixed":"#241a00","on-tertiary":"#ffffff","on-primary":"#ffffff","surface-container":"#eeedf7","secondary-fixed-dim":"#cdc5c0","surface-bright":"#fbf8ff","error":"#ba1a1a","on-surface-variant":"#4e4632","primary":"#745b00","on-primary-container":"#6e5700","surface-dim":"#dad9e3","tertiary-fixed-dim":"#4edea3","primary-container":"#fecb00","on-tertiary-fixed-variant":"#005236","on-surface":"#1a1b22","outline-variant":"#d2c5ab","secondary":"#635d5a","inverse-primary":"#f1c100","surface-container-highest":"#e3e1ec","on-secondary":"#ffffff","surface-container-low":"#f4f2fd","inverse-surface":"#2f3038","on-secondary-container":"#67625e","surface-container-high":"#e8e7f1"
+        },
+        "borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        "fontFamily":{"headline-xl":["IBM Plex Sans"],"label-sm":["IBM Plex Sans"],"body-lg":["IBM Plex Sans"],"label-lg":["IBM Plex Sans"],"headline-md":["IBM Plex Sans"],"label-md":["IBM Plex Sans"],"headline-lg":["IBM Plex Sans"],"body-sm":["IBM Plex Sans"],"display-lg":["IBM Plex Sans"],"body-md":["IBM Plex Sans"]},
+        "fontSize":{
+          "headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"600"}],
+          "label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"500"}],
+          "body-lg":["18px",{"lineHeight":"28px","fontWeight":"400"}],
+          "label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],
+          "headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],
+          "label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],
+          "headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],
+          "body-sm":["14px",{"lineHeight":"20px","fontWeight":"400"}],
+          "display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"700"}],
+          "body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}]
+        }
+      }
+    }
+  }</script>
+</head>
+<body class="bg-background font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 w-full z-50 bg-surface/95 backdrop-blur-xl border-b border-surface-container/60 shadow-[0_1px_10px_rgba(0,0,0,0.03)]">
+  <div class="h-18 max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center justify-between gap-3 lg:gap-6">
+    <div class="flex items-center gap-3 lg:gap-5 flex-shrink-0">
+      <a class="flex items-center gap-2.5 group" href="/customer">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FFD100] to-[#E5AC00] flex items-center justify-center shadow-xs text-[#2D2926] flex-shrink-0 group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="font-headline-md text-[17px] font-bold tracking-tight text-on-surface">Coverage Pulse</span>
+            <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container font-semibold text-[9px] tracking-wider uppercase">KRUNGSRI</span>
+          </div>
+          <span class="font-label-sm text-[10.5px] text-on-surface-variant leading-none">Health &amp; Wealth Intelligence</span>
+        </div>
+      </a>
+    </div>
+    <nav class="hidden lg:flex items-center gap-1 bg-surface-container-low p-1 rounded-full flex-shrink-0 shadow-xs">
+      <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors text-[13px] font-medium whitespace-nowrap" href="/customer">ภาพรวมพอร์ต</a>
+      <a aria-current="page" class="px-3.5 py-1.5 bg-surface-container-lowest text-on-surface rounded-full text-[13px] font-semibold shadow-xs whitespace-nowrap" href="/customer/assessment.html">ประเมินความคุ้มครอง</a>
+      <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors text-[13px] font-medium whitespace-nowrap" href="/customer/sandbox.html">AI จำลองแผน</a>
+      <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors text-[13px] font-medium whitespace-nowrap" href="/customer/appointments.html">ติดต่อที่ปรึกษา</a>
+    </nav>
+    <!-- Progress bar & PDPA -->
+    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+      <a href="/customer?openConsent=1" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-[11.5px] font-medium transition-all border border-surface-container-high/60 shadow-xs cursor-pointer group" title="เปิดศูนย์จัดการความยินยอม PDPA Consent Center">
+        <span class="material-symbols-outlined text-[15px] text-tertiary group-hover:scale-110 transition-transform">verified_user</span>
+        <span>PDPA Consent</span>
+      </a>
+      <div class="hidden sm:flex items-center gap-2 text-on-surface-variant">
+        <span class="font-label-sm text-label-sm whitespace-nowrap" id="progress-label">ขั้นตอนที่ 1/2</span>
+        <div class="w-24 h-1.5 rounded-full bg-surface-container overflow-hidden">
+          <div class="h-full bg-primary-container rounded-full transition-all duration-500" id="progress-bar" style="width:50%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="w-full pt-20 min-h-screen bg-background">
+  <div class="max-w-[860px] mx-auto px-6 py-10 flex flex-col gap-8">
+
+    <!-- Page Title -->
+    <div class="flex flex-col gap-2 animate-slide-in">
+      <div class="flex items-center gap-2.5">
+        <span class="px-3 py-1 rounded-full bg-primary-container/20 text-on-primary-fixed-variant font-label-sm font-semibold text-[11px] uppercase tracking-wider">Tier 1 — วิเคราะห์บริบทชีวิตและความเสี่ยงเชิงลึก</span>
+        <span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-[11px]" id="step1-counter-pill">ตอบแล้ว <strong id="step1-count-text" class="text-primary font-bold">0</strong>/7 มิติ</span>
+      </div>
+      <h1 class="font-headline-xl text-[28px] md:text-[32px] font-bold text-on-surface tracking-tight leading-tight">แบบประเมินความคุ้มครองรอบด้าน<br/>Comprehensive Coverage Assessment</h1>
+      <p class="font-body-md text-[15px] text-on-surface-variant">วิเคราะห์ความครอบคลุมทั้งสวัสดิการเดิม ภาระหนี้สิน และเป้าหมายชีวิต เพื่อคำนวณระดับแบตเตอรี่ความคุ้มครองที่ตรงกับตัวคุณที่สุด</p>
+    </div>
+
+    <!-- STEP 1: Tier 1 Profile (7 Dimensions) -->
+    <div id="step-1" class="flex flex-col gap-6 animate-slide-in">
+      
+      <!-- 1. Age -->
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-primary-container/30 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[20px]">calendar_month</span></div>
+            <div>
+              <h2 class="font-headline-md text-[17px] font-bold text-on-surface">1. ช่วงอายุของคุณ</h2>
+              <p class="font-body-sm text-[12px] text-on-surface-variant">มีผลโดยตรงต่อเบี้ยประกันและความเสี่ยงด้านสุขภาพตามช่วงวัย</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="age-options">
+          <button type="button" data-field="age" data-value="20-29" class="option-card flex flex-col items-center gap-1.5 p-4 border border-surface-container rounded-xl cursor-pointer text-center">
+            <span class="material-symbols-outlined text-[26px] text-primary">school</span>
+            <span class="font-label-lg font-semibold text-on-surface">20-29 ปี</span>
+            <span class="font-label-sm text-on-surface-variant text-[11px]">First Jobber / เริ่มทำงาน</span>
+          </button>
+          <button type="button" data-field="age" data-value="30-39" class="option-card flex flex-col items-center gap-1.5 p-4 border border-surface-container rounded-xl cursor-pointer text-center">
+            <span class="material-symbols-outlined text-[26px] text-primary">family_restroom</span>
+            <span class="font-label-lg font-semibold text-on-surface">30-39 ปี</span>
+            <span class="font-label-sm text-on-surface-variant text-[11px]">สร้างครอบครัว / ก้าวหน้า</span>
+          </button>
+          <button type="button" data-field="age" data-value="40-49" class="option-card flex flex-col items-center gap-1.5 p-4 border border-surface-container rounded-xl cursor-pointer text-center">
+            <span class="material-symbols-outlined text-[26px] text-primary">trending_up</span>
+            <span class="font-label-lg font-semibold text-on-surface">40-49 ปี</span>
+            <span class="font-label-sm text-on-surface-variant text-[11px]">มืออาชีพ / ภาระสูงสุด</span>
+          </button>
+          <button type="button" data-field="age" data-value="50-60" class="option-card flex flex-col items-center gap-1.5 p-4 border border-surface-container rounded-xl cursor-pointer text-center">
+            <span class="material-symbols-outlined text-[26px] text-primary">elderly</span>
+            <span class="font-label-lg font-semibold text-on-surface">50-60 ปี</span>
+            <span class="font-label-sm text-on-surface-variant text-[11px]">เตรียมพร้อมสู่วัยเกษียณ</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Family Status -->
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-primary-container/30 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[20px]">group</span></div>
+            <div>
+              <h2 class="font-headline-md text-[17px] font-bold text-on-surface">2. สถานะครอบครัวและผู้พึ่งพิง</h2>
+              <p class="font-body-sm text-[12px] text-on-surface-variant">ตัวกำหนดขนาดทุนประกันชีวิตและมรดกที่จำเป็นต้องสำรองไว้</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <button type="button" data-field="family_status" data-value="single" class="option-card flex flex-col items-center gap-1.5 p-4 border border-surface-container rounded-xl cursor-pointer text-center">
+            <span class="material-symbols-outlined text-[26px]">person</span>
+            <span class="font-label-lg font-semibold text-on-surface">โสด</span>
+            <span class="font-label-sm text-on-surface-variant text-[11px]">เน้นดูแลตนเอง</span>
+          </button>
+          <button type="button" data-field="family_status" data-value="married" class="option-card flex flex-col items-center gap-1.5 p-4 border border-surface-container rounded-xl cursor-pointer text-center">
+            <span class="material-symbols-outlined text-[26px]">diversity_1</span>
+            <span class="font-label-lg font-semibold text-on-surface">สมรส / มีคู่ชีวิต</span>
+            <span class="font-label-sm text-on-surface-variant text-[11px]">ยังไม่มีบุตร</span>
+          </button>
+          <button type="button" data-field="family_status" data-value="married_children" class="option-card flex flex-col items-center gap-1.5 p-4 border border-surface-container rounded-xl cursor-pointer text-center">
+            <span class="material-symbols-outlined text-[26px]">child_care</span>
+            <span class="font-label-lg font-semibold text-on-surface">มีบุตร</span>
+            <span class="font-label-sm text-on-surface-variant text-[11px]">มีผู้พึ่งพิงทางการเงิน</span>
+          </button>
+          <button type="button" data-field="family_status" data-value="preparing" class="option-card flex flex-col items-center gap-1.5 p-4 border border-surface-container rounded-xl cursor-pointer text-center">
+            <span class="material-symbols-outlined text-[26px]">pregnant_woman</span>
+            <span class="font-label-lg font-semibold text-on-surface">เตรียมมีบุตร / ตั้งครรภ์</span>
+            <span class="font-label-sm text-on-surface-variant text-[11px]">ต้องการแผนคลอด & เด็ก</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. Existing Healthcare Welfare (New & Crucial) -->
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-primary-container/30 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[20px]">local_hospital</span></div>
+            <div>
+              <h2 class="font-headline-md text-[17px] font-bold text-on-surface">3. สวัสดิการรักษาพยาบาลเดิมที่มีอยู่</h2>
+              <p class="font-body-sm text-[12px] text-on-surface-variant">เพื่อประเมินส่วนต่างค่ารักษาและช่องว่างความคุ้มครองจริง</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button type="button" data-field="welfare" data-value="group_insurance" class="option-card flex items-start gap-3.5 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0"><span class="material-symbols-outlined text-[22px]">domain</span></div>
+            <div>
+              <div class="font-label-lg font-bold text-on-surface">มีประกันกลุ่มของบริษัท (Group Insurance)</div>
+              <div class="font-body-sm text-on-surface-variant text-[12px]">มีวงเงิน OPD/IPD ขององค์กร แต่อาจมีเพดานจำกัดและหมดอายุเมื่อเปลี่ยนงาน</div>
+            </div>
+          </button>
+          <button type="button" data-field="welfare" data-value="social_security" class="option-card flex items-start gap-3.5 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0"><span class="material-symbols-outlined text-[22px]">medical_services</span></div>
+            <div>
+              <div class="font-label-lg font-bold text-on-surface">มีเฉพาะสิทธิประกันสังคม</div>
+              <div class="font-body-sm text-on-surface-variant text-[12px]">รักษาตาม รพ. ตามสิทธิ มีความเสี่ยงเรื่องส่วนต่างค่ารักษาและยานอกบัญชี</div>
+            </div>
+          </button>
+          <button type="button" data-field="welfare" data-value="government" class="option-card flex items-start gap-3.5 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0"><span class="material-symbols-outlined text-[22px]">account_balance</span></div>
+            <div>
+              <div class="font-label-lg font-bold text-on-surface">สิทธิข้าราชการ / รัฐวิสาหกิจ</div>
+              <div class="font-body-sm text-on-surface-variant text-[12px]">เบิกจ่ายตรงตามระเบียบราชการ แนะนำเน้นโรคร้ายแรงและค่าห้อง รพ.เอกชน</div>
+            </div>
+          </button>
+          <button type="button" data-field="welfare" data-value="none" class="option-card flex items-start gap-3.5 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-error flex-shrink-0"><span class="material-symbols-outlined text-[22px]">warning</span></div>
+            <div>
+              <div class="font-label-lg font-bold text-on-surface">ไม่มีสวัสดิการเลย (จ่ายเองทั้งหมด 100%)</div>
+              <div class="font-body-sm text-on-surface-variant text-[12px]">แบกรับความเสี่ยงค่ารักษาพยาบาลเอกชนเองเต็มจำนวน จำเป็นต้องมีประกันสุขภาพ</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. Debt & Financial Liabilities (New & Crucial) -->
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-primary-container/30 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[20px]">real_estate_agent</span></div>
+            <div>
+              <h2 class="font-headline-md text-[17px] font-bold text-on-surface">4. ภาระหนี้สินและการผ่อนชำระ</h2>
+              <p class="font-body-sm text-[12px] text-on-surface-variant">หากเกิดเหตุไม่คาดฝัน ทุนประกันชีวิตจะช่วยปลดภาระไม่ให้ตกถึงครอบครัว</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button type="button" data-field="debt_burden" data-value="mortgage_high" class="option-card flex flex-col gap-1.5 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <span class="material-symbols-outlined text-[24px] text-primary">home</span>
+            <span class="font-label-lg font-bold text-on-surface">มีผ่อนบ้าน / คอนโด</span>
+            <span class="font-body-sm text-on-surface-variant text-[12px]">ภาระหนี้สินระยะยาวก้อนใหญ่ จำเป็นต้องมีทุนคุ้มครองยอดหนี้</span>
+          </button>
+          <button type="button" data-field="debt_burden" data-value="car_or_personal" class="option-card flex flex-col gap-1.5 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <span class="material-symbols-outlined text-[24px] text-primary">directions_car</span>
+            <span class="font-label-lg font-bold text-on-surface">มีผ่อนรถ / สินเชื่อบุคคล</span>
+            <span class="font-body-sm text-on-surface-variant text-[12px]">ภาระหนี้สินระยะสั้น-ปานกลาง ต้องมีสภาพคล่องรองรับ</span>
+          </button>
+          <button type="button" data-field="debt_burden" data-value="no_debt" class="option-card flex flex-col gap-1.5 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <span class="material-symbols-outlined text-[24px] text-tertiary">check_circle</span>
+            <span class="font-label-lg font-bold text-on-surface">ไม่มีภาระหนี้สิน</span>
+            <span class="font-body-sm text-on-surface-variant text-[12px]">ปลอดหนี้ สภาพคล่องการเงินสูง สามารถเน้นการออมและลงทุนได้เต็มที่</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 5. Primary Protection Concern (New & Crucial) -->
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-primary-container/30 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[20px]">psychology_alt</span></div>
+            <div>
+              <h2 class="font-headline-md text-[17px] font-bold text-on-surface">5. เรื่องที่คุณกังวลหรือให้ความสำคัญสูงสุด</h2>
+              <p class="font-body-sm text-[12px] text-on-surface-variant">เพื่อจัดลำดับความสำคัญของสัญญาเพิ่มเติม (Rider Priority)</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button type="button" data-field="primary_concern" data-value="medical_cost" class="option-card flex items-start gap-3.5 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0"><span class="material-symbols-outlined text-[22px]">emergency</span></div>
+            <div>
+              <div class="font-label-lg font-bold text-on-surface">ค่ารักษาพยาบาลเอกชนบานปลาย</div>
+              <div class="font-body-sm text-on-surface-variant text-[12px]">กังวลค่าห้องผ่าตัด ยานอกบัญชี หรือเทคโนโลยีการรักษาใหม่ๆ ใน รพ.เอกชน</div>
+            </div>
+          </button>
+          <button type="button" data-field="primary_concern" data-value="critical_illness" class="option-card flex items-start gap-3.5 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-error flex-shrink-0"><span class="material-symbols-outlined text-[22px]">coronavirus</span></div>
+            <div>
+              <div class="font-label-lg font-bold text-on-surface">ตรวจพบโรคร้ายแรงกะทันหัน</div>
+              <div class="font-body-sm text-on-surface-variant text-[12px]">มะเร็ง หลอดเลือดสมอง หรือหัวใจ ที่ต้องใช้เงินก้อนในการหยุดพักฟื้นฟู</div>
+            </div>
+          </button>
+          <button type="button" data-field="primary_concern" data-value="family_burden" class="option-card flex items-start gap-3.5 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary flex-shrink-0"><span class="material-symbols-outlined text-[22px]">volunteer_activism</span></div>
+            <div>
+              <div class="font-label-lg font-bold text-on-surface">เป็นภาระครอบครัว / ห่วงคนข้างหลัง</div>
+              <div class="font-body-sm text-on-surface-variant text-[12px]">หากจากไปก่อนวัย ต้องการทิ้งทุนมรดกและปิดความเสี่ยงเรื่องค่าใช้จ่ายในบ้าน</div>
+            </div>
+          </button>
+          <button type="button" data-field="primary_concern" data-value="retirement_shortage" class="option-card flex items-start gap-3.5 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-tertiary flex-shrink-0"><span class="material-symbols-outlined text-[22px]">savings</span></div>
+            <div>
+              <div class="font-label-lg font-bold text-on-surface">เงินไม่พอใช้หลังเกษียณอายุ</div>
+              <div class="font-body-sm text-on-surface-variant text-[12px]">ต้องการกระแสเงินสดคืนแน่นอนทุกปีหลังหยุดทำงาน พร้อมสิทธิลดหย่อนภาษี</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- 6. Income -->
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-primary-container/30 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[20px]">payments</span></div>
+            <div>
+              <h2 class="font-headline-md text-[17px] font-bold text-on-surface">6. รายได้รวมต่อเดือน</h2>
+              <p class="font-body-sm text-[12px] text-on-surface-variant">คำนวณสัดส่วนเบี้ยประกันที่เหมาะสมและโอกาสการใช้สิทธิลดหย่อนภาษี</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button type="button" data-field="income_bracket" data-value="under_30k" class="option-card flex flex-col gap-1 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <span class="font-label-lg font-bold text-on-surface">ต่ำกว่า 30,000 บาท</span>
+            <span class="font-body-sm text-on-surface-variant text-[12px]">เน้นแผนเบี้ยคุ้มค่า ป้องกันความเสี่ยงพื้นฐาน</span>
+          </button>
+          <button type="button" data-field="income_bracket" data-value="30k_70k" class="option-card flex flex-col gap-1 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <span class="font-label-lg font-bold text-on-surface">30,001 – 70,000 บาท</span>
+            <span class="font-body-sm text-on-surface-variant text-[12px]">สมดุลความคุ้มครองสุขภาพและทุนชีวิต</span>
+          </button>
+          <button type="button" data-field="income_bracket" data-value="over_70k" class="option-card flex flex-col gap-1 p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <span class="font-label-lg font-bold text-on-surface">มากกว่า 70,000 บาท</span>
+            <span class="font-body-sm text-on-surface-variant text-[12px]">เน้นวงเงินเหมาจ่ายระดับพรีเมียมและลดหย่อนภาษี</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 7. Occupation -->
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-primary-container/30 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[20px]">work</span></div>
+            <div>
+              <h2 class="font-headline-md text-[17px] font-bold text-on-surface">7. อาชีพและการทำงาน</h2>
+              <p class="font-body-sm text-[12px] text-on-surface-variant">ประเมินความเสี่ยงจากการทำงานและเสถียรภาพของรายได้</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <button type="button" data-field="occupation" data-value="employee" class="option-card p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <span class="font-label-lg font-bold text-on-surface">พนักงานบริษัท</span>
+            <span class="block font-body-sm text-on-surface-variant text-[11px] mt-0.5">มีเงินเดือนประจำ</span>
+          </button>
+          <button type="button" data-field="occupation" data-value="business_owner" class="option-card p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <span class="font-label-lg font-bold text-on-surface">เจ้าของกิจการ</span>
+            <span class="block font-body-sm text-on-surface-variant text-[11px] mt-0.5">เสาหลักของธุรกิจ</span>
+          </button>
+          <button type="button" data-field="occupation" data-value="freelance" class="option-card p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <span class="font-label-lg font-bold text-on-surface">Freelance/ค้าขาย</span>
+            <span class="block font-body-sm text-on-surface-variant text-[11px] mt-0.5">ไม่มีสวัสดิการประจำ</span>
+          </button>
+          <button type="button" data-field="occupation" data-value="government" class="option-card p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <span class="font-label-lg font-bold text-on-surface">ข้าราชการ/รัฐวิสาหกิจ</span>
+            <span class="block font-body-sm text-on-surface-variant text-[11px] mt-0.5">มีความมั่นคงสูง</span>
+          </button>
+          <button type="button" data-field="occupation" data-value="retired" class="option-card p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <span class="font-label-lg font-bold text-on-surface">เกษียณอายุ</span>
+            <span class="block font-body-sm text-on-surface-variant text-[11px] mt-0.5">เน้นดูแลสุขภาพ</span>
+          </button>
+          <button type="button" data-field="occupation" data-value="other" class="option-card p-4 border border-surface-container rounded-xl cursor-pointer text-left">
+            <span class="font-label-lg font-bold text-on-surface">อื่นๆ</span>
+            <span class="block font-body-sm text-on-surface-variant text-[11px] mt-0.5">วิชาชีพอิสระ</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+        <div class="text-on-surface-variant text-[13px]">
+          กรุณาตอบคำถามให้ครบทั้ง 7 มิติ เพื่อดำเนินการต่อไปยังการเลือกหมวดความคุ้มครอง
+        </div>
+        <button id="btn-next" type="button" class="w-full sm:w-auto h-12 px-8 rounded-full bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-105 active:scale-95 opacity-50 cursor-not-allowed" disabled>
+          ถัดไป: เลือกหมวดความคุ้มครอง
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Tier 2 Categories -->
+    <div id="step-2" class="step-hidden flex flex-col gap-6">
+      <div class="flex items-center gap-3 mb-2">
+        <button id="btn-back" type="button" class="w-9 h-9 rounded-full border border-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        </button>
+        <div class="flex flex-col">
+          <span class="px-3 py-0.5 rounded-full bg-primary-container/20 text-on-primary-fixed-variant font-label-sm font-semibold text-[11px] uppercase tracking-wider w-fit">Tier 2 — ความต้องการ</span>
+          <h2 class="font-headline-lg text-[22px] font-bold text-on-surface mt-1">เลือกหมวดความคุ้มครองที่ต้องการ</h2>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="category-options">
+        <button type="button" data-cat="health_ci" class="category-card option-card flex items-center gap-4 p-5 border border-surface-container rounded-2xl cursor-pointer text-left">
+          <div class="w-12 h-12 rounded-xl bg-error-container/30 flex items-center justify-center text-error flex-shrink-0"><span class="material-symbols-outlined text-[24px]">health_and_safety</span></div>
+          <div><div class="font-label-lg font-bold text-on-surface">สุขภาพ &amp; โรคร้ายแรง</div><div class="font-label-sm text-on-surface-variant text-[12px]">IPD/OPD เหมาจ่าย, Critical Illness Multi-Pay</div></div>
+        </button>
+        <button type="button" data-cat="life" class="category-card option-card flex items-center gap-4 p-5 border border-surface-container rounded-2xl cursor-pointer text-left">
+          <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-on-surface flex-shrink-0"><span class="material-symbols-outlined text-[24px]">shield</span></div>
+          <div><div class="font-label-lg font-bold text-on-surface">ชีวิต &amp; มรดก</div><div class="font-label-sm text-on-surface-variant text-[12px]">Whole Life, Legacy Protection</div></div>
+        </button>
+        <button type="button" data-cat="savings" class="category-card option-card flex items-center gap-4 p-5 border border-surface-container rounded-2xl cursor-pointer text-left">
+          <div class="w-12 h-12 rounded-xl bg-primary-container/30 flex items-center justify-center text-primary flex-shrink-0"><span class="material-symbols-outlined text-[24px]">savings</span></div>
+          <div><div class="font-label-lg font-bold text-on-surface">ออมทรัพย์ &amp; สะสมทรัพย์</div><div class="font-label-sm text-on-surface-variant text-[12px]">Endowment 10/3, 15/5 รับเงินการันตี</div></div>
+        </button>
+        <button type="button" data-cat="pension" class="category-card option-card flex items-center gap-4 p-5 border border-surface-container rounded-2xl cursor-pointer text-left">
+          <div class="w-12 h-12 rounded-xl bg-tertiary-container/30 flex items-center justify-center text-tertiary flex-shrink-0"><span class="material-symbols-outlined text-[24px]">elderly</span></div>
+          <div><div class="font-label-lg font-bold text-on-surface">บำนาญ &amp; เกษียณ</div><div class="font-label-sm text-on-surface-variant text-[12px]">Annuity, ลดหย่อนภาษี 200,000 บาท</div></div>
+        </button>
+        <button type="button" data-cat="accident" class="category-card option-card flex items-center gap-4 p-5 border border-surface-container rounded-2xl cursor-pointer text-left">
+          <div class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center text-secondary flex-shrink-0"><span class="material-symbols-outlined text-[24px]">flight_takeoff</span></div>
+          <div><div class="font-label-lg font-bold text-on-surface">อุบัติเหตุ &amp; การเดินทาง</div><div class="font-label-sm text-on-surface-variant text-[12px]">PA Shield, ชดเชยรายได้รายวัน</div></div>
+        </button>
+        <button type="button" data-cat="mortgage" class="category-card option-card flex items-center gap-4 p-5 border border-surface-container rounded-2xl cursor-pointer text-left">
+          <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-on-surface flex-shrink-0"><span class="material-symbols-outlined text-[24px]">home</span></div>
+          <div><div class="font-label-lg font-bold text-on-surface">คุ้มครองภาระหนี้ &amp; สินเชื่อ</div><div class="font-label-sm text-on-surface-variant text-[12px]">Mortgage Protection, Fire & Home</div></div>
+        </button>
+      </div>
+
+      <!-- PDPA consent -->
+      <div class="flex items-start gap-3 p-4 rounded-xl bg-surface-container-low border border-surface-container">
+        <input type="checkbox" id="pdpa-consent" class="mt-0.5 w-5 h-5 accent-primary cursor-pointer rounded"/>
+        <label for="pdpa-consent" class="font-body-sm text-[13px] text-on-surface-variant leading-relaxed cursor-pointer">
+          ข้าพเจ้าตกลงให้ Krungsri Coverage Pulse ประมวลผลข้อมูลส่วนบุคคลและข้อมูลสุขภาพของข้าพเจ้าเพื่อวิเคราะห์ความเพียงพอของความคุ้มครอง ตาม <strong>พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA พ.ศ. 2562)</strong>
+        </label>
+      </div>
+
+      <!-- Submit -->
+      <div class="flex justify-end gap-3">
+        <button id="btn-back-2" type="button" class="h-12 px-6 rounded-full border border-surface-container text-on-surface-variant hover:bg-surface-container font-label-lg text-label-lg font-semibold transition-colors">
+          ย้อนกลับ
+        </button>
+        <button id="btn-submit" type="button" class="h-12 px-8 rounded-full bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-label-lg text-label-lg font-bold flex items-center gap-2 shadow-sm transition-all hover:scale-105 active:scale-95 opacity-50 cursor-not-allowed" disabled>
+          <span id="btn-submit-icon" class="material-symbols-outlined text-[18px]">battery_charging_full</span>
+          <span id="btn-submit-text">ประมวลผลแบตเตอรี่ความคุ้มครอง</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Result (Enriched Insights) -->
+    <div id="step-3" class="step-hidden flex flex-col gap-8 items-center animate-slide-in">
+      <div class="w-20 h-20 rounded-3xl bg-primary-container/20 flex items-center justify-center text-primary">
+        <span class="material-symbols-outlined text-[44px]" style="font-variation-settings: 'FILL' 1;">battery_charging_full</span>
+      </div>
+      
+      <div class="flex flex-col gap-1 text-center">
+        <span class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-[11px] w-fit mx-auto font-semibold uppercase tracking-wider">AI Coverage Pulse Assessment Result</span>
+        <h2 class="font-headline-xl text-[28px] font-bold text-on-surface">ผลการประเมินแบตเตอรี่ความคุ้มครอง</h2>
+        <p class="font-body-md text-[14px] text-on-surface-variant">ระบบวิเคราะห์ข้อมูล 7 มิติเชิงลึก พร้อมอัปเดตสถานะพอร์ตของคุณเรียบร้อยแล้ว</p>
+      </div>
+
+      <!-- Battery Display -->
+      <div class="flex flex-col items-center gap-2 bg-surface-container-lowest p-6 rounded-3xl border border-surface-container w-full max-w-lg shadow-sm">
+        <div class="flex items-baseline gap-2 justify-center">
+          <span class="font-display-lg text-[68px] font-extrabold text-on-surface leading-none" id="result-score">--</span>
+          <span class="font-headline-xl text-[32px] font-bold text-primary">%</span>
+        </div>
+        <div id="result-status-badge" class="px-4 py-1.5 rounded-full font-label-lg font-bold text-[14px]">--</div>
+        <p class="font-body-sm text-[14px] text-on-surface-variant text-center mt-1" id="result-status"></p>
+      </div>
+
+      <!-- Dynamic Insights Box -->
+      <div class="w-full max-w-2xl flex flex-col gap-4 text-left">
+        <!-- Reasons / Key Findings -->
+        <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container shadow-sm">
+          <div class="flex items-center gap-2.5 mb-3.5">
+            <span class="material-symbols-outlined text-[22px] text-primary">analytics</span>
+            <h3 class="font-headline-md text-[16px] font-bold text-on-surface">ประเด็นวิเคราะห์สำคัญจากโปรไฟล์ของคุณ (Key Insights)</h3>
+          </div>
+          <ul id="result-reasons-list" class="flex flex-col gap-2.5 text-on-surface-variant font-body-sm text-[13.5px]">
+            <!-- populated by JS -->
+          </ul>
+        </div>
+
+        <!-- Recommended Riders -->
+        <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container shadow-sm">
+          <div class="flex items-center gap-2.5 mb-3.5">
+            <span class="material-symbols-outlined text-[22px] text-primary">verified</span>
+            <h3 class="font-headline-md text-[16px] font-bold text-on-surface">แผนความคุ้มครองที่แนะนำเพิ่มเติมเพื่อเติมเต็มแบตเตอรี่</h3>
+          </div>
+          <div id="result-gaps-container" class="flex flex-wrap gap-2">
+            <!-- populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-md pt-2">
+        <a href="/customer" class="flex-1 h-12 px-6 rounded-full bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-label-lg font-bold flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-105">
+          <span class="material-symbols-outlined text-[18px]">home</span>
+          ดูภาพรวมพอร์ต
+        </a>
+        <a href="/customer/sandbox.html" class="flex-1 h-12 px-6 rounded-full bg-surface-container-lowest border border-surface-container text-on-surface font-label-lg font-semibold flex items-center justify-center gap-2 hover:bg-surface-container transition-colors">
+          <span class="material-symbols-outlined text-[18px]">tune</span>
+          ทดลองจำลองแผน AI
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+(function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const CUSTOMER_ID = urlParams.get('cid') || 'CUST-001';
+  const tier1 = {};
+  const tier2 = {};
+  let step = 1;
+  let pdpaConsented = false;
+
+  const TIER1_FIELDS = [
+    'age', 
+    'family_status', 
+    'welfare', 
+    'debt_burden', 
+    'primary_concern', 
+    'income_bracket', 
+    'occupation'
+  ];
+
+  function updateProgress() {
+    const label = document.getElementById('progress-label');
+    const bar = document.getElementById('progress-bar');
+    if (step === 1) {
+      if (label) label.textContent = 'ขั้นตอนที่ 1/2: ข้อมูลส่วนตัว';
+      if (bar) bar.style.width = '50%';
+    } else if (step === 2) {
+      if (label) label.textContent = 'ขั้นตอนที่ 2/2: ความต้องการเพิ่มเติม';
+      if (bar) bar.style.width = '100%';
+    } else {
+      if (label) label.textContent = 'สรุปผลการประเมิน';
+      if (bar) bar.style.width = '100%';
+    }
+  }
+
+  function checkStep1Valid() {
+    const btn = document.getElementById('btn-next');
+    const answeredCount = TIER1_FIELDS.filter(f => tier1[f] !== undefined && tier1[f] !== '').length;
+    
+    const countText = document.getElementById('step1-count-text');
+    if (countText) countText.textContent = answeredCount;
+
+    const valid = answeredCount === TIER1_FIELDS.length;
+    btn.disabled = !valid;
+    btn.classList.toggle('opacity-50', !valid);
+    btn.classList.toggle('cursor-not-allowed', !valid);
+  }
+
+  function checkStep2Valid() {
+    const btn = document.getElementById('btn-submit');
+    const hasCat = Object.values(tier2).some(v => v);
+    const valid = hasCat && pdpaConsented;
+    btn.disabled = !valid;
+    btn.classList.toggle('opacity-50', !valid);
+    btn.classList.toggle('cursor-not-allowed', !valid);
+  }
+
+  function goStep(n) {
+    step = n;
+    document.getElementById('step-1').classList.toggle('step-hidden', n !== 1);
+    document.getElementById('step-2').classList.toggle('step-hidden', n !== 2);
+    document.getElementById('step-3').classList.toggle('step-hidden', n !== 3);
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Option cards handler
+  document.querySelectorAll('.option-card[data-field]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const field = btn.dataset.field;
+      const value = btn.dataset.value;
+      document.querySelectorAll(`[data-field="${field}"]`).forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      tier1[field] = value;
+      checkStep1Valid();
+    });
+  });
+
+  // Category cards
+  document.querySelectorAll('.category-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.cat;
+      btn.classList.toggle('selected');
+      tier2[cat] = btn.classList.contains('selected');
+      checkStep2Valid();
+    });
+  });
+
+  // PDPA consent
+  document.getElementById('pdpa-consent').addEventListener('change', (e) => {
+    pdpaConsented = e.target.checked;
+    checkStep2Valid();
+  });
+
+  // Step navigation
+  document.getElementById('btn-next').addEventListener('click', () => goStep(2));
+  document.getElementById('btn-back').addEventListener('click', () => goStep(1));
+  document.getElementById('btn-back-2').addEventListener('click', () => goStep(1));
+
+  // Submit
+  document.getElementById('btn-submit').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-submit');
+    const icon = document.getElementById('btn-submit-icon');
+    const text = document.getElementById('btn-submit-text');
+    btn.disabled = true;
+    icon.textContent = 'progress_activity';
+    icon.classList.add('animate-spin');
+    text.textContent = 'AI กำลังประมวลผลแบตเตอรี่ความคุ้มครอง...';
+
+    try {
+      const res = await fetch('/api/customer/assessment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerId: CUSTOMER_ID,
+          tier1Profile: tier1,
+          tier2Categories: tier2
+        })
+      });
+      const data = await res.json();
+      const score = data.result?.battery_score ?? data.result?.batteryScore ?? 50;
+      const reasons = data.result?.reasons || [];
+      const gaps = data.result?.recommended_riders || [];
+
+      // Update UI elements
+      document.getElementById('result-score').textContent = score;
+
+      const badge = document.getElementById('result-status-badge');
+      const statusText = document.getElementById('result-status');
+      if (score >= 80) {
+        badge.textContent = 'ความคุ้มครองระดับเหมาะสม (Optimal)';
+        badge.className = 'px-4 py-1.5 rounded-full font-label-lg font-bold text-[14px] bg-tertiary-container/30 text-tertiary';
+        statusText.textContent = 'พอร์ตของคุณมีความคุ้มครองครอบคลุมบริบทชีวิตและความเสี่ยงในปัจจุบันได้เป็นอย่างดี';
+      } else if (score >= 50) {
+        badge.textContent = 'ควรทบทวนและปรับปรุง (Needs Review)';
+        badge.className = 'px-4 py-1.5 rounded-full font-label-lg font-bold text-[14px] bg-primary-container/40 text-on-primary-fixed-variant';
+        statusText.textContent = 'พบช่องว่างความคุ้มครองบางมิติที่ยังไม่สอดคล้องกับภาระหรือสวัสดิการเดิม แนะนำเสริมสัญญาเพิ่มเติม';
+      } else {
+        badge.textContent = 'ความคุ้มครองระดับวิกฤต (Critical Gap)';
+        badge.className = 'px-4 py-1.5 rounded-full font-label-lg font-bold text-[14px] bg-error-container/40 text-error';
+        statusText.textContent = 'มีความเสี่ยงสูงเนื่องจากยังขาดความคุ้มครองหลักในมิติสำคัญ ควรเร่งจัดสรรความคุ้มครองเพื่อปิดความเสี่ยง';
+      }
+
+      // Render Reasons
+      const reasonsList = document.getElementById('result-reasons-list');
+      if (reasonsList) {
+        reasonsList.innerHTML = reasons.map(r => `
+          <li class="flex items-start gap-2.5">
+            <span class="material-symbols-outlined text-[18px] text-primary mt-0.5 flex-shrink-0">check_circle</span>
+            <span>${r}</span>
+          </li>
+        `).join('') || '<li>ไม่มีประเด็นความเสี่ยงตกค้าง</li>';
+      }
+
+      // Render Recommended Riders
+      const gapsContainer = document.getElementById('result-gaps-container');
+      if (gapsContainer) {
+        gapsContainer.innerHTML = gaps.map(g => `
+          <div class="px-3 py-1.5 rounded-xl bg-surface-container border border-surface-container-high text-on-surface font-label-md text-[13px] flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-primary">add_moderator</span>
+            <span>${g}</span>
+          </div>
+        `).join('') || '<div class="text-on-surface-variant text-[13px]">ความคุ้มครองในพอร์ตสมบูรณ์แล้ว ไม่จำเป็นต้องเสริมสัญญาเพิ่มเติมในขณะนี้</div>';
+      }
+
+      goStep(3);
+    } catch (err) {
+      btn.disabled = false;
+      icon.textContent = 'battery_charging_full';
+      icon.classList.remove('animate-spin');
+      text.textContent = 'ประมวลผลแบตเตอรี่ความคุ้มครอง';
+      alert('เกิดข้อผิดพลาด กรุณาลองอีกครั้ง: ' + err.message);
+    }
+  });
+
+  // Preserve customer ID across navigation links
+  document.querySelectorAll('a[href^="/customer"]').forEach(a => {
+    try {
+      const u = new URL(a.getAttribute('href'), window.location.origin);
+      u.searchParams.set('cid', CUSTOMER_ID);
+      a.setAttribute('href', u.pathname + u.search);
+    } catch(e) {}
+  });
+
+  updateProgress();
+  checkStep1Valid();
+})();
+</script>
+</body>
+</html>

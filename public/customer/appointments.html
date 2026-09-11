@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Coverage Pulse | ติดต่อที่ปรึกษา &amp; นัดหมาย</title>
+  <meta name="description" content="นัดหมายและติดต่อที่ปรึกษา Wealth ของคุณ — ตรวจสอบสถานะคำขอและจัดการการนัดหมาย"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    @layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}
+    ::-webkit-scrollbar{display:none;}
+    .channel-btn.selected{background:rgba(254,203,0,0.15);border-color:#fecb00!important;}
+    .time-btn.selected{background:#fecb00!important;border-color:#e5ac00!important;color:#4b3a00!important;font-weight:700;box-shadow:0 2px 8px rgba(254,203,0,0.3);}
+    .time-btn.selected span{color:#4b3a00!important;font-weight:700;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .animate-spin{animation:spin 1s linear infinite;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+    .animate-fade-in{animation:fadeIn 0.3s ease forwards;}
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "inverse-on-surface":"#f1effa","secondary-container":"#e6ded9","surface":"#fbf8ff","on-tertiary-fixed":"#002113","background":"#fbf8ff","secondary-fixed":"#e9e1dc","primary-fixed-dim":"#f1c100","error-container":"#ffdad6","on-error":"#ffffff","outline":"#80765f","surface-tint":"#745b00","on-secondary-fixed":"#1e1b18","on-primary-fixed-variant":"#584400","on-tertiary-container":"#006645","surface-variant":"#e3e1ec","on-background":"#1a1b22","surface-container-lowest":"#ffffff","tertiary-container":"#5be9ad","primary-fixed":"#ffe08b","on-secondary-fixed-variant":"#4b4642","tertiary-fixed":"#6ffbbe","tertiary":"#006c49","on-error-container":"#93000a","on-primary-fixed":"#241a00","on-tertiary":"#ffffff","on-primary":"#ffffff","surface-container":"#eeedf7","secondary-fixed-dim":"#cdc5c0","surface-bright":"#fbf8ff","error":"#ba1a1a","on-surface-variant":"#4e4632","primary":"#745b00","on-primary-container":"#6e5700","surface-dim":"#dad9e3","tertiary-fixed-dim":"#4edea3","primary-container":"#fecb00","on-tertiary-fixed-variant":"#005236","on-surface":"#1a1b22","outline-variant":"#d2c5ab","secondary":"#635d5a","inverse-primary":"#f1c100","surface-container-highest":"#e3e1ec","on-secondary":"#ffffff","surface-container-low":"#f4f2fd","inverse-surface":"#2f3038","on-secondary-container":"#67625e","surface-container-high":"#e8e7f1"
+        },
+        "borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        "fontFamily":{"headline-xl":["IBM Plex Sans"],"label-sm":["IBM Plex Sans"],"body-lg":["IBM Plex Sans"],"label-lg":["IBM Plex Sans"],"headline-md":["IBM Plex Sans"],"label-md":["IBM Plex Sans"],"headline-lg":["IBM Plex Sans"],"body-sm":["IBM Plex Sans"],"display-lg":["IBM Plex Sans"],"body-md":["IBM Plex Sans"]},
+        "fontSize":{
+          "headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"600"}],
+          "label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"500"}],
+          "label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],
+          "headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],
+          "label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],
+          "headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],
+          "body-sm":["14px",{"lineHeight":"20px","fontWeight":"400"}],
+          "body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}]
+        }
+      }
+    }
+  }</script>
+</head>
+<body class="bg-background font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 w-full z-50 bg-surface/95 backdrop-blur-xl border-b border-surface-container/60 shadow-[0_1px_10px_rgba(0,0,0,0.03)]">
+  <div class="h-18 max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center justify-between gap-3 lg:gap-6">
+    <div class="flex items-center gap-3 lg:gap-5 flex-shrink-0">
+      <a href="/customer" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FFD100] to-[#E5AC00] flex items-center justify-center shadow-xs text-[#2D2926] flex-shrink-0 group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="font-headline-md text-[17px] font-bold tracking-tight text-on-surface">Coverage Pulse</span>
+            <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container font-semibold text-[9px] tracking-wider uppercase">KRUNGSRI</span>
+          </div>
+          <span class="font-label-sm text-[10.5px] text-on-surface-variant leading-none">Health &amp; Wealth Intelligence</span>
+        </div>
+      </a>
+      <div class="h-4 w-px bg-surface-container-high hidden xl:block"></div>
+      <a href="/customer?openConsent=1" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-[11.5px] font-medium transition-all border border-surface-container-high/60 shadow-xs cursor-pointer group" title="เปิดศูนย์จัดการความยินยอม PDPA Consent Center">
+        <span class="material-symbols-outlined text-[15px] text-tertiary group-hover:scale-110 transition-transform">verified_user</span>
+        <span>PDPA Consent</span>
+        <span class="text-[10px] bg-tertiary/15 text-tertiary px-1.5 py-0.5 rounded-full font-semibold">จัดการสิทธิ์</span>
+      </a>
+    </div>
+
+    <!-- Center: Main Navigation -->
+    <nav class="hidden lg:flex items-center gap-1 bg-surface-container-low p-1 rounded-full flex-shrink-0 shadow-xs">
+      <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors text-[13px] font-medium whitespace-nowrap" href="/customer">ภาพรวมพอร์ต</a>
+      <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors text-[13px] font-medium whitespace-nowrap" href="/customer/assessment.html">ประเมินความคุ้มครอง</a>
+      <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors text-[13px] font-medium whitespace-nowrap" href="/customer/sandbox.html">AI จำลองแผน</a>
+      <a aria-current="page" class="px-3.5 py-1.5 bg-surface-container-lowest text-on-surface rounded-full text-[13px] font-semibold shadow-xs whitespace-nowrap" href="/customer/appointments.html">ติดต่อที่ปรึกษา</a>
+    </nav>
+
+    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+      <!-- Persona Switcher -->
+      <div class="flex items-center gap-1.5 bg-surface-container-low px-2.5 py-1 rounded-full border border-surface-container-high/60 shadow-xs hover:bg-surface-container transition-colors flex-shrink-0" title="สลับโปรไฟล์ลูกค้าจำลอง">
+        <span class="material-symbols-outlined text-[16px] text-primary flex-shrink-0">switch_account</span>
+        <select id="persona-select" class="bg-transparent text-[12px] font-medium text-on-surface focus:outline-none cursor-pointer pr-1 max-w-[140px] sm:max-w-[175px] truncate">
+          <option value="CUST-001">CUST-001: นภัสสร (25)</option>
+          <option value="CUST-002">CUST-002: สมชาย (SME)</option>
+          <option value="CUST-003">CUST-003: ธนภัทร (Dev)</option>
+          <option value="CUST-004">CUST-004: พิมลดา (VIP)</option>
+          <option value="CUST-005">CUST-005: นพ. อานนท์</option>
+          <option value="CUST-006">CUST-006: วรัญญา (แม่&amp;เด็ก)</option>
+        </select>
+      </div>
+
+      <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant text-[11px] flex-shrink-0">
+        <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+        <span class="font-medium">Bank-Grade Secure</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="w-full pt-20 min-h-screen bg-background">
+  <div class="max-w-[1280px] mx-auto px-6 lg:px-12 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- Left: Booking Form -->
+    <div class="lg:col-span-7 flex flex-col gap-6">
+      <div class="flex flex-col gap-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tertiary/10 w-fit">
+          <span class="material-symbols-outlined text-[15px] text-tertiary">calendar_today</span>
+          <span class="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-tertiary">Broker Queue &amp; Appointments</span>
+        </div>
+        <h1 class="font-headline-xl text-[26px] font-bold text-on-surface leading-tight">ติดต่อที่ปรึกษา Wealth<br/>และนัดหมายแบบส่วนตัว</h1>
+        <p class="font-body-sm text-[14px] text-on-surface-variant">เลือกช่องทางและเวลาที่คุณสะดวก ที่ปรึกษาจะเตรียม Pre-call Brief ส่วนตัวให้ทันที</p>
+      </div>
+
+      <!-- Advisor Card -->
+      <div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container shadow-sm flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <img alt="คุณกิตติพงษ์ สิทธิเวช CFP®" class="w-14 h-14 rounded-full object-cover ring-2 ring-primary-container/80 shadow-sm" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&auto=format&fit=crop&q=80" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80';"/>
+          <div class="flex flex-col">
+            <span class="font-headline-md text-[17px] font-bold text-on-surface">คุณกิตติพงษ์ สิทธิเวช CFP®</span>
+            <span class="font-body-sm text-[13px] text-on-surface-variant">Krungsri Certified Premier Advisor</span>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="px-2 py-0.5 rounded-full bg-primary-container/30 text-on-primary-fixed-variant font-label-sm text-[11px] font-semibold">Wealth Management</span>
+              <span class="font-label-sm text-[11px] text-on-surface-variant">ประสบการณ์ 12 ปี</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col items-end gap-1 flex-shrink-0">
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-[18px] text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+            <span class="font-label-lg font-bold text-on-surface">4.9</span>
+          </div>
+          <span class="font-label-sm text-[11px] text-on-surface-variant">จากลูกค้า 287 ราย</span>
+        </div>
+      </div>
+
+      <!-- Channel Picker -->
+      <div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container shadow-sm flex flex-col gap-4">
+        <h2 class="font-headline-md text-[17px] font-bold text-on-surface">เลือกช่องทางการติดต่อ</h2>
+        <div class="grid grid-cols-3 gap-3" id="channel-options">
+          <button type="button" data-channel="video" class="channel-btn flex flex-col items-center gap-2 p-4 border border-surface-container rounded-xl cursor-pointer transition-all">
+            <span class="material-symbols-outlined text-[28px] text-primary">videocam</span>
+            <span class="font-label-lg font-semibold text-on-surface text-[13px]">Video Call</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant text-center">Zoom/Teams</span>
+          </button>
+          <button type="button" data-channel="phone" class="channel-btn flex flex-col items-center gap-2 p-4 border border-surface-container rounded-xl cursor-pointer transition-all">
+            <span class="material-symbols-outlined text-[28px] text-primary">call</span>
+            <span class="font-label-lg font-semibold text-on-surface text-[13px]">Phone Call</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant text-center">โทรออกตรง</span>
+          </button>
+          <button type="button" data-channel="in_branch" class="channel-btn flex flex-col items-center gap-2 p-4 border border-surface-container rounded-xl cursor-pointer transition-all">
+            <span class="material-symbols-outlined text-[28px] text-primary">location_on</span>
+            <span class="font-label-lg font-semibold text-on-surface text-[13px]">ที่สาขา</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant text-center">Krungsri Branch</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Date Picker -->
+      <div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container shadow-sm flex flex-col gap-4">
+        <h2 class="font-headline-md text-[17px] font-bold text-on-surface">เลือกวันที่</h2>
+        <div class="grid grid-cols-5 gap-2" id="date-options">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Time Picker -->
+      <div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container shadow-sm flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <h2 class="font-headline-md text-[17px] font-bold text-on-surface">เลือกช่วงเวลา</h2>
+          <span class="text-[12px] text-on-surface-variant font-medium flex items-center gap-1">
+            <span class="material-symbols-outlined text-[15px] text-primary">schedule</span>
+            รอบละ 1 ชั่วโมง
+          </span>
+        </div>
+
+        <!-- Morning Section -->
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-1.5 text-[12px] font-semibold text-on-surface-variant">
+            <span class="material-symbols-outlined text-[16px] text-amber-500">wb_sunny</span>
+            <span>ช่วงเช้า (09:00 - 12:00 น.)</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" class="time-btn py-2.5 px-2 rounded-xl border border-surface-container font-label-lg text-on-surface hover:bg-surface-container flex flex-col items-center justify-center gap-0.5 transition-all" data-time="09:00 - 10:00 น.">
+              <span class="font-bold text-[13px]">09:00 - 10:00 น.</span>
+              <span class="text-[10.5px] text-on-surface-variant">เช้า (1 ชม.)</span>
+            </button>
+            <button type="button" class="time-btn py-2.5 px-2 rounded-xl border border-surface-container font-label-lg text-on-surface hover:bg-surface-container flex flex-col items-center justify-center gap-0.5 transition-all" data-time="10:00 - 11:00 น.">
+              <span class="font-bold text-[13px]">10:00 - 11:00 น.</span>
+              <span class="text-[10.5px] text-on-surface-variant">เช้า (1 ชม.)</span>
+            </button>
+            <button type="button" class="time-btn py-2.5 px-2 rounded-xl border border-surface-container font-label-lg text-on-surface hover:bg-surface-container flex flex-col items-center justify-center gap-0.5 transition-all" data-time="11:00 - 12:00 น.">
+              <span class="font-bold text-[13px]">11:00 - 12:00 น.</span>
+              <span class="text-[10.5px] text-on-surface-variant">เช้า (1 ชม.)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Afternoon Section -->
+        <div class="flex flex-col gap-2 pt-1 border-t border-surface-container/60">
+          <div class="flex items-center gap-1.5 text-[12px] font-semibold text-on-surface-variant">
+            <span class="material-symbols-outlined text-[16px] text-orange-500">light_mode</span>
+            <span>ช่วงบ่าย (13:00 - 16:00 น.)</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" class="time-btn py-2.5 px-2 rounded-xl border border-surface-container font-label-lg text-on-surface hover:bg-surface-container flex flex-col items-center justify-center gap-0.5 transition-all" data-time="13:00 - 14:00 น.">
+              <span class="font-bold text-[13px]">13:00 - 14:00 น.</span>
+              <span class="text-[10.5px] text-on-surface-variant">บ่าย (1 ชม.)</span>
+            </button>
+            <button type="button" class="time-btn py-2.5 px-2 rounded-xl border border-surface-container font-label-lg text-on-surface hover:bg-surface-container flex flex-col items-center justify-center gap-0.5 transition-all" data-time="14:00 - 15:00 น.">
+              <span class="font-bold text-[13px]">14:00 - 15:00 น.</span>
+              <span class="text-[10.5px] text-on-surface-variant">บ่าย (1 ชม.)</span>
+            </button>
+            <button type="button" class="time-btn py-2.5 px-2 rounded-xl border border-surface-container font-label-lg text-on-surface hover:bg-surface-container flex flex-col items-center justify-center gap-0.5 transition-all" data-time="15:00 - 16:00 น.">
+              <span class="font-bold text-[13px]">15:00 - 16:00 น.</span>
+              <span class="text-[10.5px] text-on-surface-variant">บ่าย (1 ชม.)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Evening Section -->
+        <div class="flex flex-col gap-2 pt-1 border-t border-surface-container/60">
+          <div class="flex items-center gap-1.5 text-[12px] font-semibold text-on-surface-variant">
+            <span class="material-symbols-outlined text-[16px] text-indigo-500">wb_twilight</span>
+            <span>ช่วงเย็น (16:00 - 18:00 น.)</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" class="time-btn py-2.5 px-2 rounded-xl border border-surface-container font-label-lg text-on-surface hover:bg-surface-container flex flex-col items-center justify-center gap-0.5 transition-all" data-time="16:00 - 17:00 น.">
+              <span class="font-bold text-[13px]">16:00 - 17:00 น.</span>
+              <span class="text-[10.5px] text-on-surface-variant">เย็น (1 ชม.)</span>
+            </button>
+            <button type="button" class="time-btn py-2.5 px-2 rounded-xl border border-surface-container font-label-lg text-on-surface hover:bg-surface-container flex flex-col items-center justify-center gap-0.5 transition-all" data-time="17:00 - 18:00 น.">
+              <span class="font-bold text-[13px]">17:00 - 18:00 น.</span>
+              <span class="text-[10.5px] text-on-surface-variant">เย็น (1 ชม.)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container shadow-sm flex flex-col gap-3">
+        <h2 class="font-headline-md text-[17px] font-bold text-on-surface">บันทึกเพิ่มเติม <span class="text-on-surface-variant font-normal">(ไม่บังคับ)</span></h2>
+        <textarea id="notes-input" rows="3" placeholder="ระบุความต้องการพิเศษ เช่น ต้องการทบทวนประกันสุขภาพ, ต้องการลดหย่อนภาษี..." class="w-full bg-surface-container-low border border-surface-container rounded-xl p-4 font-body-sm text-[14px] text-on-surface placeholder:text-on-surface-variant resize-none focus:outline-none focus:ring-2 focus:ring-primary-container transition-all leading-relaxed"></textarea>
+      </div>
+
+      <!-- Submit -->
+      <button id="btn-confirm" type="button" disabled class="w-full h-14 rounded-2xl bg-primary-container text-on-primary-container font-label-lg text-label-lg font-bold text-[16px] flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] opacity-50 cursor-not-allowed">
+        <span class="material-symbols-outlined text-[20px]" id="confirm-icon">event_available</span>
+        <span id="confirm-text">ยืนยันเวลานัดหมายนี้</span>
+      </button>
+
+      <!-- PDPA -->
+      <div class="flex items-center gap-2 text-body-sm text-[12px] text-on-surface-variant">
+        <span class="material-symbols-outlined text-[15px] text-tertiary">verified_user</span>
+        ข้อมูลนัดหมายถูกเข้ารหัสและส่งถึงที่ปรึกษาตามสิทธิ์ PDPA Consent ที่คุณให้ไว้
+      </div>
+    </div>
+
+    <!-- Right: Appointments History -->
+    <div class="lg:col-span-5 flex flex-col gap-6">
+      <!-- Confirmation Card (hidden until submitted) -->
+      <div id="confirmation-card" class="hidden bg-tertiary/10 border border-tertiary/30 rounded-2xl p-5 flex flex-col gap-3 animate-fade-in">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-tertiary flex items-center justify-center text-on-tertiary">
+            <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+          </div>
+          <div>
+            <div class="font-headline-md text-[16px] font-bold text-on-surface">ยืนยันนัดหมายสำเร็จ!</div>
+            <div class="font-label-sm text-[12px] text-on-surface-variant" id="confirm-lead-id">LEAD ID: --</div>
+          </div>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl p-4 font-body-sm text-[13px] text-on-surface-variant space-y-2" id="confirm-summary"></div>
+        <p class="font-label-sm text-[12px] text-tertiary">ที่ปรึกษาจะเตรียม Pre-call Brief สำหรับคุณและติดต่อตามเวลาที่นัดหมาย</p>
+      </div>
+
+      <!-- History -->
+      <div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container shadow-sm flex flex-col gap-4 flex-1">
+        <div class="flex items-center justify-between">
+          <h2 class="font-headline-md text-[17px] font-bold text-on-surface">ประวัติคำขอและนัดหมาย</h2>
+          <button type="button" id="btn-refresh" class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+            <span class="material-symbols-outlined text-[18px]">refresh</span>
+          </button>
+        </div>
+        <div class="flex flex-col gap-3" id="appointments-list">
+          <div class="text-center text-on-surface-variant font-body-sm text-[14px] py-8">กำลังโหลด...</div>
+        </div>
+      </div>
+
+      <!-- Info tiles -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-surface-container-lowest rounded-xl p-4 border border-surface-container shadow-sm flex flex-col gap-1.5">
+          <span class="material-symbols-outlined text-[20px] text-primary">schedule</span>
+          <span class="font-label-lg font-bold text-on-surface">ตอบกลับใน 15 นาที</span>
+          <span class="font-label-sm text-[12px] text-on-surface-variant">ในเวลาทำการ จ.-ศ. 9:00-18:00</span>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl p-4 border border-surface-container shadow-sm flex flex-col gap-1.5">
+          <span class="material-symbols-outlined text-[20px] text-tertiary">lock</span>
+          <span class="font-label-lg font-bold text-on-surface">ปลอดภัย 100%</span>
+          <span class="font-label-sm text-[12px] text-on-surface-variant">TLS 1.3 + PDPA Encrypted</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+(function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const CUSTOMER_ID = urlParams.get('cid') || 'CUST-001';
+  let selectedChannel = '';
+  let selectedDate = '';
+  let selectedTime = '';
+
+  const STATUS_MAP = {
+    submitted: { text: 'รออยู่ในคิว', cls: 'bg-primary-container/30 text-on-primary-fixed-variant' },
+    confirmed: { text: 'ยืนยันแล้ว', cls: 'bg-tertiary/15 text-tertiary' },
+    completed: { text: 'เสร็จสิ้น', cls: 'bg-surface-container text-on-surface-variant' },
+    cancelled: { text: 'ยกเลิก', cls: 'bg-error-container text-on-error-container' }
+  };
+
+  function formatThaiDate(dateStr) {
+    if (!dateStr) return '--';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch(e) {
+      return dateStr;
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // Generate date options (5 consecutive business days)
+  function renderDates() {
+    const container = document.getElementById('date-options');
+    const days = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+    const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    let html = '';
+    let found = 0;
+    let offset = 1;
+    while (found < 5 && offset < 14) {
+      const d = new Date();
+      d.setDate(d.getDate() + offset);
+      offset++;
+      if (d.getDay() === 0 || d.getDay() === 6) continue;
+      const dateStr = d.toISOString().split('T')[0];
+      const isSelected = (found === 0);
+      if (isSelected && !selectedDate) selectedDate = dateStr;
+      html += `<button type="button" data-date="${dateStr}" class="date-btn flex flex-col items-center gap-0.5 py-3 border border-surface-container rounded-xl cursor-pointer hover:bg-surface-container transition-all ${isSelected ? 'bg-primary-container/20 border-primary-container' : ''}">
+        <span class="font-label-sm text-[11px] text-on-surface-variant">${days[d.getDay()]}</span>
+        <span class="font-headline-md text-[18px] font-bold text-on-surface">${d.getDate()}</span>
+        <span class="font-label-sm text-[11px] text-on-surface-variant">${months[d.getMonth()]}</span>
+      </button>`;
+      found++;
+    }
+    container.innerHTML = html;
+    container.querySelectorAll('.date-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.date-btn').forEach(b => {
+          b.classList.remove('bg-primary-container/20', 'border-primary-container');
+        });
+        btn.classList.add('bg-primary-container/20', 'border-primary-container');
+        selectedDate = btn.dataset.date;
+        checkValid();
+      });
+    });
+  }
+
+  // Channel picker
+  document.querySelectorAll('.channel-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.channel-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedChannel = btn.dataset.channel;
+      checkValid();
+    });
+  });
+
+  // Time picker
+  document.querySelectorAll('.time-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.time-btn').forEach(b => {
+        b.classList.remove('selected');
+      });
+      btn.classList.add('selected');
+      selectedTime = btn.dataset.time;
+      checkValid();
+    });
+  });
+
+  function checkValid() {
+    const btn = document.getElementById('btn-confirm');
+    const valid = selectedChannel && selectedDate && selectedTime;
+    btn.disabled = !valid;
+    btn.classList.toggle('opacity-50', !valid);
+    btn.classList.toggle('cursor-not-allowed', !valid);
+  }
+
+  // Submit
+  document.getElementById('btn-confirm').addEventListener('click', async () => {
+    const icon = document.getElementById('confirm-icon');
+    const text = document.getElementById('confirm-text');
+    icon.textContent = 'progress_activity';
+    icon.classList.add('animate-spin');
+    text.textContent = 'กำลังส่งคำขอ...';
+    document.getElementById('btn-confirm').disabled = true;
+
+    try {
+      const notes = document.getElementById('notes-input').value.trim();
+      const res = await fetch('/api/customer/warm-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerId: CUSTOMER_ID,
+          intentDetails: [selectedChannel],
+          preferredDate: selectedDate,
+          preferredTime: selectedTime,
+          notes: notes || ''
+        })
+      });
+      const data = await res.json();
+
+      // Show confirmation
+      const confCard = document.getElementById('confirmation-card');
+      confCard.classList.remove('hidden');
+      document.getElementById('confirm-lead-id').textContent = `LEAD ID: ${data.leadId || '--'}`;
+      document.getElementById('confirm-summary').innerHTML = `
+        <div class="flex justify-between"><span>ช่องทาง</span><strong>${{ video: 'Video Call', phone: 'Phone Call', in_branch: 'ที่สาขา Krungsri' }[selectedChannel]}</strong></div>
+        <div class="flex justify-between"><span>วันที่</span><strong>${formatThaiDate(selectedDate)}</strong></div>
+        <div class="flex justify-between"><span>เวลา</span><strong>${selectedTime}</strong></div>
+        <div class="flex justify-between"><span>ที่ปรึกษา</span><strong>กิตติพงษ์ สิทธิเวช</strong></div>
+      `;
+
+      icon.textContent = 'check_circle';
+      icon.classList.remove('animate-spin');
+      text.textContent = 'ยืนยันสำเร็จ!';
+      
+      // Reload appointments
+      loadAppointments();
+    } catch (e) {
+      icon.textContent = 'error';
+      icon.classList.remove('animate-spin');
+      text.textContent = 'เกิดข้อผิดพลาด ลองอีกครั้ง';
+      document.getElementById('btn-confirm').disabled = false;
+    }
+  });
+
+  async function loadAppointments() {
+    const list = document.getElementById('appointments-list');
+    try {
+      const res = await fetch(`/api/customer/appointments/${CUSTOMER_ID}`);
+      const data = await res.json();
+      const leads = data.leads || [];
+      if (leads.length === 0) {
+        list.innerHTML = `<div class="text-center py-8 flex flex-col items-center gap-3 text-on-surface-variant">
+          <span class="material-symbols-outlined text-[40px]">event_busy</span>
+          <span class="font-body-sm text-[14px]">ยังไม่มีนัดหมาย</span>
+          <span class="font-label-sm text-[12px]">กรอกฟอร์มด้านซ้ายเพื่อนัดหมายที่ปรึกษา</span>
+        </div>`;
+        return;
+      }
+      list.innerHTML = leads.map(l => {
+        const st = STATUS_MAP[l.status] || STATUS_MAP.submitted;
+        const intents = Array.isArray(l.intent_details) ? l.intent_details.join(', ') : l.intent_details;
+        const createdDate = l.created_at ? new Date(l.created_at).toLocaleDateString('th-TH') : '';
+        return `
+          <div class="p-4 rounded-xl bg-surface-container-low border border-surface-container flex flex-col gap-2 hover:shadow-sm transition-all">
+            <div class="flex items-center justify-between">
+              <span class="font-label-lg font-semibold text-on-surface">${formatThaiDate(l.preferred_date)} • ${l.preferred_time || '--'}</span>
+              <span class="px-2 py-0.5 rounded-full ${st.cls} font-label-sm text-[11px] font-semibold">${st.text}</span>
+            </div>
+            <div class="font-body-sm text-[13px] text-on-surface-variant">
+              ${intents ? `ประเด็น: ${escapeHtml(intents)}` : ''}
+              ${l.notes ? ` • ${escapeHtml(l.notes)}` : ''}
+            </div>
+            <div class="font-label-sm text-[11px] text-on-surface-variant">ส่งคำขอ: ${createdDate} • ที่ปรึกษา: ${l.assigned_broker_name || 'กิตติพงษ์ สิทธิเวช'}</div>
+          </div>
+        `;
+      }).join('');
+    } catch (e) {
+      list.innerHTML = `<div class="text-center py-6 text-on-surface-variant font-body-sm text-[14px]">ไม่สามารถโหลดข้อมูลได้</div>`;
+    }
+  }
+
+  // Persona switcher
+  const personaSelect = document.getElementById('persona-select');
+  if (personaSelect) {
+    personaSelect.value = CUSTOMER_ID;
+    personaSelect.addEventListener('change', (e) => {
+      const u = new URL(window.location.href);
+      u.searchParams.set('cid', e.target.value);
+      window.location.href = u.pathname + u.search;
+    });
+  }
+
+  // Preserve ?cid on nav links
+  document.querySelectorAll('a[href^="/customer"]').forEach(a => {
+    try {
+      const u = new URL(a.getAttribute('href'), window.location.origin);
+      u.searchParams.set('cid', CUSTOMER_ID);
+      a.setAttribute('href', u.pathname + u.search);
+    } catch(e) {}
+  });
+
+  document.getElementById('btn-refresh').addEventListener('click', loadAppointments);
+
+  renderDates();
+  loadAppointments();
+})();
+</script>
+</body>
+</html>

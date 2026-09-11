@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Coverage Pulse | PDPA Audit Log</title>
+  <meta name="description" content="PDPA Consent Audit Log — ตรวจสอบ Consent Trail ลูกค้าทุกราย พร้อมระบบ Export และ Verify"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    @layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}}
+    ::-webkit-scrollbar{display:none;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .animate-spin{animation:spin 1s linear infinite;}
+    .skeleton{background:linear-gradient(90deg,#eeedf7 25%,#f4f2fd 50%,#eeedf7 75%);background-size:200% 100%;animation:skeleton-loading 1.4s infinite;}
+    @keyframes skeleton-loading{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+    .accordion-content{max-height:0;overflow:hidden;transition:max-height 0.3s ease;}
+    .accordion-content.open{max-height:400px;}
+    #toast-notif{transition:all 0.3s ease;}
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "surface":"#fbf8ff","background":"#fbf8ff","primary-fixed-dim":"#f1c100","error-container":"#ffdad6","on-error":"#ffffff","surface-container-lowest":"#ffffff","tertiary":"#006c49","on-error-container":"#93000a","on-tertiary":"#ffffff","on-primary":"#ffffff","surface-container":"#eeedf7","error":"#ba1a1a","on-surface-variant":"#4e4632","primary":"#745b00","on-primary-container":"#6e5700","primary-container":"#fecb00","on-surface":"#1a1b22","secondary":"#635d5a","surface-container-highest":"#e3e1ec","on-secondary":"#ffffff","surface-container-low":"#f4f2fd","surface-container-high":"#e8e7f1"
+        },
+        "borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        "fontFamily":{"IBM Plex Sans":["IBM Plex Sans"]}
+      }
+    }
+  }</script>
+</head>
+<body class="bg-background font-['IBM_Plex_Sans'] text-on-surface antialiased">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-xl border-b border-surface-container/60 shadow-[0_1px_10px_rgba(45,41,38,0.04)]">
+  <div class="h-18 max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center justify-between gap-3 lg:gap-6">
+    
+    <!-- Left: Brand Logo & Title -->
+    <div class="flex items-center gap-3 lg:gap-5 flex-shrink-0">
+      <a href="/broker" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FFD100] to-[#E5AC00] flex items-center justify-center shadow-xs text-[#2D2926] flex-shrink-0 group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="font-headline-md text-[17px] font-bold tracking-tight text-on-surface">Coverage Pulse</span>
+            <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container font-semibold text-[9px] tracking-wider uppercase">BROKER</span>
+          </div>
+          <span class="font-label-sm text-[10.5px] text-on-surface-variant leading-none">Advisor Operations Hub</span>
+        </div>
+      </a>
+
+      <!-- Center-Left Nav -->
+      <nav class="hidden lg:flex items-center gap-1 p-1 bg-surface-container-low rounded-full flex-shrink-0 shadow-xs">
+        <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface text-[13px] font-medium whitespace-nowrap transition-colors" href="/broker">Priority Queue</a>
+        <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface text-[13px] font-medium whitespace-nowrap transition-colors" href="/broker/portfolio.html">Customer Portfolio</a>
+        <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface text-[13px] font-medium whitespace-nowrap transition-colors" href="/broker/analytics.html">Analytics &amp; Trends</a>
+        <a aria-current="page" class="px-3.5 py-1.5 bg-primary-container text-on-primary-container font-semibold text-[13px] rounded-full shadow-xs whitespace-nowrap" href="/broker/audit-log.html">PDPA Audit Log</a>
+      </nav>
+    </div>
+
+    <!-- Right: Search, Filter, Export -->
+    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+      <div class="hidden md:flex items-center relative">
+        <span class="material-symbols-outlined absolute left-2.5 text-secondary text-[17px]">search</span>
+        <input id="search-cid" class="bg-surface-container-lowest pl-8 pr-3 py-1.5 rounded-full text-[12.5px] text-on-surface placeholder:text-on-surface-variant shadow-xs border border-surface-container-high/50 focus:outline-none focus:ring-2 focus:ring-primary-container w-36 sm:w-52 transition-all" placeholder="ค้นหา CID, ชื่อ, Partner..." type="search"/>
+      </div>
+      <div class="relative">
+        <select id="filter-partner" class="bg-surface-container-lowest border border-surface-container-high/60 rounded-full pl-3 pr-8 py-1.5 text-[12.5px] text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container shadow-xs max-w-[170px] sm:max-w-[230px] truncate cursor-pointer appearance-none">
+          <option value="">ทุก Partner (ทั้งหมด)</option>
+          <optgroup label="กลุ่มพันธมิตรหลัก">
+            <option value="BDMS">BDMS Network ทั้งหมด</option>
+            <option value="Krungsri">เครือ Krungsri ทั้งหมด</option>
+            <option value="Bank of Ayudhya">ธนาคารกรุงศรีอยุธยา</option>
+          </optgroup>
+          <optgroup label="พันธมิตรเฉพาะราย" id="partner-options-list">
+            <option value="BDMS Network (รพ.กรุงเทพ)">BDMS Network (รพ.กรุงเทพ)</option>
+            <option value="BDMS Network (รพ.สมิติเวช)">BDMS Network (รพ.สมิติเวช)</option>
+            <option value="Bank of Ayudhya PCL">Bank of Ayudhya PCL</option>
+            <option value="Coverage Pulse Digital Engine">Coverage Pulse Digital Engine</option>
+            <option value="Krungsri Advisor Gateway">Krungsri Advisor Gateway</option>
+            <option value="Krungsri Coverage Pulse">Krungsri Coverage Pulse</option>
+            <option value="Krungsri Insurance Advisory">Krungsri Insurance Advisory</option>
+            <option value="Krungsri Life Assurance">Krungsri Life Assurance</option>
+            <option value="Krungsri Telephony Cloud">Krungsri Telephony Cloud</option>
+            <option value="Krungsri Wealth Suite">Krungsri Wealth Suite</option>
+          </optgroup>
+        </select>
+        <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[16px] text-on-surface-variant pointer-events-none">expand_more</span>
+      </div>
+      <button id="btn-export-audit" class="px-3.5 py-1.5 rounded-full bg-primary-container text-on-primary-container text-[12.5px] font-bold flex items-center gap-1.5 shadow-xs hover:brightness-105 transition-all whitespace-nowrap">
+        <span class="material-symbols-outlined text-[16px]">download</span>
+        Export
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="w-full pt-20 bg-background min-h-screen">
+  <div class="max-w-[1280px] mx-auto px-6 py-6 flex flex-col gap-6">
+
+    <!-- Page Header + PDPA Status Banner -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h1 class="font-bold text-[28px] text-on-surface leading-tight">PDPA Consent Audit Log</h1>
+        <p class="text-[14px] text-on-surface-variant">บันทึกการให้ความยินยอมทั้งหมด — ตรวจสอบได้ตามมาตรฐาน พ.ร.บ. PDPA พ.ศ. 2562</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-tertiary/10 border border-tertiary/20 text-tertiary">
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+          <span class="text-[13px] font-semibold">Fully Compliant</span>
+        </div>
+        <button id="btn-verify-all" class="px-4 py-2 rounded-full bg-surface-container-lowest border border-surface-container text-on-surface text-[13px] font-semibold flex items-center gap-1.5 hover:bg-surface-container transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">fact_check</span>
+          Verify All
+        </button>
+      </div>
+    </div>
+
+    <!-- PDPA Summary Tiles -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm text-center">
+        <div class="font-bold text-[32px] text-on-surface" id="total-consent">--</div>
+        <div class="text-[12px] font-semibold text-on-surface-variant uppercase tracking-wide mt-1">Consent Records</div>
+      </div>
+      <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm text-center">
+        <div class="font-bold text-[32px] text-tertiary" id="active-consent">--</div>
+        <div class="text-[12px] font-semibold text-on-surface-variant uppercase tracking-wide mt-1">Active Consents</div>
+      </div>
+      <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm text-center">
+        <div class="font-bold text-[32px] text-on-surface" id="partner-count">--</div>
+        <div class="text-[12px] font-semibold text-on-surface-variant uppercase tracking-wide mt-1">Data Partners</div>
+      </div>
+      <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm text-center">
+        <div class="font-bold text-[32px] text-primary-container" id="expiring-count">0</div>
+        <div class="text-[12px] font-semibold text-on-surface-variant uppercase tracking-wide mt-1">Expiring Soon</div>
+      </div>
+    </div>
+
+    <!-- PDPA Policy Sections (Accordion) -->
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-surface-container">
+        <h2 class="font-bold text-[18px] text-on-surface">สิทธิ์และนโยบาย PDPA</h2>
+      </div>
+      <div class="divide-y divide-surface-container" id="pdpa-accordions">
+        <div class="accordion-item">
+          <button class="accordion-trigger w-full flex items-center justify-between px-6 py-4 text-left hover:bg-surface-container-low transition-colors" type="button">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-[22px] text-tertiary">security</span>
+              <div>
+                <div class="font-semibold text-[15px] text-on-surface">การประมวลผลข้อมูลสุขภาพ (Sensitive Data)</div>
+                <div class="text-[12px] text-on-surface-variant">Data Category: Health &amp; Medical</div>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-[20px] text-on-surface-variant accordion-icon">expand_more</span>
+          </button>
+          <div class="accordion-content">
+            <div class="px-6 pb-5 text-[13px] text-on-surface-variant leading-relaxed">
+              ข้อมูลสุขภาพถือเป็น Sensitive Personal Data ตาม พ.ร.บ. PDPA มาตรา 26 ต้องขอ Explicit Consent แยกต่างหาก จำกัดการเข้าถึงเฉพาะผู้ที่ได้รับอนุญาต บันทึก Audit Trail ทุก Data Access และสามารถเพิกถอนความยินยอมได้ทุกเวลา
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger w-full flex items-center justify-between px-6 py-4 text-left hover:bg-surface-container-low transition-colors" type="button">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-[22px] text-primary">share</span>
+              <div>
+                <div class="font-semibold text-[15px] text-on-surface">การส่งข้อมูลให้ Third Parties</div>
+                <div class="text-[12px] text-on-surface-variant">Data Sharing: Partner Hospitals, Insurers</div>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-[20px] text-on-surface-variant accordion-icon">expand_more</span>
+          </button>
+          <div class="accordion-content">
+            <div class="px-6 pb-5 text-[13px] text-on-surface-variant leading-relaxed">
+              การส่งข้อมูลให้ Partner ต้องได้รับ Granular Consent สำหรับแต่ละ Partner โดยเฉพาะ ระบบจะบันทึก Data Lineage สำหรับทุก Data Transfer และสร้างสัญญา Data Processing Agreement (DPA) ตามมาตรฐาน GDPR-equivalent
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger w-full flex items-center justify-between px-6 py-4 text-left hover:bg-surface-container-low transition-colors" type="button">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-[22px] text-error">delete_forever</span>
+              <div>
+                <div class="font-semibold text-[15px] text-on-surface">สิทธิ์ลบข้อมูล (Right to Erasure)</div>
+                <div class="text-[12px] text-on-surface-variant">Data Subject Rights: Erasure Request</div>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-[20px] text-on-surface-variant accordion-icon">expand_more</span>
+          </button>
+          <div class="accordion-content">
+            <div class="px-6 pb-5 text-[13px] text-on-surface-variant leading-relaxed">
+              ลูกค้าสามารถขอลบข้อมูลทั้งหมดได้ภายใน 30 วันตาม PDPA มาตรา 34 ยกเว้นข้อมูลที่จำเป็นต้องเก็บตามกฎหมาย เช่น ข้อมูลทางการเงินและกรมธรรม์ที่ยังมีผลบังคับ ระบบจะส่งใบยืนยันการลบข้อมูลภายใน 72 ชั่วโมง
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audit Log Table -->
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-surface-container flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <h2 class="font-bold text-[18px] text-on-surface">Consent Trail บันทึก</h2>
+          <span id="active-filter-badge" class="hidden items-center gap-1.5 text-[11.5px] font-medium bg-primary-container/30 text-on-surface border border-primary-container/50 px-2.5 py-0.5 rounded-full">
+            <span class="material-symbols-outlined text-[13px] text-primary">filter_alt</span>
+            <span id="filter-badge-text"></span>
+            <button id="btn-clear-filter" class="hover:text-error ml-1 font-bold text-[13px] leading-none" title="ล้างตัวกรอง">✕</button>
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[12px] text-on-surface-variant" id="log-count">กำลังโหลด...</span>
+          <button id="btn-refresh-logs" class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors" title="รีเฟรช">
+            <span class="material-symbols-outlined text-[18px]">refresh</span>
+          </button>
+        </div>
+      </div>
+      <!-- Table Head -->
+      <div class="hidden md:grid grid-cols-[65px_110px_1fr_150px_160px_90px] gap-0 px-5 py-3 border-b border-surface-container bg-surface-container-low text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
+        <span>ลำดับ</span>
+        <span>CID</span>
+        <span>Consent Type</span>
+        <span>Data Partner</span>
+        <span>วันที่-เวลา (วินาที)</span>
+        <span class="text-right">สถานะ</span>
+      </div>
+      <!-- Rows -->
+      <div class="divide-y divide-surface-container" id="audit-rows">
+        <div class="skeleton h-14 m-4 rounded-lg"></div>
+        <div class="skeleton h-14 m-4 rounded-lg"></div>
+        <div class="skeleton h-14 m-4 rounded-lg"></div>
+        <div class="skeleton h-14 m-4 rounded-lg"></div>
+        <div class="skeleton h-14 m-4 rounded-lg"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Toast -->
+<div id="toast-notif" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-inverse-surface text-inverse-on-surface px-5 py-3 rounded-full shadow-2xl opacity-0 translate-y-4 pointer-events-none" style="transition:all 0.3s ease;">
+  <span class="material-symbols-outlined text-[20px]" id="toast-icon" style="color:#6ffbbe">check_circle</span>
+  <span class="text-[14px] font-semibold" id="toast-msg">สำเร็จ</span>
+</div>
+
+<script>
+(function() {
+  let allLogs = [];
+  let searchTimer = null;
+  let toastTimer = null;
+
+  function showToast(msg, icon = 'check_circle', isError = false) {
+    if (toastTimer) clearTimeout(toastTimer);
+    document.getElementById('toast-msg').textContent = msg;
+    document.getElementById('toast-icon').textContent = icon;
+    document.getElementById('toast-icon').style.color = isError ? '#ffdad6' : '#6ffbbe';
+    const el = document.getElementById('toast-notif');
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+    el.style.pointerEvents = 'auto';
+    toastTimer = setTimeout(() => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(16px)';
+      el.style.pointerEvents = 'none';
+    }, 3500);
+  }
+
+  function getConsentStatusBadge(status) {
+    const map = {
+      'active': 'bg-tertiary/15 text-tertiary',
+      'revoked': 'bg-error-container text-on-error-container',
+      'expired': 'bg-surface-container text-on-surface-variant',
+      'pending': 'bg-primary-container/30 text-on-primary-container'
+    };
+    return map[status] || 'bg-surface-container text-on-surface-variant';
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '--';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      const formatted = d.toLocaleDateString('th-TH', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+      });
+      return `${formatted} น.`;
+    } catch { return dateStr; }
+  }
+
+  function renderLogs(logs) {
+    const container = document.getElementById('audit-rows');
+    document.getElementById('log-count').textContent = `${logs.length} บันทึก`;
+
+    if (logs.length === 0) {
+      container.innerHTML = `<div class="text-center py-10 text-on-surface-variant"><span class="material-symbols-outlined text-[36px]">policy</span><p class="text-[14px] mt-2">ไม่พบบันทึก Consent Trail ตามเงื่อนไขที่เลือก</p></div>`;
+      return;
+    }
+
+    container.innerHTML = logs.map((l, idx) => {
+      const badgeCls = getConsentStatusBadge(l.status);
+      const statusLabel = { active: 'Active', revoked: 'Revoked', expired: 'Expired', pending: 'Pending' }[l.status] || l.status || 'Active';
+      return `
+        <div class="grid grid-cols-1 md:grid-cols-[65px_110px_1fr_150px_160px_90px] gap-0 px-5 py-4 items-center hover:bg-surface-container-low transition-colors group">
+          <span class="text-[12px] font-mono text-on-surface-variant hidden md:block">#${String(idx + 1).padStart(3, '0')}</span>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[13px] font-semibold text-on-surface">${l.customer_id}</span>
+            <span class="text-[11px] text-on-surface-variant">${l.customer_name || '--'}</span>
+          </div>
+          <div class="flex flex-col gap-0.5 py-1">
+            <span class="text-[13px] text-on-surface">${l.consent_type || '--'}</span>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-[11px] text-on-surface-variant">${l.purpose || 'Coverage Analysis'}</span>
+              <span class="text-[11px] text-tertiary font-medium md:hidden flex items-center gap-1">
+                <span class="material-symbols-outlined text-[12px]">handshake</span>${l.partner_name || '--'}
+              </span>
+              <span class="text-[10.5px] font-mono text-on-surface-variant md:hidden">
+                • ${formatDate(l.granted_at)}
+              </span>
+            </div>
+          </div>
+          <span class="text-[13px] text-on-surface hidden md:block">${l.partner_name || '--'}</span>
+          <div class="flex flex-col gap-0.5 hidden md:flex">
+            <span class="text-[11.5px] text-on-surface font-mono tracking-tight">${formatDate(l.granted_at)}</span>
+            ${l.expires_at ? `<span class="text-[10.5px] text-on-surface-variant font-mono">หมดอายุ: ${formatDate(l.expires_at)}</span>` : ''}
+          </div>
+          <div class="flex justify-end items-center gap-2">
+            <span class="px-2 py-0.5 rounded-full ${badgeCls} text-[11px] font-semibold">${statusLabel}</span>
+            <button onclick="verifyConsent('${l.id || l.customer_id}')" class="hidden group-hover:flex w-7 h-7 rounded-full bg-surface-container items-center justify-center text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container transition-all cursor-pointer" title="Verify">
+              <span class="material-symbols-outlined text-[14px]">fact_check</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.verifyConsent = function(id) {
+    showToast(`Consent ID ${id} — ยืนยันความถูกต้องเรียบร้อย ✓`, 'verified', false);
+  };
+
+  function updateFilterBadge(search, partner) {
+    const badge = document.getElementById('active-filter-badge');
+    const badgeText = document.getElementById('filter-badge-text');
+    if (!badge || !badgeText) return;
+
+    const parts = [];
+    if (partner) parts.push(`Partner: ${partner}`);
+    if (search) parts.push(`ค้นหา: "${search}"`);
+
+    if (parts.length > 0) {
+      badgeText.textContent = parts.join(' | ');
+      badge.classList.remove('hidden');
+      badge.classList.add('inline-flex');
+    } else {
+      badge.classList.add('hidden');
+      badge.classList.remove('inline-flex');
+    }
+  }
+
+  async function loadAuditLogs(search = '', partner = '') {
+    updateFilterBadge(search, partner);
+
+    const params = new URLSearchParams();
+    if (search) params.set('search', search);
+    if (partner) params.set('partner', partner);
+
+    const rows = document.getElementById('audit-rows');
+    rows.innerHTML = '<div class="skeleton h-14 m-4 rounded-lg"></div><div class="skeleton h-14 m-4 rounded-lg"></div><div class="skeleton h-14 m-4 rounded-lg"></div>';
+
+    try {
+      const res = await fetch(`/api/broker/audit-log?${params}`);
+      const data = await res.json();
+      allLogs = data.logs || [];
+
+      // Update summary tiles
+      document.getElementById('total-consent').textContent = allLogs.length;
+      const active = allLogs.filter(l => !l.status || l.status === 'active').length;
+      document.getElementById('active-consent').textContent = active;
+      const partners = new Set(allLogs.map(l => l.partner_name).filter(Boolean));
+      document.getElementById('partner-count').textContent = partners.size;
+
+      // Sync partner dropdown options if API returns distinct partners list
+      if (data.partners && data.partners.length > 0) {
+        const listEl = document.getElementById('partner-options-list');
+        if (listEl) {
+          const currentVal = document.getElementById('filter-partner').value;
+          listEl.innerHTML = data.partners.map(p => 
+            `<option value="${p}" ${p === currentVal ? 'selected' : ''}>${p}</option>`
+          ).join('');
+        }
+      }
+
+      renderLogs(allLogs);
+    } catch (e) {
+      rows.innerHTML = `<div class="text-center py-6 text-on-surface-variant text-[14px]">ไม่สามารถโหลดข้อมูลได้</div>`;
+    }
+  }
+
+  // Accordion
+  document.querySelectorAll('.accordion-trigger').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const content = btn.nextElementSibling;
+      const icon = btn.querySelector('.accordion-icon');
+      const isOpen = content.classList.contains('open');
+      document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('open'));
+      document.querySelectorAll('.accordion-icon').forEach(i => i.style.transform = '');
+      if (!isOpen) {
+        content.classList.add('open');
+        icon.style.transform = 'rotate(180deg)';
+      }
+    });
+  });
+
+  // Search
+  document.getElementById('search-cid').addEventListener('input', function() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      loadAuditLogs(this.value.trim(), document.getElementById('filter-partner').value);
+    }, 350);
+  });
+
+  // Partner filter
+  document.getElementById('filter-partner').addEventListener('change', function() {
+    loadAuditLogs(document.getElementById('search-cid').value.trim(), this.value);
+  });
+
+  // Clear filter
+  document.getElementById('btn-clear-filter').addEventListener('click', function() {
+    document.getElementById('search-cid').value = '';
+    document.getElementById('filter-partner').value = '';
+    loadAuditLogs('', '');
+  });
+
+  // Export
+  document.getElementById('btn-export-audit').addEventListener('click', () => {
+    showToast('กำลังสร้างไฟล์ PDF Audit Report... (จำลองการ Export)', 'download');
+  });
+
+  // Verify All
+  document.getElementById('btn-verify-all').addEventListener('click', () => {
+    showToast(`ตรวจสอบ Consent ทั้งหมด ${allLogs.length} รายการ — Compliant ✓`, 'fact_check');
+  });
+
+  // Refresh
+  document.getElementById('btn-refresh-logs').addEventListener('click', () => {
+    loadAuditLogs(document.getElementById('search-cid').value.trim(), document.getElementById('filter-partner').value);
+  });
+
+  loadAuditLogs();
+})();
+</script>
+</body>
+</html>

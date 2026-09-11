@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Coverage Pulse | Customer Portfolio</title>
+  <meta name="description" content="Broker Customer Portfolio — ค้นหา กรอง และดูรายละเอียดลูกค้าทั้งหมด"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    @layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}}
+    ::-webkit-scrollbar{display:none;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .animate-spin{animation:spin 1s linear infinite;}
+    .tab-btn.active{background:#fecb00;color:#6e5700;font-weight:700;}
+    .customer-row{cursor:pointer;transition:background 0.1s ease;}
+    .customer-row:hover{background:rgba(238,237,247,0.6);}
+    .customer-row.selected{background:rgba(254,203,0,0.08);}
+    .skeleton{background:linear-gradient(90deg,#eeedf7 25%,#f4f2fd 50%,#eeedf7 75%);background-size:200% 100%;animation:skeleton-loading 1.4s infinite;}
+    @keyframes skeleton-loading{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "inverse-on-surface":"#f1effa","secondary-container":"#e6ded9","surface":"#fbf8ff","background":"#fbf8ff","primary-fixed-dim":"#f1c100","error-container":"#ffdad6","on-error":"#ffffff","surface-container-lowest":"#ffffff","primary-fixed":"#ffe08b","tertiary":"#006c49","on-error-container":"#93000a","on-tertiary":"#ffffff","on-primary":"#ffffff","surface-container":"#eeedf7","surface-bright":"#fbf8ff","error":"#ba1a1a","on-surface-variant":"#4e4632","primary":"#745b00","on-primary-container":"#6e5700","tertiary-fixed-dim":"#4edea3","primary-container":"#fecb00","on-surface":"#1a1b22","outline-variant":"#d2c5ab","secondary":"#635d5a","surface-container-highest":"#e3e1ec","on-secondary":"#ffffff","surface-container-low":"#f4f2fd","inverse-surface":"#2f3038","on-secondary-container":"#67625e","surface-container-high":"#e8e7f1"
+        },
+        "borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        "fontFamily":{"IBM Plex Sans":["IBM Plex Sans"]},
+        "fontSize":{
+          "headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"600"}],
+          "label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"500"}],
+          "label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],
+          "headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],
+          "label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],
+          "headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],
+          "body-sm":["14px",{"lineHeight":"20px","fontWeight":"400"}],
+          "body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}]
+        }
+      }
+    }
+  }</script>
+</head>
+<body class="bg-background font-['IBM_Plex_Sans'] text-on-surface antialiased">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-xl border-b border-surface-container/60 shadow-[0_1px_10px_rgba(45,41,38,0.04)]">
+  <div class="h-18 max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center justify-between gap-3 lg:gap-6">
+    
+    <!-- Left: Brand Logo & Title -->
+    <div class="flex items-center gap-3 lg:gap-5 flex-shrink-0">
+      <a href="/broker" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FFD100] to-[#E5AC00] flex items-center justify-center shadow-xs text-[#2D2926] flex-shrink-0 group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="font-headline-md text-[17px] font-bold tracking-tight text-on-surface">Coverage Pulse</span>
+            <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container font-semibold text-[9px] tracking-wider uppercase">BROKER</span>
+          </div>
+          <span class="font-label-sm text-[10.5px] text-on-surface-variant leading-none">Advisor Operations Hub</span>
+        </div>
+      </a>
+
+      <!-- Center-Left Nav -->
+      <nav class="hidden lg:flex items-center gap-1 p-1 bg-surface-container-low rounded-full flex-shrink-0 shadow-xs">
+        <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface text-[13px] font-medium whitespace-nowrap transition-colors" href="/broker">Priority Queue</a>
+        <a aria-current="page" class="px-3.5 py-1.5 bg-primary-container text-on-primary-container font-semibold text-[13px] rounded-full shadow-xs whitespace-nowrap" href="/broker/portfolio.html">Customer Portfolio</a>
+        <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface text-[13px] font-medium whitespace-nowrap transition-colors" href="/broker/analytics.html">Analytics &amp; Trends</a>
+        <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface text-[13px] font-medium whitespace-nowrap transition-colors" href="/broker/audit-log.html">PDPA Audit Log</a>
+      </nav>
+    </div>
+
+    <!-- Right: Search, Export -->
+    <div class="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
+      <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-2.5 text-secondary text-[17px]">search</span>
+        <input id="search-box" class="bg-surface-container-lowest pl-8 pr-3 py-1.5 rounded-full text-[12.5px] text-on-surface placeholder:text-on-surface-variant shadow-xs border border-surface-container-high/50 focus:outline-none focus:ring-2 focus:ring-primary-container w-36 sm:w-52 lg:w-64 transition-all focus:w-72" placeholder="ค้นหาชื่อ, CID, เบอร์..." type="search"/>
+      </div>
+      <button id="btn-export" class="px-3.5 py-1.5 rounded-full bg-surface-container-lowest border border-surface-container text-on-surface text-[12.5px] font-semibold flex items-center gap-1.5 hover:bg-surface-container transition-colors shadow-xs whitespace-nowrap">
+        <span class="material-symbols-outlined text-[16px]">download</span>
+        Export
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="w-full pt-20 bg-background min-h-screen">
+  <div class="max-w-[1280px] mx-auto px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left: Portfolio Table -->
+    <div class="lg:col-span-8 flex flex-col gap-4">
+      <!-- Title + Tabs -->
+      <div class="flex flex-col gap-3">
+        <h1 class="font-bold text-[24px] text-on-surface">Customer Portfolio</h1>
+        <div class="flex items-center gap-2 overflow-x-auto pb-1">
+          <button class="tab-btn active flex-shrink-0 px-4 py-1.5 rounded-full text-[13px] font-semibold transition-colors" data-tab="all">ทั้งหมด</button>
+          <button class="tab-btn flex-shrink-0 px-4 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-[13px] font-semibold hover:bg-surface-container-high transition-colors" data-tab="critical">
+            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-error inline-block"></span>วิกฤต</span>
+          </button>
+          <button class="tab-btn flex-shrink-0 px-4 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-[13px] font-semibold hover:bg-surface-container-high transition-colors" data-tab="review">ควรทบทวน</button>
+          <button class="tab-btn flex-shrink-0 px-4 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-[13px] font-semibold hover:bg-surface-container-high transition-colors" data-tab="optimal">เหมาะสม</button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+        <!-- Table Head -->
+        <div class="grid grid-cols-[1fr_80px_80px_120px_100px] gap-0 px-5 py-3 border-b border-surface-container bg-surface-container-low text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
+          <span>ลูกค้า</span>
+          <span class="text-center">แบตเตอรี่</span>
+          <span class="text-center">กรมธรรม์</span>
+          <span class="text-center">Segment</span>
+          <span class="text-right">Action</span>
+        </div>
+        <!-- Rows -->
+        <div class="divide-y divide-surface-container" id="portfolio-rows">
+          <div class="skeleton h-16 m-4 rounded-lg"></div>
+          <div class="skeleton h-16 m-4 rounded-lg"></div>
+          <div class="skeleton h-16 m-4 rounded-lg"></div>
+          <div class="skeleton h-16 m-4 rounded-lg"></div>
+        </div>
+      </div>
+
+      <!-- Pagination info -->
+      <div class="text-[13px] text-on-surface-variant text-right" id="portfolio-count"></div>
+    </div>
+
+    <!-- Right: Customer Snapshot Drawer -->
+    <div class="lg:col-span-4 flex flex-col gap-4">
+      <div class="bg-surface-container-lowest rounded-xl shadow-md p-5 flex flex-col gap-4 sticky top-24" id="snapshot-panel">
+        <div class="flex flex-col items-center gap-3 py-8 text-on-surface-variant" id="snapshot-empty">
+          <span class="material-symbols-outlined text-[40px]">person_search</span>
+          <p class="text-[14px] text-center">คลิกลูกค้าจากตารางด้านซ้าย<br/>เพื่อดูข้อมูล Snapshot</p>
+        </div>
+        <div class="hidden flex-col gap-4" id="snapshot-content">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+(function() {
+  let allCustomers = [];
+  let currentTab = 'all';
+  let selectedId = null;
+  let searchTimer = null;
+
+  const OCCUPATION_MAP = {
+    employee: 'พนักงานบริษัทเอกชน',
+    government: 'ข้าราชการ/รัฐวิสาหกิจ',
+    business_owner: 'เจ้าของธุรกิจ/SME',
+    freelance: 'ฟรีแลนซ์/รับจ้างอิสระ',
+    retired: 'เกษียณอายุ',
+    other: 'อื่นๆ'
+  };
+
+  const FAMILY_STATUS_MAP = {
+    single: 'โสด (ไม่มีภาระพึ่งพิง)',
+    married: 'สมรส (ไม่มีบุตร)',
+    married_children: 'สมรส (มีบุตร)',
+    preparing: 'เตรียมมีบุตร / ตั้งครรภ์'
+  };
+
+  const INCOME_BRACKET_MAP = {
+    under_30k: 'ต่ำกว่า 30,000 บาท/ด.',
+    '30k_70k': '30,001 – 70,000 บาท/ด.',
+    over_70k: 'มากกว่า 70,000 บาท/ด.'
+  };
+
+  function formatOccupation(occ) {
+    return OCCUPATION_MAP[occ] || occ || 'ไม่ระบุ';
+  }
+
+  function formatFamilyStatus(st) {
+    return FAMILY_STATUS_MAP[st] || st || 'ไม่ระบุ';
+  }
+
+  const WELFARE_MAP = {
+    group_insurance: 'ประกันกลุ่มบริษัทเอกชน',
+    social_security: 'ประกันสังคม',
+    government: 'สิทธิข้าราชการ/รัฐวิสาหกิจ',
+    none: 'ไม่มีสวัสดิการ (จ่ายเอง 100%)'
+  };
+
+  function formatWelfare(w) {
+    return WELFARE_MAP[w] || w || 'ไม่ระบุ';
+  }
+
+  const POLICY_CAT_MAP = {
+    health: { name: 'ประกันสุขภาพ', icon: 'medical_services', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+    critical_illness: { name: 'โรคร้ายแรง', icon: 'coronavirus', cls: 'bg-rose-50 text-rose-700 border-rose-200' },
+    whole_life: { name: 'ประกันชีวิต/มรดก', icon: 'family_restroom', cls: 'bg-blue-50 text-blue-700 border-blue-200' },
+    term_life: { name: 'ชีวิตชั่วระยะเวลา', icon: 'shield', cls: 'bg-blue-50 text-blue-700 border-blue-200' },
+    savings: { name: 'ประกันสะสมทรัพย์', icon: 'savings', cls: 'bg-amber-50 text-amber-700 border-amber-200' },
+    unit_linked: { name: 'ยูนิต ลิงค์', icon: 'trending_up', cls: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
+    pension: { name: 'ประกันบำนาญ', icon: 'elderly', cls: 'bg-purple-50 text-purple-700 border-purple-200' },
+    accident: { name: 'ประกันอุบัติเหตุ PA', icon: 'health_and_safety', cls: 'bg-orange-50 text-orange-700 border-orange-200' }
+  };
+
+  function formatIncome(inc) {
+    return INCOME_BRACKET_MAP[inc] || inc || 'ไม่ระบุ';
+  }
+
+  function getBatteryColor(score, status) {
+    if (status === 'critical' || score < 50) return { text: 'text-error', bar: 'bg-error', badge: 'bg-error-container text-on-error-container' };
+    if (status === 'review' || score < 80) return { text: 'text-on-surface', bar: 'bg-primary-container', badge: 'bg-primary-fixed text-on-primary-fixed' };
+    return { text: 'text-tertiary', bar: 'bg-tertiary', badge: 'bg-tertiary/15 text-tertiary' };
+  }
+
+  function renderRows(customers) {
+    const container = document.getElementById('portfolio-rows');
+    document.getElementById('portfolio-count').textContent = `แสดง ${customers.length} จากทั้งหมด ${allCustomers.length} ราย`;
+
+    if (customers.length === 0) {
+      container.innerHTML = `<div class="text-center py-10 text-on-surface-variant"><span class="material-symbols-outlined text-[36px]">inbox</span><p class="text-[14px] mt-2">ไม่พบลูกค้าในหมวดนี้</p></div>`;
+      return;
+    }
+
+    container.innerHTML = customers.map(c => {
+      const col = getBatteryColor(c.battery_score, c.battery_status);
+      const isSelected = c.id === selectedId;
+      const policyCount = c.policies ? c.policies.length : (c.active_policies_count || 0);
+      return `
+        <div class="customer-row ${isSelected ? 'selected' : ''} grid grid-cols-[1fr_80px_80px_120px_100px] gap-0 px-5 py-4 items-center" data-id="${c.id}">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <span class="text-primary font-bold text-[14px]">${(c.name || '?')[0]}</span>
+            </div>
+            <div class="min-w-0">
+              <div class="font-semibold text-[14px] text-on-surface truncate">${c.name}</div>
+              <div class="text-[11px] text-on-surface-variant">${c.id} ${c.phone ? '• ' + c.phone : ''}</div>
+            </div>
+          </div>
+          <div class="flex flex-col items-center gap-0.5">
+            <span class="font-bold text-[15px] ${col.text}">${c.battery_score}%</span>
+            <div class="w-10 h-1.5 rounded-full bg-surface-container overflow-hidden">
+              <div class="h-full ${col.bar}" style="width:${c.battery_score}%"></div>
+            </div>
+          </div>
+          <div class="text-center font-semibold text-[14px] text-on-surface">${policyCount}</div>
+          <div class="text-center">
+            <span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-[11px] font-semibold">${c.segment || 'Standard'}</span>
+          </div>
+          <div class="flex justify-end">
+            <button type="button" onclick="event.stopPropagation();briefClick('${c.id}')" class="px-3 py-1.5 rounded-full bg-primary-container text-on-primary-container text-[12px] font-bold hover:brightness-105 transition-all">
+              Brief
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    container.querySelectorAll('.customer-row').forEach(row => {
+      row.addEventListener('click', () => showSnapshot(row.dataset.id));
+    });
+  }
+
+  window.briefClick = function(id) {
+    window.location.href = `/broker?brief=${id}`;
+  };
+
+  function showSnapshot(customerId) {
+    selectedId = customerId;
+    document.querySelectorAll('.customer-row').forEach(r => r.classList.toggle('selected', r.dataset.id === customerId));
+    const c = allCustomers.find(x => x.id === customerId);
+    if (!c) return;
+    const col = getBatteryColor(c.battery_score, c.battery_status);
+    const rawPolicies = c.policies || (c.policy_names ? c.policy_names.split(' | ').map((name, i) => ({ id: `POL-${i+1}`, product_name: name })) : []);
+
+    document.getElementById('snapshot-empty').classList.add('hidden');
+    const content = document.getElementById('snapshot-content');
+    content.classList.remove('hidden');
+    content.classList.add('flex');
+    content.innerHTML = `
+      <!-- Customer Header -->
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0">
+          <span class="text-primary font-bold text-[20px]">${(c.name || '?')[0]}</span>
+        </div>
+        <div class="flex flex-col">
+          <div class="font-bold text-[18px] text-on-surface">${c.name}</div>
+          <div class="text-[12px] text-on-surface-variant">${c.id} • ${c.segment || ''}</div>
+        </div>
+      </div>
+
+      <!-- Battery -->
+      <div class="bg-surface-container-low rounded-xl p-4 flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[12px] text-on-surface-variant font-semibold uppercase tracking-wide">Battery Score</span>
+          <span class="px-2 py-0.5 rounded-full ${col.badge} text-[11px] font-semibold">${c.battery_status === 'critical' ? 'วิกฤต' : c.battery_status === 'review' ? 'ควรทบทวน' : 'เหมาะสม'}</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span class="font-bold text-[32px] ${col.text} leading-none">${c.battery_score}</span>
+          <span class="font-bold text-[18px] text-on-surface-variant">%</span>
+        </div>
+        <div class="h-2 rounded-full bg-surface-container overflow-hidden">
+          <div class="h-full ${col.bar} transition-all duration-700" style="width:${c.battery_score}%"></div>
+        </div>
+      </div>
+
+      <!-- Profile -->
+      <div class="flex flex-col gap-2">
+        <div class="text-[12px] font-semibold text-on-surface-variant uppercase tracking-wide">โปรไฟล์ลูกค้า</div>
+        <div class="grid grid-cols-2 gap-2">
+          ${c.age ? `
+            <div class="bg-surface-container-low p-3 rounded-lg flex flex-col justify-between">
+              <div class="text-[11px] text-on-surface-variant">อายุ</div>
+              <div class="font-semibold text-[14px] text-on-surface mt-0.5">${c.age} ปี</div>
+            </div>
+          ` : ''}
+          ${c.family_status ? `
+            <div class="bg-surface-container-low p-3 rounded-lg flex flex-col justify-between">
+              <div class="text-[11px] text-on-surface-variant">สถานะครอบครัว</div>
+              <div class="font-semibold text-[13px] text-on-surface leading-snug mt-0.5 break-words">${formatFamilyStatus(c.family_status)}</div>
+            </div>
+          ` : ''}
+          ${c.income_bracket ? `
+            <div class="bg-surface-container-low p-3 rounded-lg flex flex-col justify-between">
+              <div class="text-[11px] text-on-surface-variant">รายได้เฉลี่ย</div>
+              <div class="font-semibold text-[13px] text-on-surface leading-snug mt-0.5 break-words">${formatIncome(c.income_bracket)}</div>
+            </div>
+          ` : ''}
+          ${c.welfare ? `
+            <div class="bg-surface-container-low p-3 rounded-lg flex flex-col justify-between">
+              <div class="text-[11px] text-on-surface-variant">สวัสดิการเดิม</div>
+              <div class="font-semibold text-[13px] text-on-surface leading-snug mt-0.5 break-words">${formatWelfare(c.welfare)}</div>
+            </div>
+          ` : ''}
+          ${c.occupation ? `
+            <div class="col-span-2 bg-surface-container-low p-3 rounded-lg flex flex-col gap-1">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-[11px] text-on-surface-variant font-medium">อาชีพ / ตำแหน่งงาน</span>
+                <span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-[10.5px] font-semibold">${formatOccupation(c.occupation)}</span>
+              </div>
+              <div class="font-bold text-[14px] text-on-surface leading-snug break-words">
+                ${c.occupation_detail || formatOccupation(c.occupation)}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <!-- Policies (Complete List - All Policies) -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <div class="text-[12px] font-semibold text-on-surface-variant uppercase tracking-wide flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-tertiary">inventory_2</span>
+            <span>กรมธรรม์ทั้งหมด (${rawPolicies.length} ฉบับ)</span>
+          </div>
+          ${rawPolicies.length > 0 ? `<span class="text-[10.5px] font-bold text-tertiary bg-tertiary/10 px-2 py-0.5 rounded-full">Active</span>` : ''}
+        </div>
+        ${rawPolicies.length > 0 ? `
+          <div class="flex flex-col gap-2 max-h-72 overflow-y-auto pr-1">
+            ${rawPolicies.map(p => {
+              const cat = POLICY_CAT_MAP[p.category] || { name: p.category || 'ประกันภัย', icon: 'shield', cls: 'bg-surface-container text-on-surface-variant border-surface-container-high' };
+              return `
+                <div class="p-3 bg-surface-container-low border border-surface-container-high/60 rounded-xl flex flex-col gap-1.5 hover:shadow-xs transition-shadow">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="flex items-start gap-2 min-w-0">
+                      <span class="material-symbols-outlined text-[18px] text-tertiary mt-0.5 flex-shrink-0">${cat.icon}</span>
+                      <div class="min-w-0">
+                        <div class="font-bold text-[13px] text-on-surface leading-tight">${p.product_name || 'กรมธรรม์ประกันภัย'}</div>
+                        <div class="text-[11px] text-on-surface-variant mt-0.5">${p.id || ''} • <span class="px-1.5 py-0.2 rounded border text-[10px] font-medium ${cat.cls}">${cat.name}</span></div>
+                      </div>
+                    </div>
+                    <span class="px-1.5 py-0.5 rounded bg-tertiary/10 text-tertiary text-[10px] font-bold flex-shrink-0">คุ้มครอง</span>
+                  </div>
+                  <div class="flex items-center justify-between text-[11.5px] pt-1 border-t border-surface-container/60 mt-0.5">
+                    <span class="text-on-surface-variant">ความคุ้มครอง: <strong class="text-on-surface">${p.coverage_amount || '--'}</strong></span>
+                    <span class="text-on-surface-variant">เบี้ย: <strong class="text-primary">${p.annual_premium ? `${p.annual_premium}/ปี` : '--'}</strong></span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        ` : `
+          <div class="p-3 bg-error-container/20 border border-error-container rounded-xl text-center text-[12px] text-error flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">warning</span>
+            <span>ยังไม่มีกรมธรรม์ในพอร์ต (ความเสี่ยงสูง ขาดความคุ้มครองทุกมิติ)</span>
+          </div>
+        `}
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-2 mt-2">
+        <button onclick="window.location.href='/broker?brief=${c.id}'" class="flex-1 py-2.5 rounded-full bg-primary-container text-on-primary-container text-[13px] font-bold flex items-center justify-center gap-1.5 hover:brightness-105 transition-all shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">auto_awesome</span>Pre-call Brief
+        </button>
+        <a href="/broker/audit-log.html" class="flex-1 py-2.5 rounded-full bg-surface-container text-on-surface text-[13px] font-semibold flex items-center justify-center gap-1.5 hover:bg-surface-container-high transition-colors">
+          <span class="material-symbols-outlined text-[18px]">policy</span>PDPA
+        </a>
+      </div>
+    `;
+  }
+
+  async function loadPortfolio(search = '', batteryStatus = '') {
+    const params = new URLSearchParams();
+    if (search) params.set('search', search);
+    if (batteryStatus && batteryStatus !== 'all') params.set('batteryStatus', batteryStatus);
+
+    const rows = document.getElementById('portfolio-rows');
+    rows.innerHTML = `<div class="skeleton h-16 m-4 rounded-lg"></div><div class="skeleton h-16 m-4 rounded-lg"></div><div class="skeleton h-16 m-4 rounded-lg"></div>`;
+
+    try {
+      const res = await fetch(`/api/broker/portfolio?${params}`);
+      const data = await res.json();
+      allCustomers = data.customers || [];
+      renderRows(allCustomers);
+    } catch (e) {
+      rows.innerHTML = `<div class="text-center py-6 text-on-surface-variant text-[14px]">ไม่สามารถโหลดข้อมูลได้</div>`;
+    }
+  }
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.classList.add('bg-surface-container', 'text-on-surface-variant');
+      });
+      btn.classList.add('active');
+      btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+      currentTab = btn.dataset.tab;
+      loadPortfolio(document.getElementById('search-box').value.trim(), currentTab);
+    });
+  });
+
+  // Search
+  document.getElementById('search-box').addEventListener('input', function() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      loadPortfolio(this.value.trim(), currentTab);
+    }, 350);
+  });
+
+  // Export
+  document.getElementById('btn-export').addEventListener('click', () => {
+    alert('Export BI Report: ฟีเจอร์นี้จะสร้างไฟล์ CSV ลูกค้าทั้งหมดตามฟิลเตอร์ที่เลือก');
+  });
+
+  // Global Brief Click Handler
+  window.briefClick = function(customerId) {
+    window.location.href = `/broker?brief=${customerId}`;
+  };
+
+  loadPortfolio();
+})();
+</script>
+</body>
+</html>

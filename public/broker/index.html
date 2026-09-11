@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Coverage Pulse | Broker Priority Queue</title>
+  <meta name="description" content="Broker Operations Dashboard — Priority Queue, Pre-call Brief &amp; AI Copilot"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    @layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}
+    ::-webkit-scrollbar{display:none;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .animate-spin{animation:spin 1s linear infinite;}
+    .filter-btn.active{background:#fecb00;color:#6e5700;font-weight:700;box-shadow:0 2px 8px rgba(254,203,0,0.3);}
+    .client-row{transition:all 0.15s ease;cursor:pointer;}
+    .client-row:hover{background:rgba(238,237,247,0.7);}
+    .client-row.selected{background:rgba(254,203,0,0.08);border-left:3px solid #fecb00;}
+    .skeleton{background:linear-gradient(90deg,#eeedf7 25%,#f4f2fd 50%,#eeedf7 75%);background-size:200% 100%;animation:skeleton-loading 1.4s infinite;}
+    @keyframes skeleton-loading{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+    @keyframes slideIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+    .slide-in{animation:slideIn 0.3s ease forwards;}
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "inverse-on-surface":"#f1effa","secondary-container":"#e6ded9","surface":"#fbf8ff","on-tertiary-fixed":"#002113","background":"#fbf8ff","secondary-fixed":"#e9e1dc","primary-fixed-dim":"#f1c100","error-container":"#ffdad6","on-error":"#ffffff","outline":"#80765f","surface-tint":"#745b00","on-secondary-fixed":"#1e1b18","on-primary-fixed-variant":"#584400","on-tertiary-container":"#006645","surface-variant":"#e3e1ec","on-background":"#1a1b22","surface-container-lowest":"#ffffff","tertiary-container":"#5be9ad","primary-fixed":"#ffe08b","on-secondary-fixed-variant":"#4b4642","tertiary-fixed":"#6ffbbe","tertiary":"#006c49","on-error-container":"#93000a","on-primary-fixed":"#241a00","on-tertiary":"#ffffff","on-primary":"#ffffff","surface-container":"#eeedf7","secondary-fixed-dim":"#cdc5c0","surface-bright":"#fbf8ff","error":"#ba1a1a","on-surface-variant":"#4e4632","primary":"#745b00","on-primary-container":"#6e5700","surface-dim":"#dad9e3","tertiary-fixed-dim":"#4edea3","primary-container":"#fecb00","on-tertiary-fixed-variant":"#005236","on-surface":"#1a1b22","outline-variant":"#d2c5ab","secondary":"#635d5a","inverse-primary":"#f1c100","surface-container-highest":"#e3e1ec","on-secondary":"#ffffff","surface-container-low":"#f4f2fd","inverse-surface":"#2f3038","on-secondary-container":"#67625e","surface-container-high":"#e8e7f1"
+        },
+        "borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        "fontFamily":{"headline-xl":["IBM Plex Sans"],"label-sm":["IBM Plex Sans"],"label-lg":["IBM Plex Sans"],"headline-md":["IBM Plex Sans"],"label-md":["IBM Plex Sans"],"headline-lg":["IBM Plex Sans"],"body-sm":["IBM Plex Sans"],"display-lg":["IBM Plex Sans"],"body-md":["IBM Plex Sans"]},
+        "fontSize":{
+          "headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"600"}],
+          "label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"500"}],
+          "label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],
+          "headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],
+          "label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],
+          "headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],
+          "body-sm":["14px",{"lineHeight":"20px","fontWeight":"400"}],
+          "display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"700"}],
+          "body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}]
+        }
+      }
+    }
+  }</script>
+</head>
+<body class="bg-background font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-xl border-b border-surface-container/60 shadow-[0_1px_10px_rgba(45,41,38,0.04)]">
+  <div class="h-18 max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center justify-between gap-3 lg:gap-6">
+    
+    <!-- Left: Brand Logo & Title -->
+    <div class="flex items-center gap-3 lg:gap-5 flex-shrink-0">
+      <a href="/broker" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FFD100] to-[#E5AC00] flex items-center justify-center shadow-xs text-[#2D2926] flex-shrink-0 group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="font-headline-md text-[17px] font-bold tracking-tight text-on-surface">Coverage Pulse</span>
+            <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container font-semibold text-[9px] tracking-wider uppercase">BROKER</span>
+          </div>
+          <span class="font-label-sm text-[10.5px] text-on-surface-variant leading-none">Advisor Operations Hub</span>
+        </div>
+      </a>
+
+      <!-- Center-Left Nav -->
+      <nav class="hidden lg:flex items-center gap-1 p-1 bg-surface-container-low rounded-full flex-shrink-0 shadow-xs">
+        <a aria-current="page" class="px-3.5 py-1.5 bg-primary-container text-on-primary-container font-semibold text-[13px] rounded-full shadow-xs whitespace-nowrap" href="/broker">Priority Queue</a>
+        <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface text-[13px] font-medium whitespace-nowrap transition-colors" href="/broker/portfolio.html">Customer Portfolio</a>
+        <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface text-[13px] font-medium whitespace-nowrap transition-colors" href="/broker/analytics.html">Analytics &amp; Trends</a>
+        <a class="px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface text-[13px] font-medium whitespace-nowrap transition-colors" href="/broker/audit-log.html">PDPA Audit Log</a>
+      </nav>
+    </div>
+
+    <!-- Right: Search, TLS, Notifications, Profile -->
+    <div class="flex items-center gap-2.5 sm:gap-3.5 flex-shrink-0">
+      <!-- Search Input -->
+      <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-2.5 text-secondary text-[17px]">search</span>
+        <input id="search-input" class="bg-surface-container-lowest pl-8 pr-3 py-1.5 rounded-full text-[12.5px] text-on-surface placeholder:text-on-surface-variant shadow-xs border border-surface-container-high/50 focus:outline-none focus:ring-2 focus:ring-primary-container w-32 sm:w-44 lg:w-52 transition-all focus:w-64" placeholder="ค้นหาชื่อ, CID..." type="text"/>
+      </div>
+
+      <!-- TLS Badge -->
+      <div class="hidden 2xl:flex items-center gap-1 px-2.5 py-1 bg-surface-container-lowest border border-surface-container rounded-full shadow-xs text-[11px] whitespace-nowrap flex-shrink-0">
+        <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+        <span class="text-on-surface font-medium">Bank-TLS</span>
+      </div>
+
+      <!-- Notification Bell -->
+      <button class="relative w-8 h-8 rounded-full bg-surface-container-lowest border border-surface-container text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors flex items-center justify-center flex-shrink-0" id="notif-btn" title="การแจ้งเตือน">
+        <span class="material-symbols-outlined text-[18px]">notifications</span>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface" id="notif-dot"></span>
+      </button>
+
+      <div class="h-4 w-px bg-surface-container-high hidden sm:block"></div>
+
+      <!-- Broker Profile -->
+      <div class="flex items-center gap-2 pl-1 flex-shrink-0 whitespace-nowrap">
+        <div class="hidden sm:flex flex-col text-right">
+          <span class="text-[13px] text-on-surface font-semibold leading-tight">กิตติพงษ์ สิทธิเวช</span>
+          <span class="text-[10px] text-on-surface-variant leading-none">Krungsri Certified Advisor</span>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-xs flex-shrink-0">
+          <span class="material-symbols-outlined text-[17px]">person</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="w-full pt-20 bg-background min-h-screen">
+  <div class="max-w-[1280px] mx-auto px-6 py-6 flex flex-col gap-6">
+
+    <!-- Stat Metabar -->
+    <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-error animate-pulse"></span>
+            <span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">ลูกค้าเร่งด่วนสูง</span>
+          </div>
+          <span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">battery_alert</span>&lt;50%
+          </span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="font-display-lg text-display-lg text-error font-bold leading-none" id="stat-critical">--</span>
+          <span class="font-label-lg text-label-lg text-on-surface-variant">ราย</span>
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Warm Leads</span>
+          <span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm font-semibold flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">bolt</span>รอด่วน
+          </span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="font-display-lg text-display-lg text-on-surface font-bold leading-none" id="stat-warm">--</span>
+          <span class="font-label-lg text-label-lg text-on-surface-variant">ราย</span>
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+        <div class="flex items-center justify-between mb-3">
+          <span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">ลูกค้าทั้งหมด</span>
+          <span class="material-symbols-outlined text-tertiary text-[18px]">group</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="font-display-lg text-display-lg text-on-surface font-bold leading-none" id="stat-total">--</span>
+          <span class="font-label-lg text-label-lg text-on-surface-variant">ราย</span>
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+        <div class="flex items-center justify-between mb-3">
+          <span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Hospital Signals</span>
+          <span class="material-symbols-outlined text-primary text-[18px]">local_hospital</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="font-display-lg text-display-lg text-on-surface font-bold leading-none" id="stat-hospital">--</span>
+          <span class="font-label-lg text-label-lg text-on-surface-variant">สัญญาณ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Left: Priority Queue -->
+      <div class="lg:col-span-7 flex flex-col gap-4">
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-5">
+          <!-- Header + Filters -->
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary-container text-[24px]" style="font-variation-settings: 'FILL' 1;">dataset</span>
+              <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">Priority Queue</h2>
+            </div>
+            <button id="btn-refresh-queue" class="w-8 h-8 rounded-full text-on-surface-variant hover:bg-surface-container flex items-center justify-center transition-colors">
+              <span class="material-symbols-outlined text-[18px]">refresh</span>
+            </button>
+          </div>
+          <!-- Filter Pills -->
+          <div class="flex flex-wrap gap-2 mb-4">
+            <button type="button" class="filter-btn active px-3 py-1 rounded-full font-label-sm text-label-sm font-semibold flex items-center gap-1" data-filter="all">ทั้งหมด</button>
+            <button type="button" class="filter-btn px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold flex items-center gap-1.5" data-filter="critical">
+              <span class="w-2 h-2 rounded-full bg-error"></span>วิกฤต &lt;50%
+            </button>
+            <button type="button" class="filter-btn px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold flex items-center gap-1.5" data-filter="review">
+              <span class="w-2 h-2 rounded-full bg-primary-fixed-dim"></span>ควรทบทวน
+            </button>
+            <button type="button" class="filter-btn px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold flex items-center gap-1.5" data-filter="optimal">
+              <span class="w-2 h-2 rounded-full bg-tertiary"></span>เหมาะสม
+            </button>
+          </div>
+          <!-- Queue List -->
+          <div class="flex flex-col gap-2" id="queue-list">
+            <div class="skeleton h-20 rounded-xl"></div>
+            <div class="skeleton h-20 rounded-xl"></div>
+            <div class="skeleton h-20 rounded-xl"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Pre-call Brief -->
+      <div class="lg:col-span-5 flex flex-col gap-4 sticky top-24">
+        <div class="bg-surface-container-lowest rounded-xl shadow-md p-5 flex flex-col gap-4 relative overflow-hidden" id="brief-panel">
+          <div class="absolute -top-12 -right-12 w-36 h-36 bg-primary-container/15 rounded-full blur-2xl pointer-events-none"></div>
+          <div class="flex items-center justify-between border-b border-surface-container pb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+              </div>
+              <div>
+                <h3 class="font-headline-md text-headline-md font-bold text-on-surface leading-tight">Pre-call Brief &amp; NBA</h3>
+                <span class="font-label-sm text-label-sm text-on-surface-variant" id="brief-subtitle">เลือกลูกค้าจากคิวเพื่อดู Brief</span>
+              </div>
+            </div>
+          </div>
+          <div id="brief-content" class="flex flex-col items-center justify-center gap-3 py-8 text-on-surface-variant">
+            <span class="material-symbols-outlined text-[40px]">person_search</span>
+            <span class="font-body-sm text-[14px]">คลิกลูกค้าในคิวด้านซ้ายเพื่อดู Pre-call Brief</span>
+          </div>
+        </div>
+
+        <!-- AI Copilot Floating -->
+        <div class="bg-surface/90 backdrop-blur-xl rounded-2xl shadow-md p-3 pl-4 flex items-center justify-between gap-3 border border-surface-container">
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-on-primary-container text-[18px]">smart_toy</span>
+            </div>
+            <p class="font-body-sm text-body-sm text-on-surface truncate">
+              <span class="font-semibold text-primary">Copilot:</span> <span id="copilot-msg">โหลดข้อมูลลูกค้าในคิว...</span>
+            </p>
+          </div>
+          <a href="/broker/analytics.html" class="px-3 py-1.5 rounded-full bg-on-surface text-surface font-label-sm text-label-sm font-semibold hover:bg-inverse-surface transition-colors flex-shrink-0">
+            ดู Analytics
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function() {
+  let allCustomers = [];
+  let currentFilter = 'all';
+  let selectedCustomerId = null;
+
+  const OCCUPATION_MAP = {
+    employee: 'พนักงานบริษัทเอกชน',
+    government: 'ข้าราชการ/รัฐวิสาหกิจ',
+    business_owner: 'เจ้าของธุรกิจ/SME',
+    freelance: 'ฟรีแลนซ์/รับจ้างอิสระ',
+    retired: 'เกษียณอายุ',
+    other: 'อื่นๆ'
+  };
+
+  const FAMILY_STATUS_MAP = {
+    single: 'โสด (ไม่มีภาระพึ่งพิง)',
+    married: 'สมรส (ไม่มีบุตร)',
+    married_children: 'สมรส (มีบุตร)',
+    preparing: 'เตรียมมีบุตร / ตั้งครรภ์'
+  };
+
+  const INCOME_BRACKET_MAP = {
+    under_30k: 'ต่ำกว่า 30,000 บาท/ด.',
+    '30k_70k': '30,001 – 70,000 บาท/ด.',
+    over_70k: 'มากกว่า 70,000 บาท/ด.'
+  };
+
+  const WELFARE_MAP = {
+    group_insurance: 'ประกันกลุ่มบริษัทเอกชน',
+    social_security: 'ประกันสังคม ม.33/39',
+    government: 'สิทธิข้าราชการ/รัฐวิสาหกิจ',
+    none: 'ไม่มีสวัสดิการ (จ่ายเอง 100%)'
+  };
+
+  const DEBT_MAP = {
+    no_debt: 'ไม่มีภาระหนี้สิน',
+    car_or_personal: 'ผ่อนรถ / สินเชื่อบุคคล',
+    mortgage_high: 'ผ่อนบ้าน / คอนโด / หนี้ธุรกิจ'
+  };
+
+  const PRIMARY_CONCERN_MAP = {
+    medical_cost: 'ค่ารักษาพยาบาลเอกชนบานปลาย',
+    critical_illness: 'โรคร้ายแรงกะทันหัน',
+    family_burden: 'ภาระครอบครัว / ห่วงคนข้างหลัง',
+    retirement_shortage: 'เงินไม่พอใช้หลังเกษียณ'
+  };
+
+  function formatOccupation(occ) {
+    return OCCUPATION_MAP[occ] || occ || 'ไม่ระบุ';
+  }
+
+  function formatFamilyStatus(st) {
+    return FAMILY_STATUS_MAP[st] || st || 'ไม่ระบุ';
+  }
+
+  function formatIncome(inc) {
+    return INCOME_BRACKET_MAP[inc] || inc || 'ไม่ระบุ';
+  }
+
+  function formatWelfare(w) {
+    return WELFARE_MAP[w] || w || 'ไม่ระบุ';
+  }
+
+  function formatDebt(d) {
+    return DEBT_MAP[d] || d || 'ไม่ระบุ';
+  }
+
+  function formatConcern(c) {
+    return PRIMARY_CONCERN_MAP[c] || c || 'ไม่ระบุ';
+  }
+
+  function formatThaiDate(dateStr) {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch(e) {
+      return dateStr;
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function getBatteryColor(score, status) {
+    if (status === 'critical' || score < 50) return { score: 'text-error', bar: 'bg-error', badge: 'bg-error-container text-on-error-container' };
+    if (status === 'review' || score < 80) return { score: 'text-on-surface', bar: 'bg-primary-container', badge: 'bg-primary-fixed text-on-primary-fixed' };
+    return { score: 'text-tertiary', bar: 'bg-tertiary', badge: 'bg-tertiary-fixed/30 text-tertiary' };
+  }
+
+  function batteryBars(score) {
+    const pct = score / 100;
+    const filled = Math.floor(pct * 5);
+    const cls = score < 50 ? 'bg-error' : score < 80 ? 'bg-primary-container' : 'bg-tertiary';
+    return Array.from({length: 5}, (_, i) =>
+      `<div class="w-2 h-4 rounded-sm ${i < filled ? cls : 'bg-surface-container-high'}"></div>`
+    ).join('');
+  }
+
+  function renderQueue(customers) {
+    const list = document.getElementById('queue-list');
+    if (customers.length === 0) {
+      list.innerHTML = `<div class="text-center py-8 text-on-surface-variant font-body-sm">ไม่พบลูกค้าในหมวดนี้</div>`;
+      return;
+    }
+    list.innerHTML = customers.map(c => {
+      const col = getBatteryColor(c.battery_score, c.battery_status);
+      const isSelected = c.id === selectedCustomerId;
+      const eventBadge = c.latest_event_title
+        ? `<span class="font-label-sm text-[11px] text-tertiary font-medium flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">verified</span>${c.latest_event_title.substring(0, 30)}${c.latest_event_title.length > 30 ? '...' : ''}</span>`
+        : '';
+      const warmBadge = c.warm_lead_count > 0
+        ? `<span class="font-label-sm text-[11px] text-primary font-medium">Warm Lead (${c.warm_lead_count})</span>`
+        : '';
+      return `
+        <div class="client-row ${isSelected ? 'selected' : ''} p-4 rounded-xl bg-surface-container-lowest border border-transparent hover:border-surface-container-high flex flex-col sm:flex-row sm:items-center justify-between gap-3" data-id="${c.id}" onclick="window.selectClient('${c.id}')">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 ${isSelected ? 'ring-2 ring-primary-container' : ''}">
+              <span class="font-headline-md text-[16px] font-bold text-primary">${(c.name || '?')[0]}</span>
+            </div>
+            <div class="min-w-0 flex flex-col gap-0.5">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-headline-md text-[16px] font-bold text-on-surface">${c.name}</span>
+                <span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-[11px]">${c.age ? `${c.age} ปี` : ''}</span>
+                ${c.battery_status === 'critical' ? `<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-[11px] font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span>ด่วน</span>` : ''}
+              </div>
+              <div class="flex items-center gap-2 flex-wrap">${eventBadge}${warmBadge}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 flex-shrink-0">
+            <div class="flex flex-col items-end gap-1">
+              <div class="flex items-center gap-1.5">
+                <div class="flex items-center gap-0.5 p-0.5 rounded">${batteryBars(c.battery_score)}</div>
+                <span class="font-headline-md text-[16px] font-bold ${col.score}">${c.battery_score}%</span>
+              </div>
+              <span class="font-label-sm text-[11px] text-on-surface-variant">${c.segment || ''}</span>
+            </div>
+            <button type="button" onclick="event.stopPropagation();loadBrief('${c.id}')" class="px-3 py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md font-bold shadow-sm hover:brightness-105 transition-all flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px]">call</span>
+              <span class="hidden sm:inline">โทร</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.selectClient = function(id) {
+    selectedCustomerId = id;
+    document.querySelectorAll('.client-row').forEach(r => {
+      r.classList.toggle('selected', r.dataset.id === id);
+    });
+    loadBrief(id);
+  };
+
+  async function loadBrief(customerId) {
+    const content = document.getElementById('brief-content');
+    const subtitle = document.getElementById('brief-subtitle');
+    content.innerHTML = `<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center mx-auto mb-2"><span class="material-symbols-outlined text-on-primary-container text-[18px] animate-spin">progress_activity</span></div><span class="font-body-sm text-[14px] text-on-surface-variant">กำลังโหลด Brief...</span>`;
+
+    try {
+      const res = await fetch(`/api/broker/pre-call-brief/${customerId}`);
+      const data = await res.json();
+      const c = data.customer;
+      const events = data.lifeEvents || [];
+      const leads = data.warmLeads || [];
+      const policies = data.policies || [];
+      const notes = data.brokerNotes || [];
+
+      subtitle.textContent = `AI Copilot สำหรับ ${c.name}`;
+
+      const latestEvent = events[0];
+      const latestLead = leads[0];
+      const gap = 100 - c.battery_score;
+
+      content.className = 'flex flex-col gap-4 slide-in';
+      content.innerHTML = `
+        <!-- Customer context -->
+        <div class="bg-surface-container-low/80 p-4 rounded-xl border border-surface-container-high/60 flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="font-label-md text-label-md font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-tertiary text-[18px]">verified</span>
+              Life-Event Trigger &amp; สัญญาณ
+            </span>
+            <span class="font-label-sm text-label-sm text-primary font-semibold">${c.battery_score}% Battery</span>
+          </div>
+          <div class="text-body-sm text-[13px] text-on-surface flex flex-col gap-1.5">
+            ${c.age ? `<div class="flex items-baseline gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0"></span><span><strong>โปรไฟล์:</strong> อายุ ${c.age} ปี • ${c.occupation_detail || formatOccupation(c.occupation)} • สถานะ: ${formatFamilyStatus(c.family_status)}</span></div>` : ''}
+            ${c.welfare || c.debt_burden ? `<div class="flex items-baseline gap-2"><span class="w-1.5 h-1.5 rounded-full bg-surface-tint mt-1.5 flex-shrink-0"></span><span><strong>สวัสดิการ/หนี้สิน:</strong> ${formatWelfare(c.welfare)} • ${formatDebt(c.debt_burden)}</span></div>` : ''}
+            ${latestEvent ? `<div class="flex items-baseline gap-2"><span class="w-1.5 h-1.5 rounded-full bg-tertiary mt-1.5 flex-shrink-0"></span><span><strong>Life-Event:</strong> ${latestEvent.title || latestEvent.event_type}</span></div>` : ''}
+            ${latestLead ? `
+              <div class="flex items-baseline gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary-container mt-1.5 flex-shrink-0"></span>
+                <span><strong>เวลานัดหมายที่สะดวก:</strong> ${latestLead.preferred_date ? `${formatThaiDate(latestLead.preferred_date)} ` : ''}${latestLead.preferred_time || '--'}</span>
+              </div>
+              ${latestLead.notes ? `
+                <div class="flex items-baseline gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0"></span>
+                  <span><strong>ความต้องการของลูกค้า:</strong> ${escapeHtml(latestLead.notes)}</span>
+                </div>
+              ` : ''}
+            ` : ''}
+            ${policies.length > 0 ? `
+              <div class="flex items-baseline gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-tertiary mt-1.5 flex-shrink-0"></span>
+                <span><strong>กรมธรรม์เดิม (${policies.length} ฉบับ):</strong> ${policies.map(p => `${p.product_name} (${p.coverage_amount})`).join(' • ')}</span>
+              </div>
+            ` : `
+              <div class="flex items-baseline gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-error mt-1.5 flex-shrink-0"></span>
+                <span><strong>กรมธรรม์เดิม:</strong> ยังไม่มีกรมธรรม์ในระบบ (0 ฉบับ)</span>
+              </div>
+            `}
+          </div>
+        </div>
+
+        <!-- NBA (Detailed & Actionable) -->
+        <div class="p-4 rounded-xl bg-primary-container/15 border border-primary-container/40 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <span class="font-label-md text-label-md font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-[18px]">recommend</span>
+              Next-Best-Action (NBA) เชิงกลยุทธ์
+            </span>
+            <span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-[11px] font-bold">AI Strategy</span>
+          </div>
+
+          <div class="flex flex-col gap-2 text-[13px]">
+            <!-- 1. Primary Proposal -->
+            <div class="flex items-start gap-2 p-2 rounded-lg bg-surface-container-lowest/80 border border-primary-container/30">
+              <span class="material-symbols-outlined text-[16px] text-primary mt-0.5 flex-shrink-0">stars</span>
+              <div>
+                <span class="font-bold text-on-surface">ข้อเสนอหลัก (Primary Solution):</span>
+                <p class="text-on-surface-variant leading-snug mt-0.5">
+                  ${c.battery_status === 'critical' 
+                    ? 'เสนอแพ็กเกจ <strong>Krungsri Super Care เหมาจ่าย 5M + สัญญาเพิ่มเติมโรคร้ายแรง CI 2M</strong> ชูจุดเด่นไม่ต้องสำรองจ่าย รพ.กรุงเทพ/บำรุงราษฎร์' 
+                    : c.battery_status === 'review'
+                    ? 'เสนอ <strong>Top-up Rider เหมาจ่าย OPD/IPD และ PA ทุน 1M</strong> เพื่อปิด Gap คุ้มครองที่ตกค้างจากการประเมินรอบล่าสุด'
+                    : 'เสนอ <strong>Krungsri Wealth Optimizer / Pension 85/55</strong> สำหรับลดหย่อนภาษีสูงสุด 300,000 บาท และส่งต่อมรดก'}
+                </p>
+              </div>
+            </div>
+
+            <!-- 2. Gap to Highlight -->
+            <div class="flex items-start gap-2 p-2 rounded-lg bg-surface-container-lowest/80 border border-surface-container">
+              <span class="material-symbols-outlined text-[16px] text-error mt-0.5 flex-shrink-0">crisis_alert</span>
+              <div>
+                <span class="font-bold text-on-surface">จุดเสี่ยงที่ต้องชี้ให้เห็น (Risk Gap):</span>
+                <p class="text-on-surface-variant leading-snug mt-0.5">
+                  ${latestEvent 
+                    ? `สัญญาณชีวิตล่าสุด <em>"${latestEvent.title || latestEvent.event_type}"</em> ทำให้ระดับแบตเตอรี่ลดเหลือ ${c.battery_score}% ขาดความคุ้มครองสูงถึง ${gap}% หากเกิดเหตุฉุกเฉินต้องควักเงินเก็บเองหลักล้าน`
+                    : `แบตเตอรี่ปัจจุบันอยู่ที่ ${c.battery_score}% มีช่องโหว่ด้านค่ารักษาพยาบาลยามุ่งเป้าและการชดเชยรายได้ครอบครัว`}
+                </p>
+              </div>
+            </div>
+
+            <!-- 3. Objection Anticipation -->
+            <div class="flex items-start gap-2 p-2 rounded-lg bg-surface-container-lowest/80 border border-surface-container">
+              <span class="material-symbols-outlined text-[16px] text-tertiary mt-0.5 flex-shrink-0">lightbulb</span>
+              <div>
+                <span class="font-bold text-on-surface">ข้อโต้แย้งที่คาดและแนวทางตอบ (Objection Handler):</span>
+                <p class="text-on-surface-variant leading-snug mt-0.5">
+                  ${c.active_policies_count > 0 
+                    ? 'ถ้าลูกค้าบอกว่า "มีประกันของที่อื่นอยู่แล้ว" → ให้ชมพอร์ตเดิม และเสนอว่าระบบ AI ของเราช่วยตรวจสอบ Co-pay หรือจุดทับซ้อน เพื่อประหยัดเบี้ยซ้ำซ้อน'
+                    : 'ถ้าลูกค้ากังวลเรื่อง "เบี้ยประกันแพง" → ให้ชี้ให้เห็นว่าระบบคำนวณเบี้ยเฉลี่ยเพียงวันละ 50-70 บาท แต่ป้องกันความเสียหายก้อนโตได้ถึง 3-5 ล้านบาท'}
+                </p>
+              </div>
+            </div>
+
+            <!-- 4. Target Call Outcome -->
+            <div class="flex items-start gap-2 p-2 rounded-lg bg-surface-container-lowest/80 border border-surface-container">
+              <span class="material-symbols-outlined text-[16px] text-primary mt-0.5 flex-shrink-0">flag</span>
+              <div>
+                <span class="font-bold text-on-surface">เป้าหมายสายนี้ (Call Goal):</span>
+                <p class="text-on-surface-variant leading-snug mt-0.5">
+                  นัดหมายเวลาเพื่อส่งตารางเปรียบเทียบผลประโยชน์ Sandbox ทาง LINE หรือนัดคุย VDO Call 15 นาที
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Script (Detailed & Conversational) -->
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="font-label-md text-label-md font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px] text-on-surface">record_voice_over</span>
+              สคริปต์เปิดบทสนทนา (Full Conversational Script)
+            </span>
+            <button class="text-primary font-label-sm text-[12px] font-semibold flex items-center gap-1 hover:underline cursor-pointer" onclick="window.copyScript()">
+              <span class="material-symbols-outlined text-[14px]">content_copy</span>
+              คัดลอกทั้งบท
+            </button>
+          </div>
+          <div class="p-4 rounded-xl bg-surface-container-low border border-surface-container font-body-sm text-[13px] text-on-surface leading-relaxed flex flex-col gap-2.5 max-h-72 overflow-y-auto" id="brief-script">
+            <p><strong>[1. ทักทาย &amp; สร้างความคุ้นเคย]</strong><br/>
+            "สวัสดีครับคุณ${c.name ? c.name.split(' ')[0] : ''} ผมกิตติพงษ์ สิทธิเวช ที่ปรึกษาการเงินและประกันสุขภาพส่วนบุคคลจาก Krungsri Coverage Pulse นะครับ ขออนุญาตเรียนสายสัก 3-4 นาที สะดวกคุยไหมครับ?"</p>
+
+            <p><strong>[2. ชี้เหตุผลที่ติดต่อโดยอิง Life-Event &amp; ข้อมูลจริง]</strong><br/>
+            "พอดีระบบ Coverage Pulse อัจฉริยะของธนาคารได้ทำการประมวลผลดัชนีชีพจรความคุ้มครองประจำปีให้คุณ${c.name ? c.name.split(' ')[0] : ''} ${latestEvent ? `ประกอบกับช่วงนี้มีข้อมูลการเปลี่ยนแปลงสำคัญเกี่ยวกับ <em>'${latestEvent.title || latestEvent.event_type}'</em>` : ''} ซึ่งเป็นช่วงชีวิตที่สำคัญมากครับ"</p>
+
+            <p><strong>[3. ชี้ช่องโหว่ความเสี่ยง (Pain Point &amp; Battery Gap)]</strong><br/>
+            "จากการคำนวณเบื้องต้น พบว่าระดับแบตเตอรี่ความคุ้มครองสุขภาพของคุณอยู่ที่ <strong>${c.battery_score}%</strong> ซึ่งมีช่องว่างความเสี่ยงอยู่ประมาณ <strong>${gap}%</strong> โดยเฉพาะในมิติค่ารักษาพยาบาลเทคโนโลยีใหม่และสัญญาคุ้มครองโรคร้ายแรง ที่หากเกิดเจ็บป่วยเฉียบพลัน อาจกระทบเงินเก็บสะสมของครอบครัวได้ถึงหลักล้านบาทเลยครับ"</p>
+
+            <p><strong>[4. นำเสนอคุณค่าและทางออก (The Solution Hook)]</strong><br/>
+            "ทางทีมผู้เชี่ยวชาญจึงได้เตรียมแบบจำลอง Sandbox เฉพาะบุคคลไว้ให้คุณ${c.name ? c.name.split(' ')[0] : ''} เป็นแผนเหมาจ่ายที่เติมเต็มจุดที่ขาดพอดี เบี้ยเฉลี่ยเพียงหลักร้อยต่อเดือน แต่ช่วยโอนความเสี่ยงค่ารักษาได้สูงสุดถึง 5 ล้านบาท โดยไม่ต้องสำรองจ่ายที่โรงพยาบาลชั้นนำในเครือข่ายครับ"</p>
+
+            <p><strong>[5. ขอ Call-to-Action ปิดการสนทนาเพื่อนัดหมาย]</strong><br/>
+            "ผมอยากขออนุญาตส่งสรุปผลวิเคราะห์นี้และตารางเปรียบเทียบให้คุณ${c.name ? c.name.split(' ')[0] : ''} ทาง LINE หรืออีเมล เพื่อให้พิจารณาตามสะดวก หรือหากสะดวกช่วงวันพรุ่งนี้บ่าย ผมสามารถโทรมาอธิบายสั้นๆ เพิ่มเติมได้ไหมครับ?"</p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-col gap-2 pt-2 border-t border-surface-container">
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="window.open('tel:+66819920199')" class="py-2.5 px-4 rounded-full bg-primary-container text-on-primary-container font-label-lg text-[13px] font-bold shadow-sm flex items-center justify-center gap-1.5 hover:brightness-105 transition-all">
+              <span class="material-symbols-outlined text-[18px]">call</span>โทรออกทันที
+            </button>
+            <button onclick="logCallOutcome('${c.id}','completed')" class="py-2.5 px-4 rounded-full bg-surface-container text-on-surface font-label-lg text-[13px] font-semibold flex items-center justify-center gap-1.5 hover:bg-surface-container-high transition-colors">
+              <span class="material-symbols-outlined text-[18px]">edit_note</span>บันทึกผล
+            </button>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="logCallOutcome('${c.id}','rescheduled')" class="py-1.5 rounded-lg bg-surface-container text-on-surface font-label-sm text-[12px] font-semibold hover:bg-surface-container-high transition-colors text-center">📅 นัดหมายใหม่</button>
+            <button onclick="logCallOutcome('${c.id}','adjusted')" class="py-1.5 rounded-lg bg-surface-container text-on-surface font-label-sm text-[12px] font-semibold hover:bg-surface-container-high transition-colors text-center">🔄 ปรับแผน</button>
+            <button onclick="logCallOutcome('${c.id}','pending')" class="py-1.5 rounded-lg bg-surface-container text-on-surface font-label-sm text-[12px] font-semibold hover:bg-surface-container-high transition-colors text-center">⏳ รอตัดสินใจ</button>
+          </div>
+        </div>
+
+        <!-- PDPA -->
+        <div class="flex items-center gap-2 p-2 rounded-lg bg-surface-container-low text-on-surface-variant font-label-sm text-[11px]">
+          <span class="material-symbols-outlined text-tertiary text-[16px]">verified_user</span>
+          PDPA Granular Consent Verified • รหัสลูกค้า: ${c.id}
+        </div>
+      `;
+
+      // Update copilot
+      document.getElementById('copilot-msg').textContent = c.battery_status === 'critical'
+        ? `${c.name} มีแบตเตอรี่วิกฤต ${c.battery_score}% แนะนำโทรหาวันนี้`
+        : `${c.name} มีสัญญาณ Life-event ใหม่ เหมาะสำหรับเสนอแผน`;
+
+    } catch (e) {
+      content.innerHTML = `<div class="text-center py-6 text-on-surface-variant"><span class="material-symbols-outlined text-[32px]">error_outline</span><p class="font-body-sm text-[13px] mt-2">ไม่สามารถโหลด Brief ได้</p></div>`;
+    }
+  }
+
+  window.logCallOutcome = async function(customerId, outcome) {
+    try {
+      await fetch('/api/broker/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId, callOutcome: outcome, notes: `Broker logged: ${outcome}` })
+      });
+      alert('บันทึกผลการติดต่อเรียบร้อยแล้ว');
+      loadQueue();
+    } catch (e) {
+      alert('เกิดข้อผิดพลาด');
+    }
+  };
+
+  window.copyScript = function() {
+    const el = document.getElementById('brief-script');
+    if (!el) return;
+    const text = el.innerText;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => alert('คัดลอกสคริปต์เรียบร้อย!'))
+        .catch(() => fallbackCopy(text));
+    } else {
+      fallbackCopy(text);
+    }
+    function fallbackCopy(str) {
+      const ta = document.createElement('textarea');
+      ta.value = str;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      alert('คัดลอกสคริปต์เรียบร้อย!');
+    }
+  };
+
+  async function loadQueue() {
+    try {
+      const icon = document.getElementById('btn-refresh-queue').querySelector('.material-symbols-outlined');
+      icon.classList.add('animate-spin');
+      const res = await fetch('/api/broker/priority-queue');
+      const data = await res.json();
+      allCustomers = data.customers || [];
+      icon.classList.remove('animate-spin');
+
+      // Update stats
+      document.getElementById('stat-critical').textContent = data.stats?.criticalCount ?? '--';
+      document.getElementById('stat-warm').textContent = data.stats?.warmLeadCount ?? '--';
+      document.getElementById('stat-total').textContent = data.stats?.totalClients ?? '--';
+      document.getElementById('stat-hospital').textContent = data.stats?.hospitalSignals ?? '--';
+
+      applyFilter();
+
+      // Update copilot alert
+      if (allCustomers.length > 0) {
+        const top = allCustomers[0];
+        document.getElementById('copilot-msg').textContent = `${top.name} วิกฤต ${top.battery_score}% รอในคิว • คลิกเพื่อดู Brief`;
+        document.getElementById('notif-dot').style.display = data.stats?.criticalCount > 0 ? 'block' : 'none';
+      }
+    } catch (e) {
+      document.getElementById('queue-list').innerHTML = `<div class="text-center py-6 text-on-surface-variant">ไม่สามารถโหลดข้อมูลได้ กรุณา refresh หน้า</div>`;
+    }
+  }
+
+  function applyFilter() {
+    let filtered = allCustomers;
+    if (currentFilter !== 'all') {
+      filtered = allCustomers.filter(c => c.battery_status === currentFilter);
+    }
+    renderQueue(filtered);
+    if (selectedCustomerId) {
+      document.querySelectorAll('.client-row').forEach(r => {
+        r.classList.toggle('selected', r.dataset.id === selectedCustomerId);
+      });
+    }
+  }
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      applyFilter();
+    });
+  });
+
+  // Search
+  document.getElementById('search-input').addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    const filtered = q ? allCustomers.filter(c =>
+      (c.name || '').toLowerCase().includes(q) || (c.id || '').toLowerCase().includes(q)
+    ) : allCustomers.filter(c => currentFilter === 'all' || c.battery_status === currentFilter);
+    renderQueue(filtered);
+  });
+
+  // Refresh queue
+  document.getElementById('btn-refresh-queue').addEventListener('click', loadQueue);
+
+  async function init() {
+    await loadQueue();
+    const urlParams = new URLSearchParams(window.location.search);
+    const briefParam = urlParams.get('brief');
+    if (briefParam) {
+      window.selectClient(briefParam);
+    }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
